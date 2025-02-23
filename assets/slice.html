@@ -1,0 +1,71 @@
+<!--
+    Copyright 2024 Google LLC
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+  -->
+<!doctype html PUBLIC "-//W3C//DTD HTML 5.0//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <link type="text/css" rel="stylesheet" href="css/doc_style.css"/>
+    <title>Polytope Help Page</title>
+  </head>
+  <body>
+    <h2>Slices</h2>
+
+    <p>
+      To help visualize an n-dimensional polytope, this program will display the
+      intersection of the polytope with an (n-1)-dimensional hyperplane. The
+      intersection will also be a convex polytope, but it might not be regular. When
+      the slice is active, there will be a slider at the bottom of the screen that
+      controls the height of the hyperplane.
+    </p>
+
+    <p>
+      To understand what is going on, it might help to start with a cube in 3
+      dimensions. Click the slice button to create the slice. Move the slider at the
+      bottom of the screen back and forth and you will see that the intersection of a
+      cube with a plane is a square.</p>
+
+    <p>
+      That is, it is a square if the cube has one face parallel to the plane. Click
+      on the rotation menu and select "Edge first". Then recreate the slice. Now you
+      will see that the intersection starts of as an edge, turns into a rectangle
+      that gets fatter until it is a square, and then shrinks back to an edge before
+      disappearing.</p>
+
+    <p>
+      Now rotate the cube to be "Vertex first" and recreate the slice. This time, the
+      intersection will start off as a point and grow into a triangle. When the
+      triangle gets as large as it can, it starts to loose its corners. At the middle
+      of the cube, the intersection is a hexagon.</p>
+
+    <p>
+      Once you feel you understand what you are looking at, try intersecting a 4-cube
+      with a 3-dimensional hyperplane.</p>
+
+    <p>
+      For more reading, I recommend
+      <ul>
+        <li><a href="https://en.wikipedia.org/wiki/Regular_Polytopes_(book)"
+               target="_blank">Regular Polytopes</a> by H.S. M. Coxeter.
+        <li><bold>Geometry</bold> by
+          <a href="https://en.wikipedia.org/wiki/Marcel_Berger" target="_blank">M
+            Berger</a>
+        <li><a href="https://en.wikipedia.org/wiki/Geometry_and_the_Imagination"
+               target="_blank">Geometry and the Imagination</a> by David Hilbert.
+      </ul>
+    </p>
+
+</body>
+</html>

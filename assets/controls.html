@@ -1,0 +1,142 @@
+<!--
+    Copyright 2024 Google LLC
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+  -->
+<!doctype html PUBLIC "-//W3C//DTD HTML 5.0//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <link type="text/css" rel="stylesheet" href="css/doc_style.css"/>
+    <title>Polytope Help Page</title>
+  </head>
+  <body>
+    <h2>Controls</h2>
+
+    <p>
+      The top bar contains several menus.
+    </p>
+
+    <p>
+      The first menu lets you pick which type of regular polytope to display.
+    </p>
+
+    <p>
+      The second menu lets you pick the dimension of the polytope.
+    </p>
+
+    <p>
+      Next is a check box showing if the slice is visible or not.
+      When you check the "slice" checkbox, an intersection of the slice with a hyperplane will be displayed. The slide-bar at the bottom of the screen allows you to control the height of the hyperplane. See <a href="slice.html">slice</a> for more information.
+    </p>
+
+    <p>
+      After the slice checkbox is the transformation menu. Initially, it is set to
+      "Rotate R3". If you have a keyboard, you can also use the shift, control, or
+      alt keys to change which transformation is active.
+    </p>
+
+    <h3>Rotate R3</h3>
+    <p>
+      If you drag your mouse or finger, the polytope will rotate in 3 dimensions.
+      Use two fingers or the mouse scroll wheel to scale the polytope.
+    </p>
+
+    <h3>Rotate R4</h3>
+    <p>
+      If you drag your mouse or finger, the polytope will rotate in 4 dimensions.
+      That means that instead of rotating in the x-z plane and the y-z plane, the
+      polytope will rotate in the x-w plane or y-w plane.
+    </p>
+
+    <h3>Rotate R5</h3>
+    <p>
+      If you drag your mouse or finger, the polytope will rotate in 5 dimensions.
+    </p>
+
+    <h3>Zolly</h3>
+    <p>
+      Dragging the mouse or finger will change the perspective
+      transformation. I.e. things that are farther away will either a lot smaller or
+      just a little smaller.
+    </p>
+
+    <p>
+      <a href="https://en.wikipedia.org/wiki/Dolly_zoom" target="_blank">Zolly</a> is
+      a contraction of zoom and dolly, and I did not make up that word.
+    </p>
+
+    <h3>Translate</h3>
+    <p>
+      Dragging the mouse or finger will move the polytope.
+    </p>
+
+    <h3>Vertex First</h3>
+    <p>
+      Rotate the polytope so that a vertex is closest to the camera. A new slice
+      intersection will hit the vertex first.
+    </p>
+
+    <h3>Edge First</h3>
+    <p>
+      Rotate the polytope so that an edge is closest to the camera. A new slice
+      intersection will hit the edge first.
+    </p>
+
+    <h3>Face First</h3>
+    <p>
+      Rotate the polytope so that a face is closest to the camera. A new slice
+      intersection will hit the face first.
+    </p>
+
+    <h3>3-Cell First</h3>
+    <p>
+      Rotate the polytope so that a 3-cell is closest to the camera. A new slice
+      intersection will hit the 3-cell first.
+    </p>
+
+    <h2>Velocity</h2>
+    <p>
+      If you fling your mouse or finger while rotating in R3, the polytope will
+      continue to rotate. Click or tap in the screen to stop it.
+    </p>
+
+    <p>
+      If you fling your mouse or finger while adjusting the slice slidebar, the slice
+      height will continue to change. Click or tap on the slider to stop it.
+    </p>
+
+    <h2>Settings</h2>
+
+    <p>
+      On the settings screen you can change the theme color, as well as the color of
+      the polytope and the slice.
+    </p>
+
+    <p>
+      The sticky delay and sticky radius allow the slidebar to pause for a short time
+      at important points. An important point is where the hyperplane intersects a
+      point, edge, or face at only one height instead of in a range.
+    </p>
+
+    <p>
+      The "hotkey buttons for touchscreen" adds buttons on a touchscreen that mimic
+      the effects of the shift, alt, and control keys.
+    </p>
+
+    <p>
+      Leave the "Periodic Debug Logs" off. Pay no attention to the man behind the curtain.
+    </p>
+
+  </body>
+</html>

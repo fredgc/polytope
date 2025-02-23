@@ -1,0 +1,224 @@
+TODO:
+
+- Release next: step 4 run cross tool.
+- drawable can use global colors.
+- copy color,settings,help/assets changes from polytope/spacetime to chaos, too.
+- fix html colors. Where did those colors come from? Can I dynamically change css colors.
+  - replace <link type=...doc_style.css"/>  with <style>...</style>
+  - cannot always intercept load function.
+- also clean up the icons a little more.
+- start the release. (polytope and chaos at same time)
+- figure out how to set the icon. (web and android)
+  - do this for all of the projects. - daylight, chaos, spacetime, etc.
+  - see if gimp has nice way to do this. Use "convert" instead. Just make a big icon w/gimp.
+- draw nicer marker for slider.
+  - setting for sticky times. Maybe start at 0.1 second? 0.5 seconds?
+  - change slider color when at sticky point?
+- figure out navigation with poly names. navigate w/help pages.
+- settings: (allow show polytope checkbox).
+- fix spacing on ui.
+- fix/test narrow ui.
+- test ui on touch screen. -- shift/ctrl does not work. Add other touch?
+- test ui on android.
+  - touch screen.
+  - multitouch.
+  - shift/cntr/alt. -- meh.
+  - narrow vs wide.
+  - animate, etc.
+- review colors.
+- play with clipping and sorting.
+- https://docs.flutter.dev/cookbook/navigation/navigate-with-arguments
+- add firebase, like daylight so that I can deploy easily. (add to others as well)
+  - (in chaos too) need to do firebase init and also add console to setup.sh.
+  - fix run.el, too.
+- remove debug statements before launch.
+- play with clipping.
+
+Navigation:
+/view?poly=cube, dim=4, slice=true, poly=false
+
+
+
+wide UI:
+<settings> <dim> <polytope> <rotate/translate/zolly><R3/R4> <slice checkbox> <poly checkbox> <help>
+[Scene]
+<slice slider><play/pause>
+
+<settings> - settings page.
+
+narrow UI:
+<settings> <dim> <polytope> <help>
+<rotate><r3/4> <slice checkbox> <poly checkbox>
+[Scene]
+<slice slider><play/pause>
+
+keyboard or not:
+plain drag - rotate. (with momentum)
+tap - stop movement.
+
+
+No keyboard put at the bottom:
+(or use settings)
+<R3/R4 rotate - shift> <R3 perspective -ctrl> <R4 perspective -ctrl shift>
+<R5 per/rotate>
+Can use scale w/focus on far left or right drag up/down?
+Play with that.
+
+Rotate menu:
+... Rotate R3 (drag mouse to rotate R3)
+S.. Rotate R4 (drag mouse to rotate R4)... (if dim >= 4) (shift)
+SC. Rotate R5 (drag mouse to rotate R4)... (if dim >= 5)
+.C. Zolly 3 and 4... (ctrl, ctrl/shift)
+..A Translate... (ctrl, ctrl/shift)
+.CA Scale... (ctrl, ctrl/shift)
+0   Rotate vertex to front - 0
+1   Rotae edge to front  - 1 
+2   Rotae face to front - 2 
+3   Rotae 3-cell to front - 3 
+4   Rotae 4-cell to front - 4
+
+
+Android apk source:
+Is there an android directory? Maybe on other compter?
+~/jeeves/source/android/Polytope/
+Look at Polytope/assets/help_files
+UI:
+  Buttons: Rotate, Pick, Slice, Help (at top)
+  slider slice_seekbar
+  Scene.
+
+  Rotate Edit Buttons: reset, vertex first, edge first, face first, cell first
+  <ok, help, cancel>
+  Slice edit: checkbox display slice, checkbox display polytope, ok, cancel
+
+
+Web page source:
+~/jeeves/source/polytope/src/
+
+---------------------------------------------
+## Settings
+
+can I just add a list of settings and then
+have a separate class that does all the work. 
+
+Use:
+Settings.startGroup(name), endGroup()
+Settings.add(name, Saveable).
+Settings.addNoWidget(name, Saveable).
+Settings.getBool(name)
+Settings.getDouble(name)
+Settings.getColor(name)
+Settings.statusStream() -- used by widget.
+
+flow needs array of mote colors, current color, and way to choose.
+colors are updated based on scheme.
+
+Theme: 
+saves switcher value (theme mode).
+saves theme color and background color.
+are colors updated? 
+fix layout.
+
+SettingsListener:
+init settings.
+update settings values.
+
+e.g.: 
+on app init:
+- add settings to init.
+- call static widget.initSettings(settings).
+  - call static scene.initSettings(settings).
+  - call static slider.initSettings(settings).
+  - call static transform.initSettings(settings).
+- YYY can also init drawables. (load assets/images)
+- note: settings.initialize needs a build context in order to get theme and brightness.
+- YYY does gdrive need to be initialized. Maybe there are more things
+  that need to go in settings update.
+
+widget:
+(add to status stream listener) -- (and cancel on dispose)
+update scene (from widget)
+update sliders (from scene)
+update transform (from scene)
+- call *.updateSettings(settings) - 
+
+Saveable: save(prefs), load(prefs), widget, name
+usually: name, value, tip, default_value
+
+Settings
+ map<String name, Saveable>
+ initialize() - async.
+ load (load all saveable)
+ save (save all saveable)
+
+- refactor settings so that it takes a list of saveable things.
+  - settings should just have a list of savable<T>(save, load, build)
+  - allow array of savable colors to have one description and row builders.
+    - save saves array, load saves array, build builds row of widgets.
+  - base settings does work. settings inherits from base and owns all variables.
+  - is there a flow layout? Maybe called Wrap. Maybe just use a column.
+  - group some settings in one row.
+  - add sections to settings. (i.e. column of <heading text>, <wrap>.
+  - copy settings back to chaos and polytope.
+  - column method: settings.create(savable, end_row = True)
+  
+color should have an array of high profile colors.
+
+---------------------------------------------
+
+
+--------------
+Done:
+- X move SavableColor to own file (do it in chaos, too).
+- X do the constructor and printing of the polytope.
+- X translate RdVector -> Vector, RdPoint -> Point, Transformation.
+  - X use operator overload.
+- X translate Polytope, Regular,
+  - X go back to returning poly from the make routine.
+- verify that the regulars are being created correct.
+  - X add some tests for the regular. https://docs.flutter.dev/cookbook/testing/unit/introduction
+  - X or https://docs.flutter.dev/testing/overview
+  - X verify vertices on unit sphere.
+  - X verify all cells have same number of subcells.
+  - X verify all edges have same length.
+  - X verify center of all cells is same.
+- translate rotate <cell> first.
+- add ui for pt first, edge first, cell first.
+- add tool tips.
+- X figure out theme colors for slider. and text size.
+- X make sure tapup for slider adjusts value.
+- play/pause button causes rebuild? What about when thrown. Remove this?
+- Rethink update time and transform. Update all drawables?
+  - update time:
+    - update slice levels. -> compute slice levels if t changed.
+    - update transform.
+    - if changed, update scene.
+  - update scene
+    - update/project all points.
+    - clip everything.
+    - trigger repaint.
+  - update slice time
+    - DON'T NOTIFY LISTENERS.
+    - count calls to compute levels since last call here.
+    - (turn on dont-change)
+    - compute new time.
+    - (turn off dont-change)
+    - if no t change, return.
+    - compute levels.
+  - turn on slice:
+    - compute levels,
+    - update scene, 
+  - ui change slice: same as update time, but always changed.
+    - if dont-change return.
+    - compute levels, (use notifier)
+    - update scene.
+  - ui change transform. 
+    - update scene.
+    - play.
+- add animator.play callback for both scene.transform and slider.
+- scale start should start animation and move value.
+- make sure that slider play starts animation.
+
+
+Firebase app: polytope-7d78f
+

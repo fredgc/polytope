@@ -1,0 +1,137 @@
+<!--
+    Copyright 2024 Google LLC
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+  -->
+<!doctype html PUBLIC "-//W3C//DTD HTML 5.0//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <link type="text/css" rel="stylesheet" href="css/doc_style.css"/>
+    <title>Polytope Help Page</title>
+  </head>
+  <body>
+    <h2>Polytope</h2>
+
+    <p>
+      The word "polytope" means the generalization of a polygon or polyhedron in
+      multiple dimensions. We can talk about the "cells" of a polytope, which are the
+      generalization of sides or faces.
+    </p>
+
+    <p>
+      This program only looks at regular convex polytopes. That means all of the
+      cells and angles are the same. In 3 dimensions, the five regular polytopes are
+      called the Platonic Solids.
+    </p>
+
+    <p>
+      <table border="1">
+        <tr><th>Dimension</th><th>Name</th><th>Cell Type</th></tr>
+        <tr><td>0</td><td>point</td><td>none - points have not cells</td></tr>
+        <tr><td>1</td><td>line segment</td>
+          <td>point - a line segment has exactly two end points. Also called a vertex.</td></tr>
+        <tr><td>2</td><td>polygon</td><td>each edge is a line segment</td></tr>
+        <tr><td>3</td><td>polyhedron</td><td>each face is a polygon</td></tr>
+        <tr><td>4</td><td>4-polytope</td><td>each cell is a polyhedron</td></tr>
+        <tr><td>&hellip;</td></tr>
+        <tr><td>n</td><td>n-polytope</td><td>each cell is an (n-1)-polytope</td></tr>
+        <tr><td>&hellip;</td></tr>
+      </table>
+    </p>
+
+    <h2>Types</h2>
+
+    <h3>Simplex</h3>
+    <p>
+      A simplex is the smallest polytope. A line segment, a triangle, and a
+      tetrahedron are simlexes. In higher dimension you can make an n-simplex by
+      taking an (n-1)-simplex and adding a new vertex above it connecting each of the
+      existing vertices to the new one with a new edge.
+    </p>
+
+    <p>
+      There is a simplex in every dimension.
+    </p>
+
+    <p>
+      See Wikipedia's article on <a href="https://en.wikipedia.org/wiki/Simplex"
+                                    target="_blank">Simplex</a> for more information.
+    </p>
+
+    <h3>Hypercube</h3>
+    <p>
+      A hypercube or sometimes called an n-cube is the generalization of a square or
+      cube.
+      There is a hypercube in every dimension.
+    </p>
+
+    <p>
+      See Wikipedia's article on <a href="https://en.wikipedia.org/wiki/Hypercube"
+                                    target="_blank">Hypercube</a> for more information.
+    </p>
+
+    <h3>Cross type</h3>
+    <p>
+      An n dimensional cross type polytope is made by taking an (n-1) dimensional
+      cube and adding one point above and one point below the cube. Connect each of
+      the cube's vertices to both of the new points. If you start with a square, you
+      end up with an octohedron. If you start with a line segment, you end up with a
+      square.
+    </p>
+
+    <p>
+      There is a cross type polytope in every dimension.
+    </p>
+
+    <p>
+      See Wikipedia's article on
+      <a href="https://en.wikipedia.org/wiki/Cross-polytope"
+         target="_blank">Cross-polytope</a> for more information.
+    </p>
+
+
+    <h3>Dodecahedron</h3>
+    <p>
+      The Dodecahedron is only in 3 dimensions and has 12 faces. Each face is a pentagon.
+    </p>
+
+    <p>
+      See Wikipedia's article on <a href="https://en.wikipedia.org/wiki/Dodecahedron"
+                                    target="_blank">Dodecahedron</a> for more information.
+    </p>
+
+
+    <h3>Icosahedron</h3>
+    <p>
+      The Dodecahedron is only in 3 dimensions and has 20 faces. Each face is a triangle.
+    </p>
+
+    <p>
+      See Wikipedia's article on <a href="https://en.wikipedia.org/wiki/Icosahedron"
+                                    target="_blank">Icosahedron</a> for more information.
+    </p>
+
+    <h3>24-cell</h3>
+
+    <p>
+      The 24-cell is only in 4 dimensions and has 24 cells. Each cell is an octohedron.
+    </p>
+
+    <p>
+      See Wikipedia's article on <a href="https://en.wikipedia.org/wiki/24-cell"
+                                    target="_blank">24-cell</a> for more information.
+    </p>
+
+  </body>
+</html>

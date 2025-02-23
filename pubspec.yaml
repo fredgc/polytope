@@ -1,0 +1,65 @@
+# Copyright 2024 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: polytope
+description: "A drawing app for polytopes."
+publish_to: 'none'
+version: 2.0.0
+
+environment:
+  sdk: '>=3.3.4 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  flex_color_picker: ^3.7.0
+  flutter_inappwebview: ^6.1.5  # If the help page is html.
+  flutter_markdown: ^0.7.6+2      # If the help page is in markdown.
+  google_fonts: ^6.2.1
+  ordered_set: ^6.1.1
+  package_info_plus: ^8.2.1     # get version number from code.
+  shared_preferences: ^2.5.2
+  url_launcher: ^6.3.1
+  firebase_core: ^3.12.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  test: ^1.25.8
+  flutter_launcher_icons: any
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/about.html
+    - assets/help.html
+    - assets/slice.html
+    - assets/controls.html
+    - assets/css/
+    - assets/images/
+
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: "assets/icon/icon.png"
+  adaptive_icon_background: "assets/icon/background.png"
+  adaptive_icon_foreground: "assets/icon/foreground.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  web:
+    generate: true
+    image_path: "assets/icon/icon.png"
+    background_color: "#9300ff"
+    theme_color: "#ff00f4"

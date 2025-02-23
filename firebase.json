@@ -1,0 +1,36 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "polytope-7d78f",
+          "appId": "1:123675276456:android:c11e233e4c7b7df1e0be9d",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "polytope-7d78f",
+          "configurations": {
+            "android": "1:123675276456:android:c11e233e4c7b7df1e0be9d",
+            "web": "1:123675276456:web:1967d6f28ad78e9ae0be9d"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
