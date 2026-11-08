@@ -13,13 +13,11 @@
 // limitations under the License.
 
 import 'dart:async';
-import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flutter/material.dart';
 
 import 'package:vector_math/vector_math.dart' show Vector2;
 
-import "transform.dart";
 import "polytope.dart";
 import "vector.dart";
 
@@ -37,13 +35,13 @@ String zzz2(var vec) {
     return "(${zzz(vec.x)}, ${zzz(vec.y)})";
   }
   if (vec is List) {
-    return "[" + vec.map((v) => zzz(v)).join(", ") + "]";
+    return "[${vec.map((v) => zzz(v)).join(", ")}]";
   }
   if (vec is Point) {
-    return "$vec[" + vec.x.map((v) => zzz(v)).join(", ") + "]";
+    return "$vec[${vec.x.map((v) => zzz(v)).join(", ")}]";
   }
   if (vec is Vertex) {
-    return "$vec[" + vec.vertex.x.map((v) => zzz(v)).join(", ") + "]";
+    return "$vec[${vec.vertex.x.map((v) => zzz(v)).join(", ")}]";
   }
   if (vec is double) {
     if (vec.isNaN) {
@@ -55,7 +53,7 @@ String zzz2(var vec) {
     if (vec > 50 || vec < -50) {
       return "${vec.round()}";
     }
-    return "${vec.toStringAsPrecision(3)}";
+    return vec.toStringAsPrecision(3);
   }
   return "$vec";
 }
@@ -67,14 +65,16 @@ class DebugPrint {
 
   static void dprint(String s, {int depth = 0}) {
     if (print_debug > 0) {
-      String extra_indent = indent;
-      for (int i = 0; i < depth; i++) extra_indent = extra_indent + "  ";
-      print("$extra_indent$s");
+      String extraIndent = indent;
+      for (int i = 0; i < depth; i++) {
+        extraIndent = "$extraIndent  ";
+      }
+      print("$extraIndent$s");
     }
   }
 
   static void printPoly(Polytope p) {
-    if (print_debug > 0) p.printAll(indent: indent + ". ");
+    if (print_debug > 0) p.printAll(indent: "$indent. ");
   }
 
   static String incIndent(String s) {

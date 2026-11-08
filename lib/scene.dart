@@ -17,16 +17,16 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import "animate.dart";
 import "drawable.dart";
 import "printer.dart";
 import "vector.dart";
+import 'color.dart';
 import 'polytope.dart';
 import 'regular.dart';
 import 'settings.dart';
-import 'color.dart';
 import 'slice.dart';
 import 'transform.dart';
+import 'widget.dart';
 
 class Scene {
   Regular type = Regular.simplex;
@@ -43,12 +43,45 @@ class Scene {
   CameraMovement movement = CameraMovement.rotate3;
 
   Scene() {
-    print("RED: Created new Scene.");
+    // print("RED: Created new Scene.");
     updateList();
   }
 
   static SavableColor poly_color = SavableColor("poly_color", "Polytope Color",
       Colors.white, (scheme) => scheme.onSurface);
+  static SavableDouble poly_edge_thickness = SavableDouble(
+    "poly_edge_thickness",
+    "Polytope Edge Thickness",
+    2.0,
+    min: 0.5,
+    max: 10.0,
+    divisions: 19,
+    tip: "Thickness of polytope edges in pixels",
+  );
+  static SavableDouble vertex_radius = SavableDouble(
+    "vertex_radius",
+    "Vertex Size",
+    2.0,
+    min: 0.5,
+    max: 10.0,
+    divisions: 19,
+    tip: "Radius of vertex dots in pixels",
+  );
+  static SavableBool enable_line_clipping = SavableBool(
+    "enable_line_clipping",
+    "Clip Crossing Lines",
+    true,
+    tip: "Draw gaps when lines cross each other to show depth",
+  );
+  static SavableDouble clip_gap_size = SavableDouble(
+    "clip_gap_size",
+    "Clipping Gap Size",
+    4.0,
+    min: 1.0,
+    max: 15.0,
+    divisions: 14,
+    tip: "Width of gaps drawn when lines cross in pixels",
+  );
   static SavableBool show_hotkey_buttons = SavableBool(
       "show_hotkey_buttons", "Show Hotkey Buttons", false,
       tip: "Show buttons on the screen as shortcuts for shift/ctrl/alt.");
@@ -56,23 +89,29 @@ class Scene {
   static void initSettings(Settings settings) {
     show_hotkey_buttons.value = settings.no_keyboard;
     settings.add(poly_color);
+    settings.add(poly_edge_thickness);
+    settings.add(vertex_radius);
+    settings.add(EndOfRow());
     Slice.initSettings(settings);
+    settings.add(EndOfRow());
+    settings.add(enable_line_clipping);
+    settings.add(clip_gap_size);
     settings.add(EndOfRow());
     settings.add(show_hotkey_buttons);
   }
 
   void setPolytope(Regular type) {
     this.type = type;
-    int current_dim = polytope.dim;
-    polytope = type.make(current_dim);
-    print("BLUE: set polytope ${type} => ${polytope}");
+    int currentDim = polytope.dim;
+    polytope = type.make(currentDim);
+    // print("BLUE: set polytope ${type} => ${polytope}");
     // polytope.printAll();
     updateList();
   }
 
   void setDim(int dim) {
     polytope = type.make(dim);
-    print("BLUE: set dim ${dim} => ${polytope}");
+    // print("BLUE: set dim ${dim} => ${polytope}");
     // polytope.printAll();
     updateList();
   }
@@ -82,7 +121,7 @@ class Scene {
   }
 
   void updateList() {
-    print("BLUE: Update Scene list. polytope = $polytope");
+    // print("BLUE: Update Scene list. polytope = $polytope");
     slice = null;
     points.clear();
     drawables.clear();
@@ -97,7 +136,7 @@ class Scene {
     // Reset the transform.
     transform = CoordinateTransform();
     updateScene();
-    dprint("After update list. repaint counter = ${repaint_counter}");
+    dprint("After update list. repaint counter = $repaint_counter");
   }
 
   void paint(Canvas canvas, Size size) {
@@ -107,9 +146,12 @@ class Scene {
       updateScene(triggerRepaint: false);
     }
     paint_counter++;
-    paintTimeText(canvas, size);
-    for (var d in drawables) d.paint(canvas);
-    // XXX Debug.print_debug = 1;
+    if (PolyAppWidgetState.debug_logs.value) {
+      paintTimeText(canvas, size);
+    }
+    for (var d in drawables) {
+      d.paint(canvas);
+    }
   }
 
   void paintTimeText(Canvas canvas, Size size) {
@@ -118,8 +160,8 @@ class Scene {
       fontSize: 10.0,
     );
     double t = slice == null ? 0 : slice!.slider.value;
-    String text = "t=${zzz(time)}.  " +
-        "sl=${zzz(t)}, paint=$paint_counter/${repaint_counter.value}, " +
+    String text = "t=${zzz(time)}.  "
+        "sl=${zzz(t)}, paint=$paint_counter/${repaint_counter.value}, "
         "build=$build_counter #=${drawables.length}";
     var span = TextSpan(text: text, style: style);
     var painter = TextPainter(
@@ -135,9 +177,7 @@ class Scene {
 
   String debugPrint() {
     String s = slice == null ? "" : slice!.debugPrint();
-    return s +
-        "sc(r${repaint_counter.value}p$paint_counter,b$build_counter) " +
-        "$polytope";
+    return "${s}sc(r${repaint_counter.value}p$paint_counter,b$build_counter) $polytope";
   }
 
   void dumpDebugInfo() {
@@ -185,10 +225,127 @@ class Scene {
     return changed;
   }
 
+  void clipLines() {
+    // Reset gaps on all ClippableEdges.
+    for (var d in drawables) {
+      if (d is ClippableEdge) {
+        d.resetGaps();
+      }
+    }
+
+    if (!enable_line_clipping.value) {
+      return;
+    }
+
+    // Collect ClippableEdges that are visible.
+    List<ClippableEdge> segments = [];
+    for (var d in drawables) {
+      if (d is ClippableEdge && d.isEdgeVisible) {
+        segments.add(d);
+      }
+    }
+
+    final double gapPx = clip_gap_size.value;
+    final int n = segments.length;
+    for (int i = 0; i < n; i++) {
+      ClippableEdge s1 = segments[i];
+      double x1 = s1.ptA.sx, y1 = s1.ptA.sy;
+      double x2 = s1.ptB.sx, y2 = s1.ptB.sy;
+      double dx1 = x2 - x1, dy1 = y2 - y1;
+      double len1 = math.sqrt(dx1 * dx1 + dy1 * dy1);
+      if (len1 < 1e-4) continue;
+
+      for (int j = i + 1; j < n; j++) {
+        ClippableEdge s2 = segments[j];
+        // Skip lines that share a vertex (they meet at endpoints).
+        if (identical(s1.ptA, s2.ptA) ||
+            identical(s1.ptA, s2.ptB) ||
+            identical(s1.ptB, s2.ptA) ||
+            identical(s1.ptB, s2.ptB)) {
+          continue;
+        }
+
+        // Also check if a SlideEdge ends at a Polytope edge (sourceEdge)
+        // or connects to a vertex of s1 / s2.
+        if (s1 is SlideEdge && s2 is LineSegment) {
+          if (_slideDotOnEdge(s1.a, s2) || _slideDotOnEdge(s1.b, s2)) {
+            continue;
+          }
+        } else if (s2 is SlideEdge && s1 is LineSegment) {
+          if (_slideDotOnEdge(s2.a, s1) || _slideDotOnEdge(s2.b, s1)) {
+            continue;
+          }
+        }
+
+        double x3 = s2.ptA.sx, y3 = s2.ptA.sy;
+        double x4 = s2.ptB.sx, y4 = s2.ptB.sy;
+        double dx2 = x4 - x3, dy2 = y4 - y3;
+        double len2 = math.sqrt(dx2 * dx2 + dy2 * dy2);
+        if (len2 < 1e-4) continue;
+
+        // Check bounding box overlap first.
+        double minX1 = x1 < x2 ? x1 : x2, maxX1 = x1 < x2 ? x2 : x1;
+        double minY1 = y1 < y2 ? y1 : y2, maxY1 = y1 < y2 ? y2 : y1;
+        double minX2 = x3 < x4 ? x3 : x4, maxX2 = x3 < x4 ? x4 : x3;
+        double minY2 = y3 < y4 ? y3 : y4, maxY2 = y3 < y4 ? y4 : y3;
+
+        if (maxX1 < minX2 || minX1 > maxX2 || maxY1 < minY2 || minY1 > maxY2) {
+          continue;
+        }
+
+        // 2D line segment intersection.
+        // P1 + t1 * (P2 - P1) == P3 + t2 * (P4 - P3)
+        double denom = dx1 * dy2 - dy1 * dx2;
+        if (denom.abs() < 1e-6) continue; // Parallel or collinear.
+
+        double dx31 = x3 - x1;
+        double dy31 = y3 - y1;
+        double t1 = (dx31 * dy2 - dy31 * dx2) / denom;
+        double t2 = (dx31 * dy1 - dy31 * dx1) / denom;
+
+        // Interior intersection (avoid clipping near endpoints).
+        const double eps = 0.02;
+        if (t1 > eps && t1 < 1.0 - eps && t2 > eps && t2 < 1.0 - eps) {
+          // Compare Z depths at the crossing point.
+          // In transform.dart: p.sz = zoom * temp.x[2], where higher sz is closer.
+          double z1 = s1.ptA.sz + t1 * (s1.ptB.sz - s1.ptA.sz);
+          double z2 = s2.ptA.sz + t2 * (s2.ptB.sz - s2.ptA.sz);
+
+          if ((z1 - z2).abs() < 1e-3) {
+            // Depths are virtually identical.
+            continue;
+          }
+
+          if (z1 < z2) {
+            // s1 is behind s2; gap on s1.
+            double dt1 = gapPx / len1;
+            s1.addGap(t1 - dt1, t1 + dt1);
+          } else {
+            // s2 is behind s1; gap on s2.
+            double dt2 = gapPx / len2;
+            s2.addGap(t2 - dt2, t2 + dt2);
+          }
+        }
+      }
+    }
+  }
+
+  static bool _slideDotOnEdge(SlideDot dot, LineSegment line) {
+    // A SlideDot moves along the polytope edge between dot.a and dot.b.
+    // If line has the same edge endpoints, dot ends at line.
+    Vertex? v1 = line.vertexA;
+    Vertex? v2 = line.vertexB;
+    if (v1 == null || v2 == null) return false;
+    return (dot.a == v1 && dot.b == v2) || (dot.a == v2 && dot.b == v1);
+  }
+
   void updateScene({bool triggerRepaint = true}) {
     dprint("BLUE: updateScene.");
+    if (slice != null) {
+      slice!.computeSlice();
+    }
     transform.apply(points);
-    // XXX clip everything.
+    clipLines();
     if (triggerRepaint) repaint_counter.value++;
   }
 
@@ -446,6 +603,7 @@ enum CameraMovement {
   final String tip;
   final int dim;
   final String hotkeys;
+  @override
   String toString() => name;
 }
 
@@ -460,12 +618,13 @@ enum RotationSnap {
   final String tip;
   final int dim;
   final String character;
+  @override
   String toString() => name;
   void snap(Scene scene) {
     scene.transform.resetRotation();
     // rotate so that the cell points in the direction most away from the
     // screen. i.e. in Dim 3, point in z axis. In Dim 4 point in w axis.
-    scene.polytope.cellFirst(this.dim);
+    scene.polytope.cellFirst(dim);
     if (scene.slice != null) {
       double value = scene.slice!.slider.value;
       scene.changeSlice(false); //Remove old slice...
@@ -525,11 +684,11 @@ class KeyStates {
       onTapUp: (info) => hotkeyEnd(name, value, callback),
       child: CircleAvatar(
         radius: 20,
+        backgroundColor: value.value ? scheme.primary : scheme.inversePrimary,
         child: Text(name,
             style: TextStyle(
                 color:
                     value.value ? scheme.onPrimary : scheme.onInverseSurface)),
-        backgroundColor: value.value ? scheme.primary : scheme.inversePrimary,
       ),
     ));
   }

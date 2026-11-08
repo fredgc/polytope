@@ -13,27 +13,24 @@
 // limitations under the License.
 
 import 'dart:async';
-import 'dart:math' as math;
-import 'package:vector_math/vector_math.dart' show Vector2;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-import "printer.dart";
 import 'animate.dart';
 import 'help.dart';
-import 'polytope.dart';
 import 'regular.dart';
 import 'scene.dart';
 import 'settings.dart';
 import 'slider.dart';
-import 'transform.dart';
+import 'xr_support.dart';
 
 class PolyAppWidget extends StatefulWidget {
   static const routeName = "/";
+  final XRSupport xr;
 
-  PolyAppWidget() {
+  PolyAppWidget(this.xr, {super.key}) {
     print("YELLOW: Create new PolyAppWidget.");
   }
 
@@ -44,6 +41,7 @@ class PolyAppWidget extends StatefulWidget {
 class PolyAppWidgetState extends State<PolyAppWidget>
     with SingleTickerProviderStateMixin {
   Scene scene;
+  bool use_xr = false;
 
   late StreamSubscription _statusListener;
   late final MyAnimator animator; // Created in init state.
@@ -56,7 +54,7 @@ class PolyAppWidgetState extends State<PolyAppWidget>
   int poly_number = 0;
   int build_count = 0;
 
-  PolyAppWidgetState() : scene = Scene() {}
+  PolyAppWidgetState() : scene = Scene();
 
   static SavableBool debug_logs = SavableBool(
       "debug_logs", "Periodic Debug Logs", false,
@@ -78,6 +76,14 @@ class PolyAppWidgetState extends State<PolyAppWidget>
   void initState() {
     super.initState();
     print("RED: PolyAppWidget initState.");
+    widget.xr.scene = scene;
+    widget.xr.onExitXR = () {
+      if (mounted) {
+        setState(() {
+          use_xr = false;
+        });
+      }
+    };
     _statusListener = Settings.instance.statusStream().listen((status) {
       setState(() {
         // print("YELLOW: Widget setting state based on status $status");
@@ -98,9 +104,8 @@ class PolyAppWidgetState extends State<PolyAppWidget>
     return Timer.periodic(const Duration(seconds: 5), (timer) {
       if (debug_logs.value) {
         timer_counter++;
-        print("T${poly_number} $timer_counter, b$build_count, " +
-            scene.debugPrint() +
-            animator.debugPrint());
+        print(
+            "T$poly_number $timer_counter, b$build_count, ${scene.debugPrint()}${animator.debugPrint()}");
       }
     });
   }
@@ -112,7 +117,7 @@ class PolyAppWidgetState extends State<PolyAppWidget>
 
   @override
   void dispose() {
-    print("RED: Displose of widget.");
+    // print("RED: Displose of widget.");
     debug_timer.cancel();
     HardwareKeyboard.instance.removeHandler(keyHandler);
     animator.dispose();
@@ -164,7 +169,7 @@ class PolyAppWidgetState extends State<PolyAppWidget>
   }
 
   AppBar makeAppBar(BuildContext context) {
-    final settings_button = IconButton(
+    final settingsButton = IconButton(
       onPressed: () {
         Navigator.pushNamed(context, SettingsScreen.routeName);
       },
@@ -174,7 +179,7 @@ class PolyAppWidgetState extends State<PolyAppWidget>
 
     return AppBar(
       title: _buildPolyMenu(context),
-      leading: settings_button,
+      leading: settingsButton,
       actions: _getButtons(context),
     );
   }
@@ -242,12 +247,25 @@ class PolyAppWidgetState extends State<PolyAppWidget>
     // print("Get buttons.");
     List<Widget> list = [];
     if (!_narrow) _getOtherButtons(list, context);
+    if (widget.xr.supported && !kReleaseMode) {
+      list.add(_makeButton("Switch to AR mode", Icons.view_in_ar, () {
+        print("RED: switch to XR.");
+        widget.xr.switchToXR().then((bool itWorked) {
+          print("it_worked = $itWorked");
+          setState(() {
+            use_xr = widget.xr.supported && widget.xr.isActive;
+          });
+        });
+      }));
+    }
     list.add(_makeButton("Help", Icons.help, () {
       Navigator.pushNamed(context, HelpScreen.routeName);
     }));
-    list.add(_makeButton("Debug", Icons.info, () {
-      scene.dumpDebugInfo();
-    }));
+    if (debug_logs.value) {
+      list.add(_makeButton("Debug", Icons.info, () {
+        scene.dumpDebugInfo();
+      }));
+    }
     return list;
   }
 
@@ -322,6 +340,11 @@ class PolyAppWidgetState extends State<PolyAppWidget>
       Settings.instance.initialize(context);
       return Text("Initializing Settings...");
     }
+    if (use_xr) {
+      print("BLUE: building xr widget.");
+      return widget.xr.buildScene(context);
+    }
+
     List<Widget> column = [];
     if (_narrow) {
       List<Widget> list = [];

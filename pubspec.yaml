@@ -12,10 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# to see old packages:   flutter pub outdated
+# to try to upgrad:  flutter pub upgrade
+# to also update pubspec.yaml: flutter pub upgrade --major-versions
+# to list all packages: dart pub outdated --show-all
+# dart pub upgrade
+
 name: polytope
 description: "A drawing app for polytopes."
 publish_to: 'none'
-version: 2.0.0
+version: 2.1.1+0
 
 environment:
   sdk: '>=3.3.4 <4.0.0'
@@ -26,40 +32,51 @@ dependencies:
   cupertino_icons: ^1.0.2
   flex_color_picker: ^3.7.0
   flutter_inappwebview: ^6.1.5  # If the help page is html.
-  flutter_markdown: ^0.7.6+2      # If the help page is in markdown.
-  google_fonts: ^6.2.1
-  ordered_set: ^6.1.1
-  package_info_plus: ^8.2.1     # get version number from code.
+  # flutter_markdown_plus: ^1.0.7 # If the help page is in markdown.
+  google_fonts: ^8.0.0
+  ordered_set: ^8.0.0
+  package_info_plus: ^9.0.0     # get version number from code.
   shared_preferences: ^2.5.2
   url_launcher: ^6.3.1
-  firebase_core: ^3.12.0
+  firebase_core: ^4.4.0
+  webxr: ^0.2.0
+  ar_flutter_plugin_2: ^0.0.3
 
+  vector_math: any
+  web: any
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.3
+  flutter_lints: ^6.0.0
   test: ^1.25.8
-  flutter_launcher_icons: any
+  html_tweak:
+    path: ./html_tweak
 
 flutter:
   uses-material-design: true
   assets:
-    - assets/about.html
+    - path: assets/about.html
+      transformers:
+        - package: html_tweak
+    - assets/privacy.html
+    - assets/terms.html
     - assets/help.html
     - assets/slice.html
     - assets/controls.html
     - assets/css/
     - assets/images/
+    - assets/mesh/
 
 flutter_launcher_icons:
   android: true
   ios: false
-  image_path: "assets/icon/icon.png"
-  adaptive_icon_background: "assets/icon/background.png"
-  adaptive_icon_foreground: "assets/icon/foreground.png"
+  image_path: "assets/icons/icon.png"
+  adaptive_icon_background: "assets/icons/background.png"
+  adaptive_icon_foreground: "assets/icons/foreground.png"
   min_sdk_android: 21 # android min sdk min:16, default 21
   web:
     generate: true
-    image_path: "assets/icon/icon.png"
+    image_path: "assets/icons/icon.png"
     background_color: "#9300ff"
     theme_color: "#ff00f4"

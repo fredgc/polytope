@@ -1,0 +1,173 @@
+/* This is the style sheet for the spacetime drawing tool docs. */
+.container {
+    /* width: 710px;  */
+    margin: 0 auto;
+    max-width: 810px;
+    padding: 20px;
+    background: #dcd2e3;
+    /* background-image:url('../images/grid.png'); */
+    background-repeat:repeat;
+    background-position: 50% 0px;
+}
+
+html {
+    /* margin: 0 auto; */
+    /* padding: 0; */
+    /* border: 0; */
+    background: #dcd2e3;
+    /* background-image:url('../images/grid.png'); */
+    background-repeat:repeat;
+    background-position: 50% 0px;
+}
+/* The body is the whole page. */
+body {
+    /* margin: 0 auto; */
+    /* padding: 0; */
+    /* border: 0; */
+    background: #dcd2e3;
+    /* background-image:url('../images/grid.png'); */
+    background-repeat:repeat;
+    background-position: 50% 0px;
+}
+
+img {
+    vertical-align: middle;
+}
+
+header {
+    padding-top: 20px;
+    background: #c1bff1;
+    /* background-image:url('../images/grid.png'); */
+    background-repeat:repeat;
+    background-position: 50%  36px; /*  1 + padding + x = 55 pix image height*/
+                                    /*  (1 for good luck?) */
+}
+
+header img {                    /* Used on the logo in the header. */
+    padding: 0em;
+}
+
+/* Navigation */
+/* This controls the navigation buttons at the top right of the page */
+
+nav {
+    float: right;
+    background-color: white;
+    padding: 0 0.7em;
+}
+
+nav ul {
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li {
+    list-style-type: none;
+    display: inline-block;
+    padding: 0.2em 0;
+}
+
+nav ul li a {
+    padding: 0 5px;
+    font-weight: bold;
+}
+
+nav ul li a:visited {
+    color: #09c;
+}
+
+nav ul li a:hover {
+    text-decoration: underline;
+}
+
+section {
+    background: #eae4ee;
+    /* width: 90%; */
+    padding: 1em;
+    border: 1px solid #733e8c;
+    /* vertical-align: top; */
+}
+
+section h1 {
+    font-size: 140%;
+    text-align: center;
+}
+
+section h2 {
+    font-size: 110%;
+}
+
+table.for_sidebar {
+    /* background: #f00; */
+    width: 100%;
+    margin-bottom: 0;
+/* padding: 1em; */
+}
+
+/* Links */
+
+a {
+    color: #03c;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #0c9;
+    text-decoration: underline;
+}
+
+a:visited {
+    color: #069;
+}
+
+
+footer {
+    text-align: center;
+    /* margin-top: 30px; */
+    /* width: 800px; */
+    margin-left: auto;
+    margin-right: auto;
+    background: #c1bff1;
+    float: none;
+}
+
+footer ul li {
+    list-style-type: none;
+    display: inline-block;
+    padding: 0.2em 0.5em;
+}
+
+footer ul li a {
+    padding: 0 5px;
+    font-weight: bold;
+}
+
+footer ul li a:visited {
+    color: #09c;
+}
+
+footer ul li a:hover {
+    text-decoration: underline;
+}
+
+/* Round corners */
+
+.round {
+    -moz-border-radius:    10px;
+    -webkit-border-radius: 10px;
+    border-radius:         10px;
+}
+
+div.field, div.actions {
+    margin-bottom: 10px;
+}
+
+/* Listing 11.19 */
+
+.page_on {
+    display: none;
+}
+
+.debug {
+    display: none;
+}

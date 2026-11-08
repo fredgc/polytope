@@ -13,9 +13,7 @@
 // limitations under the License.
 
 import 'dart:math' as math;
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import "drawable.dart";
 import "printer.dart";
@@ -24,7 +22,6 @@ import 'color.dart';
 import 'polytope.dart';
 import 'settings.dart';
 import 'slider.dart';
-import 'transform.dart';
 
 class Slice with ChangeNotifier {
   MySlider slider = MySlider("Slice", -1.5, 1.5, -1.5);
@@ -33,9 +30,19 @@ class Slice with ChangeNotifier {
   static final double tolerance = 1e-6;
   static SavableColor slice_color = SavableColor("slice_color", "Slice Color",
       Colors.yellow, (scheme) => scheme.inversePrimary);
+  static SavableDouble slice_edge_thickness = SavableDouble(
+    "slice_edge_thickness",
+    "Slice Edge Thickness",
+    2.0,
+    min: 0.5,
+    max: 10.0,
+    divisions: 19,
+    tip: "Thickness of cross-section slice edges",
+  );
 
   static void initSettings(Settings settings) {
     settings.add(slice_color);
+    settings.add(slice_edge_thickness);
   }
 
   // The list points is transformed by the scene when the rotation matrix is update.
@@ -45,7 +52,7 @@ class Slice with ChangeNotifier {
     slider.startAnimation = startAnimation;
     slider.addListener(onSliderChanged);
     Vector direction = Vector.unit(polytope.dim - 1);
-    Map<Polytope, Intersection> map = Map();
+    Map<Polytope, Intersection> map = {};
     List<double> transitions = [];
     // Each vertex is a singular slide dot.
     for (var p in polytope.vertices) {
@@ -98,21 +105,21 @@ class Slice with ChangeNotifier {
       Intersection? i = map[edge];
       // If edge is singular, then skip it because we already added it to
       // the list of interections and drawables. If not, it made a slide dot.
-      if (i is SlideDot) dots.add(i as SlideDot);
+      if (i is SlideDot) dots.add(i);
     }
     dprint("Face $face has ${dots.length} non-singular edges.");
     // Since the face is convex and regular, the hyperplane can only intersect
     // two non singular edges at a time.
     for (int i = 0; i < dots.length; i++) {
       for (int j = i + 1; j < dots.length; j++) {
-        bool dont_intersect =
+        bool dontIntersect =
             ((dots[i].max <= dots[j].min) || (dots[i].min >= dots[j].max));
-        if (dont_intersect) {
+        if (dontIntersect) {
           dprint("  Edge $i and $j don't intersect");
         } else {
           dprint("  Edge $i and $j intersect");
         }
-        if (!dont_intersect) {
+        if (!dontIntersect) {
           SlideEdge edge = SlideEdge(dots[i], dots[j], slice_color.value);
           drawables.add(edge);
           intersections.add(edge);
@@ -132,8 +139,8 @@ class Slice with ChangeNotifier {
   }
 
   void dumpDebugInfo() {
-    print("Slider ${zzz(slider.value)} in " +
-        "[${zzz(slider.min)}..${zzz(slider.max)}]" +
+    print("Slider ${zzz(slider.value)} in "
+        "[${zzz(slider.min)}..${zzz(slider.max)}]"
         ", sticky = ${zzz(slider.sticky)}");
     for (var i in intersections) {
       i.dumpDebugInfo();
@@ -177,15 +184,17 @@ class SingularDot with Intersection {
   SingularDot(this.pt, Vector direction, this.color) {
     min = direction.dot(pt.vertex);
     max = min;
-    dprint("Made singular dot $this from P${pt}." +
-        " R=(${zzz(min)}, ${zzz(max)}.");
+    dprint(
+        "Made singular dot $this from P$pt." " R=(${zzz(min)}, ${zzz(max)}.");
   }
 
+  @override
   void updatePosition(double t) {
     visible = (t < max + Slice.tolerance) && (t > min - Slice.tolerance);
     dprint("Update $this(v=$visible) -> ${zzz(pt)}");
   }
 
+  @override
   void paint(Canvas canvas) {
     if (!visible) return;
     Paint paint = Paint()..color = color;
@@ -194,12 +203,14 @@ class SingularDot with Intersection {
     dprint("Painting $this, visible = $visible. c=${zzz(c)}");
   }
 
+  @override
   String toString() {
-    return "SD-$debug_id(${pt})";
+    return "SD-$debug_id($pt)";
   }
 
+  @override
   void dumpDebugInfo() {
-    print("  Singular $this (v=${zzz(visible)})" +
+    print("  Singular $this (v=${zzz(visible)})"
         " R=(${zzz(min)}, ${zzz(max)}) ${zzz(pt)}");
   }
 }
@@ -229,10 +240,11 @@ class SlideDot extends Point with Intersection {
       b = temp;
     }
     v = b.vertex - a.vertex;
-    dprint("Made slide dot $this from P${a.id} to P${b.id}." +
+    dprint("Made slide dot $this from P${a.id} to P${b.id}."
         " R=(${zzz(min)}, ${zzz(max)}).");
   }
 
+  @override
   void updatePosition(double t) {
     visible = (t < max + Slice.tolerance) && (t > min - Slice.tolerance);
     double ratio = (t - min) / (max - min);
@@ -241,6 +253,7 @@ class SlideDot extends Point with Intersection {
     dprint("Update $this(v=$visible) -> ${zzz(this)}");
   }
 
+  @override
   void paint(Canvas canvas) {
     if (!visible) return;
     Paint paint = Paint()..color = color;
@@ -249,64 +262,103 @@ class SlideDot extends Point with Intersection {
     dprint("Painting $this, visible = $visible. c=${zzz(c)}");
   }
 
+  @override
   String toString() {
     return "sd-$debug_id(${a.id}-${b.id})";
   }
 
+  @override
   void dumpDebugInfo() {
-    print("  SlideDot $this (v=${zzz(visible)})" +
+    print("  SlideDot $this (v=${zzz(visible)})"
         " R=(${zzz(min)}, ${zzz(max)}) ${zzz(this)}");
   }
 }
 
 // An intersection of a line segment with a hyperplace. It is singular in that
 // it is contained within the hyperplane only if height = min = max.
-class SingularEdge with Intersection {
+class SingularEdge with Intersection implements ClippableEdge {
   SingularDot a, b;
   Color color;
+  List<double>? gaps;
 
   static int count = 0;
   int debug_id = count++;
 
+  @override
+  Point get ptA => a.pt.vertex;
+  @override
+  Point get ptB => b.pt.vertex;
+  @override
+  bool get isEdgeVisible => visible;
+  @override
+  Polytope? get sourceEdge => null;
+  @override
+  Vertex get vertexA => a.pt;
+  @override
+  Vertex get vertexB => b.pt;
+
+  @override
+  void resetGaps() {
+    gaps = null;
+  }
+
+  @override
+  void addGap(double t0, double t1) {
+    gaps ??= [];
+    double start = t0 < t1 ? t0 : t1;
+    double end = t0 < t1 ? t1 : t0;
+    if (start < 0.0) start = 0.0;
+    if (end > 1.0) end = 1.0;
+    if (start < end) {
+      gaps!.add(start);
+      gaps!.add(end);
+    }
+  }
+
   SingularEdge(this.a, this.b, this.color) {
     min = a.min; // We assume that b.min = a.min
     max = min;
-    dprint("Made slide edge $this from P${a} to P${b}." +
+    dprint("Made slide edge $this from P$a to P$b."
         " R=(${zzz(min)}, ${zzz(max)}).");
   }
 
+  @override
   void updatePosition(double t) {
     visible = (t < max + Slice.tolerance) && (t > min - Slice.tolerance);
     dprint("Update $this(v=$visible) -> ${zzz(this)}");
   }
 
+  @override
   void paint(Canvas canvas) {
     dprint("Painting $this, visible = $visible");
     if (!visible) return;
     Paint paint = Paint()
       ..color = color
-      ..strokeWidth = 2;
+      ..strokeWidth = Slice.slice_edge_thickness.value;
     Offset p1 = Offset(a.pt.vertex.sx, a.pt.vertex.sy);
     Offset p2 = Offset(b.pt.vertex.sx, b.pt.vertex.sy);
-    canvas.drawLine(p1, p2, paint);
+    LineSegment.paintGappedLine(canvas, p1, p2, paint, gaps);
     dprint("  a = $a =  ${zzz(a)} -> ${zzz(a.pt)}");
     dprint("  b = $b =  ${zzz(b)} -> ${zzz(a.pt)}");
     dprint("  line from ${zzz(p1)} to ${zzz(p2)}");
   }
 
+  @override
   String toString() {
     return "SE-$debug_id";
   }
 
+  @override
   void dumpDebugInfo() {
-    print("  SingEdge $this($a-$b) (v=${zzz(visible)})" +
+    print("  SingEdge $this($a-$b) (v=${zzz(visible)})"
         " R=(${zzz(min)}, ${zzz(max)})");
   }
 }
 
-class SlideEdge with Intersection {
+class SlideEdge with Intersection implements ClippableEdge {
   SlideDot a, b;
   Color color;
+  List<double>? gaps;
   // If the intersection is singular, the original polytope is contained within
   // the hyperplane at height min = max.
   bool singular = false;
@@ -314,39 +366,80 @@ class SlideEdge with Intersection {
   static int count = 0;
   int debug_id = count++;
 
+  @override
+  Point get ptA => a;
+  @override
+  Point get ptB => b;
+  @override
+  bool get isEdgeVisible => visible;
+  @override
+  Polytope? get sourceEdge => null;
+  @override
+  Vertex? get vertexA => null;
+  @override
+  Vertex? get vertexB => null;
+
+  // The polytope edge vertices this SlideEdge's endpoints slide along:
+  Vertex get dotAStart => a.a;
+  Vertex get dotAEnd => a.b;
+  Vertex get dotBStart => b.a;
+  Vertex get dotBEnd => b.b;
+
+  @override
+  void resetGaps() {
+    gaps = null;
+  }
+
+  @override
+  void addGap(double t0, double t1) {
+    gaps ??= [];
+    double start = t0 < t1 ? t0 : t1;
+    double end = t0 < t1 ? t1 : t0;
+    if (start < 0.0) start = 0.0;
+    if (end > 1.0) end = 1.0;
+    if (start < end) {
+      gaps!.add(start);
+      gaps!.add(end);
+    }
+  }
+
   SlideEdge(this.a, this.b, this.color) {
     min = math.max(a.min, b.min);
     max = math.min(a.max, b.max);
     if (max - min < Slice.tolerance) singular = true;
-    dprint("Made slide edge $this from P${a.debug_id} to P${b.debug_id}." +
+    dprint("Made slide edge $this from P${a.debug_id} to P${b.debug_id}."
         " R=(${zzz(min)}, ${zzz(max)}), singular=${zzz(singular)}.");
   }
 
+  @override
   void updatePosition(double t) {
     visible = (t < max + Slice.tolerance) && (t > min - Slice.tolerance);
     dprint("Update $this(v=$visible) -> ${zzz(this)}");
   }
 
+  @override
   void paint(Canvas canvas) {
     dprint("Painting $this, visible = $visible");
     if (!visible) return;
     Paint paint = Paint()
       ..color = color
-      ..strokeWidth = 2;
+      ..strokeWidth = Slice.slice_edge_thickness.value;
     Offset p1 = Offset(a.sx, a.sy);
     Offset p2 = Offset(b.sx, b.sy);
-    canvas.drawLine(p1, p2, paint);
+    LineSegment.paintGappedLine(canvas, p1, p2, paint, gaps);
     dprint("  a = $a =  ${zzz(a)} -> ${zzz(p1)}");
     dprint("  b = $b =  ${zzz(b)} -> ${zzz(p2)}");
     dprint("  line from ${zzz(p1)} to ${zzz(p2)}");
   }
 
+  @override
   String toString() {
     return "se-$debug_id";
   }
 
+  @override
   void dumpDebugInfo() {
-    print("  SlideEdge $this($a-$b) (v=${zzz(visible)}, s=${zzz(singular)})" +
+    print("  SlideEdge $this($a-$b) (v=${zzz(visible)}, s=${zzz(singular)})"
         " R=(${zzz(min)}, ${zzz(max)})");
   }
 }

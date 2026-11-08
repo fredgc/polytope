@@ -12,14 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flutter/material.dart';
 
 import 'package:vector_math/vector_math.dart' show Vector2;
 
-import "permute.dart";
 import "printer.dart";
 import "vector.dart";
 
@@ -55,19 +53,27 @@ class CoordinateTransform {
     return size != this.size;
   }
 
+  Vector projectTo3D(Vector p) {
+    Vector temp = Vector();
+    for (int i = 0; i < Vector.d; i++) {
+      for (int j = 0; j < Vector.d; j++) {
+        temp.x[i] += A[i][j] * (p.x[j] - b.x[j]) * scale;
+      }
+    }
+    for (int j = zolly.length - 1; j > 1; j--) {
+      for (int i = 0; i < j; i++) {
+        temp.x[i] = temp.x[i] / (1.0 - zolly[j] * temp.x[j]);
+      }
+    }
+    return temp;
+  }
+
   void apply(List<Point> points) {
     for (Point p in points) {
-      Vector temp = Vector();
-      for (int i = 0; i < Vector.d; i++) {
-        for (int j = 0; j < Vector.d; j++) {
-          temp.x[i] += A[i][j] * (p.x[j] - b.x[j]) * scale;
-        }
-      }
-      for (int j = zolly.length - 1; j > 1; j--) {
-        for (int i = 0; i < j; i++) {
-          temp.x[i] = temp.x[i] / (1.0 - zolly[j] * temp.x[j]);
-        }
-      }
+      Vector temp = projectTo3D(p);
+      p.wx = temp.x[0];
+      p.wy = temp.x[1];
+      p.wz = temp.x[2];
       p.sx = offset.x + zoom * temp.x[0];
       p.sy = offset.y - zoom * temp.x[1];
       p.sz = zoom * temp.x[2];
@@ -93,10 +99,10 @@ class CoordinateTransform {
     double dz = dx / zoom;
     zolly[i] *= (1 + dz);
     if (zolly[i] <= 0) zolly[i] = 0;
-    final double min_zolly = 1e-6;
-    if (dz > 0 && zolly[i] <= 0) zolly[i] = min_zolly;
-    final double max_zolly = 0.99;
-    if (zolly[i] > max_zolly) zolly[i] = max_zolly;
+    final double minZolly = 1e-6;
+    if (dz > 0 && zolly[i] <= 0) zolly[i] = minZolly;
+    final double maxZolly = 0.99;
+    if (zolly[i] > maxZolly) zolly[i] = maxZolly;
   }
 
   void scaleBy(double delta) {
@@ -162,9 +168,7 @@ class CoordinateTransform {
     print("Transform (size $size, scale = ${zzz(scale)}, zolly = $zolly)");
     print("  offset = ${zzz(offset)}");
     for (int i = 0; i < Vector.d; i++) {
-      print("   [" +
-          A[i].map((a) => "${zzz(a)}").join(", ") +
-          "]   [${zzz(b.x[i])}]");
+      print("   [${A[i].map((a) => zzz(a)).join(", ")}]   [${zzz(b.x[i])}]");
     }
   }
 }

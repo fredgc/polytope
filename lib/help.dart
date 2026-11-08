@@ -12,18 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter/services.dart' show rootBundle;
 
 import 'settings.dart';
 
 class HelpScreen extends StatefulWidget {
   static const routeName = "/help";
-  HelpScreen({super.key});
+  const HelpScreen({super.key});
 
   @override
   State<HelpScreen> createState() => _HelpScreenState();
@@ -46,16 +43,23 @@ class _HelpScreenState extends State<HelpScreen> {
       return;
     }
     print("load file $filename.");
-    webViewController?.loadFile(assetFilePath: "assets/$filename");
-    // print("getMetaThemeColor = ${webViewController?.getMetaThemeColor}");
-    Color? color = await webViewController!.getMetaThemeColor();
-    // print("getMetaThemeColor = ${color}");
-    // print("Done loading?");
+    // XXX This does not work with firebase hosting. These files need to go
+    // to the web and also to Android. This needs some work.
+    try {
+      await webViewController?.loadFile(
+          assetFilePath: "assets/assets/$filename");
+      print("getMetaThemeColor = ${webViewController?.getMetaThemeColor}");
+      Color? color = await webViewController!.getMetaThemeColor();
+      print("getMetaThemeColor = $color");
+      print("Done loading?");
+    } catch (ex) {
+      print("RED: error loading $filename. $ex");
+    }
   }
 
   AppBar appBar(BuildContext context) {
     // print("Building help page appbar.");
-    final settings_button = IconButton(
+    final settingsButton = IconButton(
       onPressed: () {
         Navigator.pushNamed(context, SettingsScreen.routeName);
       },
@@ -65,12 +69,24 @@ class _HelpScreenState extends State<HelpScreen> {
 
     return AppBar(
       title: Text("Help"),
-      leading: settings_button,
+      leading: settingsButton,
       actions: <Widget>[
         ElevatedButton(
           child: const Text("About"),
           onPressed: () {
             loadFile("about.html");
+          },
+        ),
+        ElevatedButton(
+          child: const Text("Privacy"),
+          onPressed: () {
+            loadFile("privacy.html");
+          },
+        ),
+        ElevatedButton(
+          child: const Text("Terms"),
+          onPressed: () {
+            loadFile("terms.html");
           },
         ),
         ElevatedButton(
@@ -104,13 +120,13 @@ class _HelpScreenState extends State<HelpScreen> {
 
   InAppWebView webview(BuildContext c) {
     // print("Making web view.");
-    var blank_page = InAppWebViewInitialData(data: """
+    var blankPage = InAppWebViewInitialData(data: """
       <!DOCTYPE html>
       <head></head> <body>Loading... </body></html>
       """);
     return InAppWebView(
       key: webViewKey,
-      initialData: blank_page,
+      initialData: blankPage,
       // pullToRefreshController: pullToRefreshController,
       onWebViewCreated: (controller) {
         // print("onWebViewCreated");

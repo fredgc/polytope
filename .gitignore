@@ -1,3 +1,7 @@
+# User / Project custom ignores
+cached/
+.git_chain_data
+
 # Miscellaneous
 *.class
 *.log
@@ -5,9 +9,11 @@
 *.swp
 .DS_Store
 .atom/
+.build/
 .buildlog/
 .history
 .svn/
+.swiftpm/
 migrate_working_dir/
 out/
 
@@ -32,8 +38,7 @@ out/
 .pub-cache/
 .pub/
 /build/
-
-# Web related
+/coverage/
 
 # Symbolication related
 app.*.symbols
@@ -46,32 +51,40 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 /android/app/.cxx
+android/.gradle/
+android/app/build/
+android/build/
+android/local.properties
+android/key.properties
+android/app/src/main/res/values/strings.xml
+
+# Archives and binaries
+*.aab
+*.aar
+*.apk
+*.tgz
+*.zip
+
+# Widget Preview related
+.widget_preview/
 
 # Firebase cache
 .firebase/
 
-# Firebase secrets.
-android/app/google-services.json
+# Firebase secrets (regenerate them using "flutterfire configure")
+firebase_options.dart
 lib/firebase_options.dart
-firebase.json
+google-services.json
+android/app/google-services.json
 
-# Optional npm cache directory
+# Environment variables
+.env
+.env.*
+
+# Node / NPM (if present)
 .npm
 package-lock.json
 node_modules
-
-# Optional eslint cache
 .eslintcache
-
-# Optional REPL history
 .node_repl_history
-
-# Output of 'npm pack'
-*.tgz
-
-# Yarn Integrity file
 .yarn-integrity
-
-# dotenv environment variables file
-.env
-

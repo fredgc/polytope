@@ -12,12 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:math' as math;
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
-import "drawable.dart";
 import "printer.dart";
 import 'settings.dart';
 
@@ -79,7 +75,7 @@ class MySlider with ChangeNotifier {
   }
 
   void autoRange() {
-    if (sticky.length == 0) return;
+    if (sticky.isEmpty) return;
     min = sticky[0];
     max = sticky.last;
     if (max - min < 1.0e-9) {
@@ -113,21 +109,21 @@ class MySlider with ChangeNotifier {
     return "SL ${zzz(value)}(sp=${zzz(speed)}, p$paint_counter,b$build_counter), ";
   }
 
-  void set value(double x) {
+  set value(double x) {
     // If there is a sticky radius, find the closest sticky point.
     current_sticky = -1;
-    if (sticky_radius.value > 0 && sticky.length > 0) {
-      int sticky_point = 0;
+    if (sticky_radius.value > 0 && sticky.isNotEmpty) {
+      int stickyPoint = 0;
       for (int i = 1; i < sticky.length; i++) {
-        if ((x - sticky[i]).abs() < (x - sticky[sticky_point]).abs()) {
-          sticky_point = i;
+        if ((x - sticky[i]).abs() < (x - sticky[stickyPoint]).abs()) {
+          stickyPoint = i;
         }
         // If the closest sticky point is within the sticky radius (as a percent),
         // then move to that point.
-        if ((x - sticky[sticky_point]).abs() <
+        if ((x - sticky[stickyPoint]).abs() <
             (max - min) * sticky_radius.value * 0.01) {
-          x = sticky[sticky_point];
-          current_sticky = sticky_point;
+          x = sticky[stickyPoint];
+          current_sticky = stickyPoint;
           current_time_at_sticky_point = 0.0;
           // print("GREEN: set value to sticky s[$current_sticky] = ${zzz(x)}");
         }
@@ -195,7 +191,7 @@ class MySlider with ChangeNotifier {
   }
 
   void findNextSticky() {
-    if (sticky_delay.value <= 0.0 || sticky.length == 0) {
+    if (sticky_delay.value <= 0.0 || sticky.isEmpty) {
       next_sticky = -1;
       return;
     }
@@ -300,13 +296,13 @@ class MySlider with ChangeNotifier {
 
     // Draw the handle. Width = 4.
     var x = valueToPixel(value);
-    Paint text_paint = Paint()..color = text_color;
+    Paint textPaint = Paint()..color = text_color;
     rect = Rect.fromLTWH(x - 2, 0.0, 4.0, size.height);
     RRect rrect = RRect.fromRectAndRadius(rect, Radius.circular(2.0));
-    canvas.drawRRect(rrect, text_paint);
+    canvas.drawRRect(rrect, textPaint);
 
     final style = TextStyle(color: text_color);
-    var span = TextSpan(text: "${zzz(value)}", style: style);
+    var span = TextSpan(text: zzz(value), style: style);
     var painter = TextPainter(
       text: span,
       textDirection: TextDirection.ltr,
@@ -337,7 +333,7 @@ class MySlider with ChangeNotifier {
           child: IconButton(
               icon: Icon(Icons.arrow_left),
               onPressed: () {
-                print("Button $name decrease speed.");
+                // print("Button $name decrease speed.");
                 incrementSpeed(-speed_delta);
               })),
       Expanded(
@@ -357,7 +353,7 @@ class MySlider with ChangeNotifier {
           child: IconButton(
               icon: Icon(Icons.arrow_right),
               onPressed: () {
-                print("Button $name increase speed.");
+                // print("Button $name increase speed.");
                 incrementSpeed(speed_delta);
               })),
     ]));

@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:polytope/printer.dart';
-import 'package:polytope/transform.dart';
 import 'package:polytope/vector.dart';
 import 'package:test/test.dart';
 

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>GEMINI</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="../css/doc_style.css" />
+</head>
+<body>
+<h1 id="gemini.md---developer-guide-for-polytope-drawing-tool">GEMINI.md
+- Developer Guide for Polytope Drawing Tool</h1>
+<p>Welcome! This guide is designed to help future LLM agents and human
+developers get up to speed quickly on the <strong>Polytope</strong>
+Flutter application.</p>
+<p>Build Version v2.1.0+3</p>
+<hr />
+<h2 id="developer-rules-environment-configuration">Developer Rules &amp;
+Environment Configuration</h2>
+<p>All contributors and AI agents must follow the central rules defined
+in <code>~/source/gemini/config/rules/</code>:</p>
+<ul>
+<li><p><strong>Task Management (<code>todo.md</code>)</strong>: Project
+tasks and issues are tracked using <code>~/bin/todo.py</code>. When
+asked about tasks or what to work on next, execute:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">~/bin/todo.py</span> list</span></code></pre></div>
+<p>Before starting an item, mark it in progress
+(<code>~/bin/todo.py doing &lt;N&gt;</code>). Once completed, mark it
+done (<code>~/bin/todo.py done &lt;N&gt;</code>). Do not archive
+completed tasks until reviewed and verified.</p></li>
+<li><p><strong>Communication Style (<code>style.md</code>)</strong>: Be
+blunt and direct. Avoid polite filler and superlatives. Keep responses
+concise, technical, and focused strictly on facts and
+instructions.</p></li>
+<li><p><strong>Documentation Formatting
+(<code>markdown.md</code>)</strong>: Keep line lengths strictly under 80
+characters. Always separate list items with a blank line. Always follow
+headers with a blank line. Visually align markdown table column borders
+(<code>|</code>).</p></li>
+<li><p><strong>Emacs Integration (<code>emacs.md</code>)</strong>: When
+requested to send a file to Emacs, run
+<code>emacs-maybe-client -f &lt;file&gt;</code>.</p></li>
+<li><p><strong>Hardware &amp; Testing
+(<code>devices.md</code>)</strong>: On host <code>raven</code>, an
+Android device may be connected via <code>adb</code> for Android
+testing.</p></li>
+</ul>
+<hr />
+<h2 id="project-purpose-features">1. Project Purpose &amp; Features</h2>
+<p>The <strong>Polytope Drawing Tool</strong> is an interactive,
+cross-platform (Web and Android) application used to construct, rotate,
+project, and slice regular polytopes in 3, 4, and higher dimensions.</p>
+<h3 id="key-features">Key Features</h3>
+<ul>
+<li><p><strong>Higher-Dimensional Polytopes</strong>: Supports regular
+polytopes including simplexes, hypercubes, cross-polytopes, the 24-cell,
+the 120-cell, and the 600-cell.</p></li>
+<li><p><strong>Dynamic Hyperplane Slicing</strong>: Calculates the exact
+3D cross-sections formed by intersecting 4D polytopes with moving 3D
+hyperplanes.</p></li>
+<li><p><strong>Interactive N-Dimensional Rotation</strong>: Manipulate
+rotation planes in 3D and 4D space with continuous speed and angle
+controls.</p></li>
+<li><p><strong>WebXR and Spatial Rendering</strong>: Provides
+experimental immersive WebXR rendering allowing users to view and
+manipulate 3D slices and 4D wireframes as holographic spatial
+objects.</p></li>
+</ul>
+<hr />
+<h2 id="codebase-architecture">2. Codebase Architecture</h2>
+<pre class="text"><code>lib/
+├── animate.dart           # Animation timing and controller utilities
+├── color.dart             # Color schemes and face palette management
+├── drawable.dart          # Canvas drawable primitives (dots, edges, faces)
+├── help.dart              # In-app help viewer loading doc HTML assets
+├── main.dart              # App entry point
+├── permute.dart           # Coordinate permutation and symmetry generators
+├── polytope.dart          # Base polytope data models and topological mesh
+├── printer.dart           # Debug logging utilities
+├── regular.dart           # Generators for regular polytopes across dimensions
+├── scene.dart             # Scene layout and high-dimensional viewport
+├── settings.dart          # SharedPreferences persistence and settings dialog
+├── slice.dart             # Hyperplane slicing and polygon intersection math
+├── slider.dart            # Custom parameter slider widgets
+├── spatial_scene.dart     # 3D spatial scene graph for XR pipelines
+├── transform.dart         # N-dimensional rotation and projection matrices
+├── vector.dart            # Vector and matrix algebra
+├── webxr_renderer.dart    # WebXR JavaScript bridge and 3D WebGL renderer
+├── widget.dart            # Top-level UI widgets and responsive scaffolding
+└── xr_support.dart        # Platform-agnostic XR capability detection</code></pre>
+<hr />
+<h2 id="build-versioning-deployment-workflow">3. Build, Versioning &amp;
+Deployment Workflow</h2>
+<h3 id="build-and-asset-automation-makefile">Build and Asset Automation
+(<code>Makefile</code>)</h3>
+<p>The project uses <code>make</code> targets to coordinate asset
+compilation and builds:</p>
+<ul>
+<li><p><code>make docs</code>: Compiles user markdown docs from
+<code>doc/*.md</code> into <code>assets/*.html</code> and developer docs
+(<code>plan.md</code>, <code>README.md</code>, <code>GEMINI.md</code>)
+into <code>assets/dev/*.html</code> via <code>pandoc</code>.</p></li>
+<li><p><code>make ASSETS</code>: Generates icons, favicons, version
+metadata, and docs.</p></li>
+<li><p><code>make test</code>: Runs all Flutter unit and widget
+tests.</p></li>
+<li><p><code>make stage</code>: Builds web app with debug flags and runs
+<code>firebase_stage.pl</code>.</p></li>
+<li><p><code>make release</code>: Deploys production bundle to Firebase
+(<code>polytope.gchouse.org</code>).</p></li>
+</ul>
+<h3 id="version-rolling-roll_build_number.sh">Version Rolling
+(<code>roll_build_number.sh</code>)</h3>
+<p>Increments the build number in <code>pubspec.yaml</code> and
+propagates the update to <code>web/version.json</code>:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./roll_build_number.sh</span></span></code></pre></div>
+<hr />
+<h2 id="code-style-guidelines">4. Code Style Guidelines</h2>
+<ul>
+<li><p><strong>Markdown</strong>: Keep line lengths strictly under 80
+characters. Always separate list items with a blank line. Always follow
+headers with a blank line.</p></li>
+<li><p><strong>Dart</strong>: Run <code>dart format .</code> after
+modifying any code. Keep static analysis free of errors and
+lints.</p></li>
+</ul>
+<hr />
+<h2 id="testing-guidelines">5. Testing Guidelines</h2>
+<p>Run tests before committing:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">flutter</span> test</span></code></pre></div>
+</body>
+</html>

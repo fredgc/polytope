@@ -12,12 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:async';
 import 'dart:math' as math;
-import 'dart:ui';
-import 'package:flutter/material.dart';
-
-import 'package:vector_math/vector_math.dart' show Vector2;
 
 import "permute.dart";
 import "printer.dart";
@@ -38,48 +33,63 @@ class Vector {
   Vector.from(Vector other) : x = List.from(other.x);
 
   void scale(double s) {
-    for (int i = 0; i < d; i++) x[i] *= s;
+    for (int i = 0; i < d; i++) {
+      x[i] *= s;
+    }
   }
 
   void add(Vector other) {
-    for (int i = 0; i < d; i++) x[i] = x[i] + other.x[i];
+    for (int i = 0; i < d; i++) {
+      x[i] = x[i] + other.x[i];
+    }
   }
 
   void copy(Vector other) {
-    for (int i = 0; i < d; i++) x[i] = other.x[i];
+    for (int i = 0; i < d; i++) {
+      x[i] = other.x[i];
+    }
   }
 
   Vector operator +(Vector other) {
     Vector result = Vector();
-    for (int i = 0; i < d; i++) result.x[i] = x[i] + other.x[i];
+    for (int i = 0; i < d; i++) {
+      result.x[i] = x[i] + other.x[i];
+    }
     return result;
   }
 
   Vector operator -(Vector other) {
     Vector result = Vector();
-    for (int i = 0; i < d; i++) result.x[i] = x[i] - other.x[i];
+    for (int i = 0; i < d; i++) {
+      result.x[i] = x[i] - other.x[i];
+    }
     return result;
   }
 
   Vector operator *(double scalar) {
     Vector result = Vector();
-    for (int i = 0; i < d; i++) result.x[i] = scalar * x[i];
+    for (int i = 0; i < d; i++) {
+      result.x[i] = scalar * x[i];
+    }
     return result;
   }
 
   double dot(Vector other) {
     // inner product.
     double result = 0.0;
-    for (int i = 0; i < d; i++) result += x[i] * other.x[i];
+    for (int i = 0; i < d; i++) {
+      result += x[i] * other.x[i];
+    }
     return result;
   }
 
   double norm() {
-    return math.sqrt(this.dot(this));
+    return math.sqrt(dot(this));
   }
 
+  @override
   String toString() {
-    return "< " + x.map((v) => "${zzz(v)}").join(", ") + ">";
+    return "< ${x.map((v) => zzz(v)).join(", ")}>";
   }
 }
 
@@ -99,15 +109,17 @@ double norm(Vector v) => v.norm();
 class Point extends Vector {
   int id = -1; // An id of -1 means it is unique.
   double sx = 0, sy = 0, sz = 0; // Screen coordinates. sz is for clipping.
+  double wx = 0, wy = 0, wz = 0; // 3D world coordinates before 2D projection.
 
   Point({this.id = -1});
-  Point.from(Vector other) : super.from(other);
+  Point.from(super.other) : super.from();
 
+  @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (id == -1) return false;
     if (other is Point) {
-      if (this.id == other.id) return true;
+      if (id == other.id) return true;
     }
     return false;
   }
@@ -116,7 +128,8 @@ class Point extends Vector {
     id = p.map(id);
   }
 
+  @override
   String toString() {
-    return (id == -1 ? "P?" : "P${id}");
+    return (id == -1 ? "P?" : "P$id");
   }
 }
