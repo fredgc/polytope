@@ -1,44 +1,52 @@
-<!--
-  Copyright 2024 Google LLC
-
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
--->
-<!doctype html PUBLIC "-//W3C//DTD HTML 5.0//EN">
-<html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
-    <link type="text/css" rel="stylesheet" href="css/doc_style.css"/>
-    <title>About Polytope</title>
-  </head>
-  <body>
-    <h2>Polytope</h2>
-    <p>
-      This program draws regular polytopes in several dimensions. See
-      <a href="help.html">the overview</a> for an explanation of what a polytope is.
-      See <a href="controls.html">controls</a> for how to use the program.
-    </p>
-
-    <h2>Privacy and Data Retention</h2>
-
-    <p>
-      This program allows the user to change settings that are saved on your
-      device. This is done via flutter's
-      <a href="https://pub.dev/packages/shared_preferences" target="_blank">
-      SharedPreferences </a> which are backed by Android Shared Preferences on
-      Android and LocalStorage for a web app. For Android, the data will be
-      deleted when you uninstall the app. For the web, the data will be deleted
-      when you clear application data in your browser.
-    </p>
-
-  </body>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>About Polytope (v2.0.5)</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+  </style>
+  <link rel="stylesheet" href="css/doc_style.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">About Polytope (v2.0.5)</h1>
+</header>
+<p>The <strong>Polytope Demo</strong> is an interactive educational
+application designed to render and visualize regular polytopes and their
+cross-sectional slices in 2, 3, 4, or 5 dimensions.</p>
+<p>See the <a href="help.html">Overview</a> for an explanation of
+polytopes, or see <a href="controls.html">Controls</a> for instructions
+on using the program.</p>
+<p>This application is written in Dart with Flutter — the source code is
+available on GitHub at <a
+href="https://github.com/fredgc/polytope">https://github.com/fredgc/polytope</a>.</p>
+<p>Found a bug or have a feature request? <a
+href="https://github.com/fredgc/polytope/issues">File an issue on
+GitHub</a>.</p>
+<p>Other apps and drawing tools can be found at <a
+href="https://www.gchouse.org">www.gchouse.org</a>.</p>
+<h2 id="privacy-and-data-retention">Privacy and Data Retention</h2>
+<p>This program allows you to customize settings that are saved locally
+on your device (using SharedPreferences / LocalStorage). No personal
+data is collected.</p>
+<p>On Android, local settings are deleted when you uninstall the app. On
+Web, settings are deleted when you clear your browser’s local
+application data.</p>
+</body>
 </html>

@@ -15,7 +15,6 @@
 import 'dart:math' as math;
 import 'package:ordered_set/ordered_set.dart';
 
-import "transform.dart";
 import "printer.dart";
 import "permute.dart";
 import "vector.dart";
@@ -23,7 +22,8 @@ import "vector.dart";
 class Polytope implements Comparable<Polytope> {
   final int dim;
   final String name;
-  OrderedSet<Polytope> cells = OrderedSet((a, b) => a.compareTo(b));
+  OrderedSet<Polytope> cells =
+      OrderedSet.comparing<Polytope>(compare: (a, b) => a.compareTo(b));
   Set<Polytope> parents = {};
 
   static int polytope_count = 0;
@@ -32,6 +32,70 @@ class Polytope implements Comparable<Polytope> {
 
   Polytope(this.dim, this.name) {
     poly_id = polytope_count++;
+  }
+
+  factory Polytope.fromMesh(Map<String, dynamic> data) {
+    int dim = data['dim'] as int;
+    String name = data['name'] as String;
+    List rawVerts = data['vertices'] as List;
+    List rawEdges = data['edges'] as List;
+    List rawFaces = data['faces'] as List;
+    List rawCells = data['cells'] as List;
+
+    List<Vertex> vertices = [];
+    for (int i = 0; i < rawVerts.length; i++) {
+      Vertex v = Vertex(id: i);
+      List c = rawVerts[i] as List;
+      for (int k = 0; k < c.length; k++) {
+        v.vertex.x[k] = (c[k] as num).toDouble();
+      }
+      vertices.add(v);
+    }
+
+    List<Polytope> edges = [];
+    for (int i = 0; i < rawEdges.length; i++) {
+      Polytope e = Polytope(1, "Edge");
+      List pair = rawEdges[i] as List;
+      Vertex v0 = vertices[pair[0] as int];
+      Vertex v1 = vertices[pair[1] as int];
+      e.cells.add(v0);
+      e.cells.add(v1);
+      v0.parents.add(e);
+      v1.parents.add(e);
+      edges.add(e);
+    }
+
+    List<Polytope> faces = [];
+    for (int i = 0; i < rawFaces.length; i++) {
+      Polytope f = Polytope(2, "Face");
+      List edgeIndices = rawFaces[i] as List;
+      for (var eIdx in edgeIndices) {
+        Polytope e = edges[eIdx as int];
+        f.cells.add(e);
+        e.parents.add(f);
+      }
+      faces.add(f);
+    }
+
+    List<Polytope> cells = [];
+    for (int i = 0; i < rawCells.length; i++) {
+      Polytope c = Polytope(3, "Cell");
+      List faceIndices = rawCells[i] as List;
+      for (var fIdx in faceIndices) {
+        Polytope f = faces[fIdx as int];
+        c.cells.add(f);
+        f.parents.add(c);
+      }
+      cells.add(c);
+    }
+
+    Polytope top = Polytope(dim, name);
+    for (var c in cells) {
+      top.cells.add(c);
+      c.parents.add(top);
+    }
+
+    return top;
   }
 
   // These can be used in for-each loops.
@@ -53,9 +117,13 @@ class Polytope implements Comparable<Polytope> {
   }
 
   void permute(Permutation map) {
-    for (var v in vertices) v.permute(map);
+    for (var v in vertices) {
+      v.permute(map);
+    }
     // After permuting, we have changed the order of points.
-    for (var edge in edges) edge.cells.rebalanceAll();
+    for (var edge in edges) {
+      edge.cells.rebalanceAll();
+    }
   }
 
   @override
@@ -74,18 +142,18 @@ class Polytope implements Comparable<Polytope> {
     for (int d = 0; d < dim; d++) {
       // Keep a list of cells to delete, because we cannot modify an iterator
       // while iterating.
-      AbsorbList absorb_list = AbsorbList();
+      AbsorbList absorbList = AbsorbList();
       // For each cell of dimension d.
       PolyIterator i1 = PolyIterator(this, d);
       while (i1.moveNext()) {
         PolyIterator i2 = PolyIterator.from(i1);
         while (i2.moveNext()) {
           if (i1.current == i2.current) {
-            absorb_list.add(i1.current, i2.current);
+            absorbList.add(i1.current, i2.current);
           }
         }
       }
-      absorb_list.doit();
+      absorbList.doit();
     }
   }
 
@@ -115,7 +183,9 @@ class Polytope implements Comparable<Polytope> {
   int size(int d) {
     int count = 0;
     PolyIterator it = PolyIterator(this, d);
-    while (it.moveNext()) count++;
+    while (it.moveNext()) {
+      count++;
+    }
     return count;
   }
 
@@ -189,13 +259,13 @@ class Polytope implements Comparable<Polytope> {
       translate(center);
 
       // We want this to end up pointing up.
-      Point cell_center = cell.findCenter();
+      Point cellCenter = cell.findCenter();
       //print("For d=$d, center=${zzz(center)}, cell " +
       //    "center = ${zzz(cell_center)}");
 
       int h = dim - 1;
       Vector b = Vector.unit(h);
-      rotateInto(cell_center, b);
+      rotateInto(cellCenter, b);
 
       // Move the whole polytope back to where it was centered before.
       center.scale(-1.0);
@@ -235,7 +305,7 @@ class Polytope implements Comparable<Polytope> {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! Polytope) return false;
-    Polytope that = other as Polytope;
+    Polytope that = other;
     if (dim != that.dim) return false;
     if (cells.length != that.cells.length) return false;
     var it1 = cells.iterator;
@@ -248,21 +318,21 @@ class Polytope implements Comparable<Polytope> {
 
   @override
   String toString() {
-    return "${dim}-${name}-${sort_id}";
+    return "$dim-$name-$sort_id";
   }
 
   void printSelf(String indent) {
     String clist = cells.toList().map((p) => "${p.poly_id}").join(", ");
     String plist = parents.toList().map((p) => "${p.poly_id}").join(", ");
-    print("${indent}$this. ${cells.length} cells ($clist)." +
+    print("$indent$this. ${cells.length} cells ($clist)."
         " ${parents.length} parents ($plist)");
   }
 
   void printConcise() {
     String indent = "";
     for (int d = dim; d >= 0; d--) {
-      print(indent + "cell of dim=$d");
-      indent = indent + "  ";
+      print("${indent}cell of dim=$d");
+      indent = "$indent  ";
       for (var cell in PolyIterator(this, d)) {
         cell.printSelf(indent);
       }
@@ -271,10 +341,10 @@ class Polytope implements Comparable<Polytope> {
 
   void printAll({String indent = ""}) {
     String plist = parents.toList().map((p) => "${p.poly_id}").join(", ");
-    print("${indent}id=${sort_id}. ${cells.length} cells." +
+    print("${indent}id=$sort_id. ${cells.length} cells."
         " ${parents.length} parents $plist. $this");
     for (var cell in cells) {
-      cell.printAll(indent: indent + "  ");
+      cell.printAll(indent: "$indent  ");
     }
   }
 }
@@ -289,21 +359,25 @@ class Vertex extends Polytope {
   @override
   int get sort_id => vertex.id;
 
+  @override
   String toString() {
     return "V${vertex.id}";
   }
 
+  @override
   void printSelf(String indent) {
     String plist = parents.toList().map((p) => "${p.poly_id}").join(", ");
-    print("${indent}$this ${parents.length} parents ($plist), $vertex");
+    print("$indent$this ${parents.length} parents ($plist), $vertex");
   }
 
+  @override
   void printAll({String indent = ""}) {
     String plist = parents.toList().map((p) => "${p.poly_id}").join(", ");
-    print("${indent}id=${sort_id}/${poly_id}. " +
+    print("${indent}id=$sort_id/$poly_id. "
         "${parents.length} parents $plist. $this");
   }
 
+  @override
   Point? findPoint(int n) {
     if (n == id) {
       return vertex;
@@ -312,26 +386,31 @@ class Vertex extends Polytope {
     }
   }
 
+  @override
   void permute(Permutation map) {
     vertex.permute(map);
   }
 
+  @override
   Point findCenter() => Point.from(vertex);
 
   // Two Vertices are equal if their points are equal.
+  @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-    if (!(other is Vertex)) return false;
-    Vertex that = other as Vertex;
-    return that.vertex == this.vertex;
+    if (other is! Vertex) return false;
+    Vertex that = other;
+    return that.vertex == vertex;
   }
 }
 
 class PolyIterator extends Iterable<Polytope> implements Iterator<Polytope> {
   List<Iterator<Polytope>> iters;
   bool done = false;
+  @override
   Polytope get current => iters.last.current;
   int dim;
+  @override
   Iterator<Polytope> get iterator => this;
 
   // Create an iterator of all subcells that have dimesion dim. We
@@ -341,7 +420,7 @@ class PolyIterator extends Iterable<Polytope> implements Iterator<Polytope> {
     bool result = iters[0].moveNext();
     assert(result, "List has iterator.");
     if (polytope.dim < dim) done = true;
-    if (polytope.cells.length == 0) done = true;
+    if (polytope.cells.isEmpty) done = true;
   }
 
   // Copy the iterator from the above, starting at the where the other left off.
@@ -362,13 +441,14 @@ class PolyIterator extends Iterable<Polytope> implements Iterator<Polytope> {
     }
   }
 
+  @override
   bool moveNext() {
     if (done) return false;
     Polytope top = iters.first.current;
-    final int max_depth = top.dim - dim;
+    final int maxDepth = top.dim - dim;
     // If we're looking for the top level, then the original polytope is
     // the only element.
-    if (max_depth == 0) {
+    if (maxDepth == 0) {
       done = true; // Return true just once.
       return true;
     }
@@ -378,7 +458,7 @@ class PolyIterator extends Iterable<Polytope> implements Iterator<Polytope> {
     if (iters.length == 1) {
       depth = 1;
     }
-    while (depth <= max_depth && depth > 0) {
+    while (depth <= maxDepth && depth > 0) {
       Polytope parent = iters[depth - 1].current; // depth > 0, so this is ok.
       if (depth >= iters.length) {
         // If this is the first pass, then we need to create the first interator.
@@ -395,12 +475,12 @@ class PolyIterator extends Iterable<Polytope> implements Iterator<Polytope> {
         }
       } else {
         Polytope p = iters[depth].current;
-        Polytope first_parent = p.parents.first;
+        Polytope firstParent = p.parents.first;
 
-        if (first_parent == parent) {
+        if (firstParent == parent) {
           // This p is good. Use it and go down one depth.
           depth++;
-          if (depth > max_depth) {
+          if (depth > maxDepth) {
             return true;
           }
           // Start a new iterator at this depth. Continue this loop at this depth.
@@ -423,11 +503,14 @@ class PolyIterator extends Iterable<Polytope> implements Iterator<Polytope> {
 
 class VertIterator extends Iterable<Vertex> implements Iterator<Vertex> {
   PolyIterator iter;
+  @override
   Vertex get current => iter.current as Vertex;
+  @override
   Iterator<Vertex> get iterator => this;
 
   VertIterator(Polytope polytope) : iter = PolyIterator(polytope, 0);
   VertIterator.from(VertIterator other) : iter = PolyIterator.from(other.iter);
+  @override
   bool moveNext() => iter.moveNext();
 }
 

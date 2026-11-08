@@ -19,16 +19,24 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'help.dart';
 import 'widget.dart';
 import 'settings.dart';
+import 'xr_support.dart';
 
 void main() async {
-  print("RED: Start of main.");
+  print("RED: FDGC: Start of main.");
+
+  XRSupport xr = getXRSupport();
+  await xr.checkSupport();
+  print("xr.supported  = ${xr.supported}.");
+
   // The following is used by InAppWebView.
   WidgetsFlutterBinding.ensureInitialized();
+  print("BLUE: kIsWeb = $kIsWeb.");
   if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+    print("BLUE: not web, and is Android.");
     await InAppWebViewController.setWebContentsDebuggingEnabled(kDebugMode);
   }
   print("Building app.");
-  MyAppBuilder builder = MyAppBuilder();
+  MyAppBuilder builder = MyAppBuilder(xr);
   PolyAppWidgetState.initSettings(Settings.instance);
   print("run app.");
   runApp(builder.makeApp());
@@ -38,12 +46,14 @@ void main() async {
 class MyAppBuilder {
   final settings = Settings();
   Map<String, WidgetBuilder> routes = {};
+  final XRSupport xr;
 
-  MyAppBuilder() {
+  MyAppBuilder(this.xr) {
     routes[SettingsScreen.routeName] =
         (BuildContext context) => SettingsScreen();
     routes[HelpScreen.routeName] = (BuildContext context) => HelpScreen();
-    routes[PolyAppWidget.routeName] = (BuildContext context) => PolyAppWidget();
+    routes[PolyAppWidget.routeName] =
+        (BuildContext context) => PolyAppWidget(xr);
   }
 
   MaterialApp makeApp() {

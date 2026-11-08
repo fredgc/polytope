@@ -13,7 +13,6 @@
 // limitations under the License.
 
 import 'dart:async';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' as foundation;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -47,6 +46,7 @@ abstract class Savable<T> {
   List<Widget?> build(BuildContext context, VoidCallback rebuild);
   void dispose() {}
 
+  @override
   String toString() {
     return "Savable $name ($description) value=$value";
   }
@@ -54,21 +54,24 @@ abstract class Savable<T> {
 
 class SavableBool extends Savable<bool> {
   SavableBool(super.name, super.description, super.value, {super.tip = ""});
+  @override
   void load(SharedPreferencesWithCache prefs) {
     value = prefs.getBool(name) ?? value;
     // print("Loaded $name -> $value");
   }
 
+  @override
   void save(SharedPreferencesWithCache prefs) {
     // print("Saving $name -> $value");
     prefs.setBool(name, value);
   }
 
+  @override
   List<Widget?> build(BuildContext context, VoidCallback rebuild) {
     return [
       Text("$description: "),
       Checkbox(
-          value: this.value,
+          value: value,
           onChanged: (bool? value) {
             this.value = value!;
             rebuild();
@@ -80,13 +83,26 @@ class SavableBool extends Savable<bool> {
 
 class SavableDouble extends Savable<double> {
   TextEditingController? _controller;
+  final double? min;
+  final double? max;
+  final int? divisions;
 
-  SavableDouble(super.name, super.description, super.value, {super.tip = ""});
+  SavableDouble(
+    super.name,
+    super.description,
+    super.value, {
+    super.tip = "",
+    this.min,
+    this.max,
+    this.divisions,
+  });
+
+  @override
   void load(SharedPreferencesWithCache prefs) {
     value = prefs.getDouble(name) ?? value;
-    // print("Loaded $name -> $value");
   }
 
+  @override
   void save(SharedPreferencesWithCache prefs) {
     try {
       if (_controller != null) {
@@ -95,27 +111,57 @@ class SavableDouble extends Savable<double> {
     } catch (ex) {
       print("Parse error in ${_controller!.text} for $name");
     }
-    // print("Saving $name -> $value");
     prefs.setDouble(name, value);
   }
 
+  @override
   List<Widget?> build(BuildContext context, VoidCallback rebuild) {
-    // print("Building widget for $name");
+    if (min != null && max != null) {
+      return [
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text("$description: ${value.toStringAsFixed(1)}"),
+            Slider(
+              value: value.clamp(min!, max!),
+              min: min!,
+              max: max!,
+              divisions: divisions,
+              onChanged: (double newValue) {
+                value = newValue;
+                rebuild();
+              },
+            ),
+          ],
+        ),
+      ];
+    }
+
     _controller = TextEditingController();
     _controller!.text = value.toString();
     return [
-      Text("$description: "),
-      Flexible(
-          child: TextField(
+      Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text("$description: "),
+          SizedBox(
+            width: 80,
+            child: TextField(
               controller: _controller,
-              // style: TextStyle(fontSize: 10),
-              decoration: InputDecoration(hintText: tip))),
-      SizedBox(width: 10),
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
+              decoration: InputDecoration(hintText: tip),
+            ),
+          ),
+        ],
+      ),
     ];
   }
 
+  @override
   void dispose() {
-    // print("Disposing of widget for $name");
     _controller?.dispose();
     _controller = null;
   }
@@ -126,17 +172,20 @@ class EndOfRow extends Savable<int> {
   static int count = 0;
   EndOfRow() : super("row $count", "UI Feature", count++);
 
+  @override
   void load(SharedPreferencesWithCache prefs) {}
+  @override
   void save(SharedPreferencesWithCache prefs) {}
 
   // For building a UI.
+  @override
   List<Widget?> build(BuildContext context, VoidCallback rebuild) {
     return [null];
   }
 }
 
 class Settings {
-  static Settings _singleton = Settings();
+  static final Settings _singleton = Settings();
   static Settings get instance => _singleton;
 
   SettingsStatus _status = SettingsStatus.NotInitialized;
@@ -147,7 +196,7 @@ class Settings {
   String version = "uninitialized";
   String build_number = "-";
   bool no_keyboard = false;
-  Future<void>? _loading_future = null;
+  Future<void>? _loading_future;
 
   List<Savable> savables = []; //All settings.
   Map<String, Savable> savables_map = {};
@@ -181,8 +230,8 @@ class Settings {
     return _status;
   }
 
-  void set status(SettingsStatus newStatus) {
-    this._status = newStatus;
+  set status(SettingsStatus newStatus) {
+    _status = newStatus;
     if (_statusStream.hasListener) _statusStream.add(_status);
   }
 
@@ -206,9 +255,7 @@ class Settings {
   }
 
   Future<void> load() {
-    if (_loading_future == null) {
-      _loading_future = _load_future();
-    }
+    _loading_future ??= _load_future();
     return _loading_future!;
   }
 
@@ -227,7 +274,7 @@ class Settings {
     app_name = packageInfo.appName;
     version = packageInfo.version;
     build_number = packageInfo.buildNumber;
-    // print("Package info: $app_name, $build_number, $version");
+    print("Package info: $app_name, $build_number, $version");
     var prefs = await getPrefs();
     // print("prefs = $prefs");
     // theme.load(prefs);
@@ -272,7 +319,8 @@ class Settings {
 
 class SettingsScreen extends StatefulWidget {
   static const routeName = "/settings";
-  SettingsScreen({super.key});
+  const SettingsScreen({super.key});
+  @override
   _SettingsScreenState createState() => _SettingsScreenState();
 }
 
@@ -316,11 +364,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
       padding: const EdgeInsets.all(8),
       itemCount: rows.length,
       itemBuilder: (buildContext, int index) {
-        return Container(
-          // height: 50,
-          child: Row(
-            children: rows[index],
-          ),
+        return Wrap(
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: 8,
+          runSpacing: 8,
+          children: rows[index],
         );
       },
       separatorBuilder: (BuildContext context, int index) => const Divider(),
@@ -414,11 +462,14 @@ class MyIterator extends Iterable<List<Widget>>
     implements Iterator<List<Widget>> {
   List<Widget?> input;
   List<Widget> _current = [];
+  @override
   List<Widget> get current => _current;
+  @override
   Iterator<List<Widget>> get iterator => this;
 
   MyIterator(this.input);
 
+  @override
   bool moveNext() {
     if (input.isEmpty) return false;
     int i = input.indexWhere((s) => s == null);

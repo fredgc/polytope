@@ -14,11 +14,11 @@
 
 import 'dart:math' as math;
 
-import "transform.dart";
 import "printer.dart";
 import "polytope.dart";
 import "permute.dart";
 import "vector.dart";
+import "mesh_data.dart";
 
 enum Regular {
   simplex("Simplex"),
@@ -26,7 +26,9 @@ enum Regular {
   cross("Cross Type"), // Also called Orthoplex.
   dodec("Dodecahedron"),
   ico("Icosahedron"),
-  cell24("24 Cell");
+  cell24("24 Cell"),
+  cell120("120 Cell"),
+  cell600("600 Cell");
 
   const Regular(this.name);
 
@@ -37,10 +39,10 @@ enum Regular {
       (math.sqrt(5.0) - 1.0) / 2.0; // The golden ratio.
 
   Polytope make(int dim) {
-    dprint("Make ${name} of dim ${dim}");
-    String old_indent = DebugPrint.incIndent("$dim - ");
+    dprint("Make $name of dim $dim");
+    String oldIndent = DebugPrint.incIndent("$dim - ");
     Polytope p = make_inner(dim);
-    DebugPrint.decIndent(old_indent);
+    DebugPrint.decIndent(oldIndent);
     return p;
   }
 
@@ -60,6 +62,10 @@ enum Regular {
         return makeIcosahedron(dim);
       case Regular.cell24:
         return makeCell24(dim);
+      case Regular.cell120:
+        return makeCell120(dim);
+      case Regular.cell600:
+        return makeCell600(dim);
         break;
     }
   }
@@ -99,7 +105,9 @@ enum Regular {
     DebugPrint.printPoly(p);
     Point? pt = p.findPoint(0);
     dprint("First pt = $pt. dim = $dim");
-    for (int i = 0; i < p.dim - 1; i++) pt!.x[i] = 0;
+    for (int i = 0; i < p.dim - 1; i++) {
+      pt!.x[i] = 0;
+    }
     pt!.x[p.dim - 1] = r;
     dprint("BLUE: After push. Before scale and translate.");
     DebugPrint.printPoly(p);
@@ -133,14 +141,13 @@ enum Regular {
         cell.setParent(p);
 
         int mask = exp2(i) - 1; // A bit mask for the first i bits.
-        Permutation map = new Permutation(exp2(p.dim));
+        Permutation map = Permutation(exp2(p.dim));
         for (int k = 0; k < exp2(p.dim); k++) {
           int image = mask & k; // The first i bits stay the same.
           image += (k & ~mask) << 1; // Shift the others over by 1 bit.
           image += (j << i); // Set the ith bit to be j.
           map.setMap(k, image);
         }
-        ;
         cell.permute(map);
       }
     }
@@ -166,7 +173,6 @@ enum Regular {
       for (int j = 0; j < p.dim; j++) {
         pt!.x[j] = s * plusMinus(i & exp2(j));
       }
-      ;
       dprint("... moved to point $i = $pt");
     }
     return p;
@@ -183,7 +189,7 @@ enum Regular {
       // For the first cell, the point i should be sent to 2*i.
       // For the cell c, the point i should be sent to 2*i+1 if
       // the ith bit of c is set.
-      Permutation map = new Permutation(p.dim);
+      Permutation map = Permutation(p.dim);
       for (int i = 0; i < p.dim; i++) {
         map.setMap(i, 2 * i + ((c >> i) & 1));
       }
@@ -208,7 +214,6 @@ enum Regular {
       }
       pt!.x[i] = 1.0;
     }
-    ;
     return p;
   }
 
@@ -271,8 +276,8 @@ enum Regular {
           int c = 4 * i + 2 * j + k;
           Point? pt = p.findPoint(c);
           pt!.x[0] = r * plusMinus(i);
-          pt!.x[1] = r * plusMinus(j);
-          pt!.x[2] = r * plusMinus(k);
+          pt.x[1] = r * plusMinus(j);
+          pt.x[2] = r * plusMinus(k);
         }
       }
     }
@@ -283,7 +288,7 @@ enum Regular {
           int c = 8 + 4 * i + 2 * j + k;
           Point? pt = p.findPoint(c);
           pt!.x[(i + 1) % 3] = (r * plusMinus(j) * golden);
-          pt!.x[(i + 2) % 3] = ((r * plusMinus(k))) / golden;
+          pt.x[(i + 2) % 3] = ((r * plusMinus(k))) / golden;
         }
       }
     }
@@ -344,7 +349,7 @@ enum Regular {
           int c = 4 * i + 2 * j + k;
           Point? pt = p.findPoint(c);
           pt!.x[i] += r * plusMinus(j);
-          pt!.x[(i + 1) % 3] += (r * golden * plusMinus(k));
+          pt.x[(i + 1) % 3] += (r * golden * plusMinus(k));
         }
       }
     }
@@ -390,7 +395,6 @@ enum Regular {
                     index[3] * 27]);
             index[(i + j + 1) % 4] = 0;
           }
-        ;
         Polytope cell = cross.make(3);
         cell.setParent(p);
         cell.permute(map);
@@ -398,13 +402,19 @@ enum Regular {
     }
 
     List<List<int>> mapindex = List.filled(6, []);
-    for (int i = 0; i < 6; i++) mapindex[i] = List.filled(4, 0);
+    for (int i = 0; i < 6; i++) {
+      mapindex[i] = List.filled(4, 0);
+    }
     for (int i = 0; i < 3; i++) {
-      for (int j = 0; j < 3; j++) mapindex[2 * i][j] = 1;
+      for (int j = 0; j < 3; j++) {
+        mapindex[2 * i][j] = 1;
+      }
       mapindex[2 * i][3] = 0;
       mapindex[2 * i][i] = 0;
 
-      for (int j = 0; j < 3; j++) mapindex[(2 * i + 1)][j] = 0;
+      for (int j = 0; j < 3; j++) {
+        mapindex[(2 * i + 1)][j] = 0;
+      }
       mapindex[2 * i + 1][3] = 1;
       mapindex[2 * i + 1][i] = 1;
     }
@@ -413,12 +423,13 @@ enum Regular {
       for (index[1] = -1; index[1] <= 1; index[1] += 2) {
         for (index[2] = -1; index[2] <= 1; index[2] += 2) {
           for (index[3] = -1; index[3] <= 1; index[3] += 2) {
-            Permutation map = new Permutation(6);
+            Permutation map = Permutation(6);
             for (int j = 0; j < 3; j++)
               for (int l = 0; l < 2; l++) {
                 int k = 0;
-                for (int i = 3; i >= 0; i--)
+                for (int i = 3; i >= 0; i--) {
                   k = 3 * k + mapindex[(j * 2 + l)][i] * index[i];
+                }
                 map.setMap(j * 2 + l, narray[40 + k]);
               }
             Polytope cell = cross.make(3);
@@ -442,13 +453,21 @@ enum Regular {
           for (int l = 0; l < 2; l++) {
             Point? pt = p.findPoint(c);
             pt!.x[i] = r * plusMinus(k);
-            pt!.x[j] = r * plusMinus(l);
+            pt.x[j] = r * plusMinus(l);
             c++;
           }
         }
       }
     }
     return p;
+  }
+
+  Polytope makeCell120(int dim) {
+    return Polytope.fromMesh(MeshData.cell120);
+  }
+
+  Polytope makeCell600(int dim) {
+    return Polytope.fromMesh(MeshData.cell600);
   }
 
   // Returns 1 if j is positive and -1 otherwise.

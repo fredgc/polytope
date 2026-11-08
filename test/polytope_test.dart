@@ -12,12 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/material.dart';
 import 'package:test/test.dart';
 
+import 'package:polytope/drawable.dart';
 import 'package:polytope/polytope.dart';
 import 'package:polytope/printer.dart';
 import 'package:polytope/regular.dart';
-import 'package:polytope/transform.dart';
+import 'package:polytope/scene.dart';
+import 'package:polytope/slice.dart';
 import 'package:polytope/vector.dart';
 
 final double tolerance = 0.0001;
@@ -125,6 +128,12 @@ void main() {
     test('4 dim 24 cell.', () {
       checkSizes(Regular.cell24.make(4), [24, 96, 96, 24]);
     });
+    test('4 dim 120 cell.', () {
+      checkSizes(Regular.cell120.make(4), [600, 1200, 720, 120]);
+    });
+    test('4 dim 600 cell.', () {
+      checkSizes(Regular.cell600.make(4), [120, 720, 1200, 600]);
+    });
     // Ref: https://en.wikipedia.org/wiki/Cross-polytope.
     test('5 dim simplex.', () {
       checkSizes(Regular.simplex.make(5), [6, 15, 20, 15, 6]);
@@ -148,6 +157,8 @@ void main() {
         expect(Regular.dodec.make(i).dim, 3);
         expect(Regular.ico.make(i).dim, 3);
         expect(Regular.cell24.make(i).dim, 4);
+        expect(Regular.cell120.make(i).dim, 4);
+        expect(Regular.cell600.make(i).dim, 4);
       }
     });
   });
@@ -204,5 +215,121 @@ void main() {
         });
       }
     }
+  });
+
+  group('Line clipping.', () {
+    test('Crossing lines clip the one further away in Z', () {
+      Scene scene = Scene();
+      scene.drawables.clear();
+      scene.points.clear();
+
+      // Front horizontal segment: (-10, 0) to (10, 0) at z = 10
+      Point p1 = Point()
+        ..sx = -10
+        ..sy = 0
+        ..sz = 10;
+      Point p2 = Point()
+        ..sx = 10
+        ..sy = 0
+        ..sz = 10;
+      Polytope e1 = Polytope(1, "E1");
+      e1.cells.add(Vertex()..vertex = p1);
+      e1.cells.add(Vertex()..vertex = p2);
+      LineSegment s1 = LineSegment(e1, const Color(0xFFFFFFFF));
+
+      // Back vertical segment: (0, -10) to (0, 10) at z = 0
+      Point p3 = Point()
+        ..sx = 0
+        ..sy = -10
+        ..sz = 0;
+      Point p4 = Point()
+        ..sx = 0
+        ..sy = 10
+        ..sz = 0;
+      Polytope e2 = Polytope(1, "E2");
+      e2.cells.add(Vertex()..vertex = p3);
+      e2.cells.add(Vertex()..vertex = p4);
+      LineSegment s2 = LineSegment(e2, const Color(0xFFFFFFFF));
+
+      scene.drawables.addAll([s1, s2]);
+      scene.clipLines();
+
+      // s1 is in front (z=10 > z=0), so it should have no gaps
+      expect(s1.gaps, isNull);
+      // s2 is in back (z=0 < z=10), so it should have a gap around t=0.5
+      expect(s2.gaps, isNotNull);
+      expect(s2.gaps!.length, 2);
+      double gStart = s2.gaps![0];
+      double gEnd = s2.gaps![1];
+      expect(gStart, lessThan(0.5));
+      expect(gEnd, greaterThan(0.5));
+    });
+
+    test('SlideEdge crossing clips behind edge and does not clip at line ends',
+        () {
+      Scene scene = Scene();
+      scene.drawables.clear();
+      scene.points.clear();
+
+      // Polytope edge: (-10, 0) to (10, 0) at z = 10
+      Vertex v1 = Vertex(id: 1);
+      v1.vertex.sx = -10;
+      v1.vertex.sy = 0;
+      v1.vertex.sz = 10;
+      Vertex v2 = Vertex(id: 2);
+      v2.vertex.sx = 10;
+      v2.vertex.sy = 0;
+      v2.vertex.sz = 10;
+      Polytope e1 = Polytope(1, "E1");
+      e1.cells.add(v1);
+      e1.cells.add(v2);
+      LineSegment polyEdge = LineSegment(e1, const Color(0xFFFFFFFF));
+
+      // SlideDot sliding on e1
+      SlideDot d1 = SlideDot(v1, v2, Vector.unit(0), const Color(0xFFFFFF00));
+      d1.sx = 0;
+      d1.sy = 0;
+      d1.sz = 10;
+
+      // Another SlideDot elsewhere: (0, 20) at z = 10
+      Vertex v3 = Vertex(id: 3);
+      Vertex v4 = Vertex(id: 4);
+      SlideDot d2 = SlideDot(v3, v4, Vector.unit(0), const Color(0xFFFFFF00));
+      d2.sx = 0;
+      d2.sy = 20;
+      d2.sz = 10;
+
+      // SlideEdge from d1 to d2 (vertical line starting exactly on polyEdge at (0,0))
+      SlideEdge sliceEdge1 = SlideEdge(d1, d2, const Color(0xFFFFFF00));
+      sliceEdge1.visible = true;
+
+      scene.drawables.addAll([polyEdge, sliceEdge1]);
+      scene.clipLines();
+
+      // Since d1 lies on polyEdge (ends at polyEdge), they should NOT clip each other
+      expect(polyEdge.gaps, isNull);
+      expect(sliceEdge1.gaps, isNull);
+
+      // Now add a crossing SlideEdge in the background at z = 0 crossing sliceEdge1
+      SlideDot d3 = SlideDot(v3, v4, Vector.unit(0), const Color(0xFFFFFF00));
+      d3.sx = -10;
+      d3.sy = 10;
+      d3.sz = 0;
+      SlideDot d4 = SlideDot(v3, v4, Vector.unit(0), const Color(0xFFFFFF00));
+      d4.sx = 10;
+      d4.sy = 10;
+      d4.sz = 0;
+      SlideEdge sliceEdge2 = SlideEdge(d3, d4, const Color(0xFFFFFF00));
+      sliceEdge2.visible = true;
+
+      scene.drawables.add(sliceEdge2);
+      scene.clipLines();
+
+      // sliceEdge1 is in front at z=10, so no gaps
+      expect(sliceEdge1.gaps, isNull);
+      // sliceEdge2 is in back at z=0, so it gets a gap around crossing point (0, 10)
+      expect(sliceEdge2.gaps, isNotNull);
+      expect(sliceEdge2.gaps!.length, 2);
+    });
   });
 }

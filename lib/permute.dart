@@ -16,7 +16,9 @@ class Permutation {
   List<int> image;
 
   Permutation(int k) : image = List<int>.filled(k + 1, 0) {
-    for (int i = 0; i < k; i++) image[i] = i;
+    for (int i = 0; i < k; i++) {
+      image[i] = i;
+    }
   }
 
   // Change k to map to ik.
@@ -24,8 +26,12 @@ class Permutation {
     if (k >= image.length) {
       // Maybe we have to make the array bigger.
       List<int> temp = image = List<int>.filled(k + 1, 0);
-      for (int j = 0; j <= k; j++) temp[j] = j;
-      for (int j = 0; j < image.length; j++) temp[j] = image[j];
+      for (int j = 0; j <= k; j++) {
+        temp[j] = j;
+      }
+      for (int j = 0; j < image.length; j++) {
+        temp[j] = image[j];
+      }
       image = temp;
     }
     image[k] = ik;
@@ -37,7 +43,8 @@ class Permutation {
     return image[i];
   }
 
+  @override
   String toString() {
-    return "Perm[ " + image.map((p) => "$p").join(", ") + "]";
+    return "Perm[ ${image.map((p) => "$p").join(", ")}]";
   }
 }

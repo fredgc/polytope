@@ -25,23 +25,27 @@ class SavableColor extends Savable<Color> {
 
   SavableColor(super.name, super.description, super.value, this.reset);
 
+  @override
   void load(SharedPreferencesWithCache prefs) {
     // print("Loading $name as ${prefs.getInt(name)}");
-    value = Color(prefs.getInt(name) ?? value.value);
+    value = Color(prefs.getInt(name) ?? value.toARGB32());
   }
 
+  @override
   void save(SharedPreferencesWithCache prefs) {
     // print("Saving $name as ${value.value}");
-    prefs.setInt(name, value.value);
+    prefs.setInt(name, value.toARGB32());
   }
 
   // This is called when the theme changes.
+  @override
   void updateTheme(ColorScheme scheme) {
     // Color old = value;
     value = reset(scheme);
     // print("updating color for $name from $old to $value");
   }
 
+  @override
   List<Widget?> build(BuildContext context, VoidCallback rebuild) {
     return [
       Text('$description: '),
@@ -120,28 +124,32 @@ class SavableColorArray extends Savable<List<Color>> {
 
   SavableColorArray(super.name, super.description, super.value, this.reset);
 
+  @override
   void load(SharedPreferencesWithCache prefs) {
     for (int i = 0; i < value.length; i++) {
       String key = "$name $i";
       // print("Loading '$key' as ${prefs.getInt(key)}");
-      value[i] = Color(prefs.getInt(key) ?? value[i].value);
+      value[i] = Color(prefs.getInt(key) ?? value[i].toARGB32());
     }
   }
 
+  @override
   void save(SharedPreferencesWithCache prefs) {
     for (int i = 0; i < value.length; i++) {
       String key = "$name $i";
       // print("Saving $key as ${value[i].value}");
-      prefs.setInt(key, value[i].value);
+      prefs.setInt(key, value[i].toARGB32());
     }
   }
 
   // This is called when the theme changes.
+  @override
   void updateTheme(ColorScheme scheme) {
     // print("Update theme for $name. using scheme.brightness = ${scheme.brightness}");
     value = reset(scheme);
   }
 
+  @override
   List<Widget?> build(BuildContext context, VoidCallback rebuild) {
     List<Widget> children = [];
     children.add(Text('$description: '));
@@ -245,6 +253,7 @@ class SavableTheme extends Savable<int> {
     // print("Finished with theme initialize................................");
   }
 
+  @override
   void load(SharedPreferencesWithCache prefs) {
     try {
       theme_mode =
@@ -258,6 +267,7 @@ class SavableTheme extends Savable<int> {
     update();
   }
 
+  @override
   void save(SharedPreferencesWithCache prefs) {
     // // print("Setting theme_mode as ${theme_mode.index}");
     prefs.setInt("theme_mode", theme_mode.index);
@@ -266,6 +276,7 @@ class SavableTheme extends Savable<int> {
   }
 
   // Called by settings to update all of the savables.
+  @override
   void updateTheme(ColorScheme scheme) {
     // print("--- Updating theme for theme.");
     update();
@@ -292,9 +303,10 @@ class SavableTheme extends Savable<int> {
   void updateAndCallback() {
     // print("update and callback. callback = $_callback.");
     update();
-    this._callback.call();
+    _callback.call();
   }
 
+  @override
   List<Widget?> build(BuildContext context, VoidCallback rebuild) {
     // Make a flattened list of all the witches in the theme colors.
     return [
