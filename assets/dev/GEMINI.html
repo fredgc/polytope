@@ -94,7 +94,6 @@
 <p>Welcome! This guide is designed to help future LLM agents and human
 developers get up to speed quickly on the <strong>Polytope</strong>
 Flutter application.</p>
-<p>Build Version v2.1.0+3</p>
 <hr />
 <h2 id="developer-rules-environment-configuration">Developer Rules &amp;
 Environment Configuration</h2>
@@ -105,11 +104,13 @@ in <code>~/source/gemini/config/rules/</code>:</p>
 tasks and issues are tracked using <code>~/bin/todo.py</code>. When
 asked about tasks or what to work on next, execute:</p>
 <div class="sourceCode" id="cb1"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">~/bin/todo.py</span> list</span></code></pre></div>
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">~/bin/todo.py</span> list</span></code></pre></div></li>
+</ul>
 <p>Before starting an item, mark it in progress
 (<code>~/bin/todo.py doing &lt;N&gt;</code>). Once completed, mark it
 done (<code>~/bin/todo.py done &lt;N&gt;</code>). Do not archive
-completed tasks until reviewed and verified.</p></li>
+completed tasks until reviewed and verified.</p>
+<ul>
 <li><p><strong>Communication Style (<code>style.md</code>)</strong>: Be
 blunt and direct. Avoid polite filler and superlatives. Keep responses
 concise, technical, and focused strictly on facts and
@@ -184,8 +185,17 @@ compilation and builds:</p>
 into <code>assets/dev/*.html</code> via <code>pandoc</code>.</p></li>
 <li><p><code>make ASSETS</code>: Generates icons, favicons, version
 metadata, and docs.</p></li>
-<li><p><code>make test</code>: Runs all Flutter unit and widget
-tests.</p></li>
+<li><p><code>make test</code>: Runs standard Flutter unit, widget, and
+ARB localization parity tests on every commit
+(<code>flutter test --exclude-tags release_audit</code>). Fast execution
+(~2-5 seconds).</p></li>
+<li><p><code>make audit</code>: Runs exhaustive pre-release
+accessibility and multi-locale layout audits
+(<code>flutter test test/audit_test.dart</code>). Tests all supported
+locales, compact mobile/tablet/desktop viewports, 1.5x/2.0x font
+scaling, and WCAG AA guidelines
+(<code>labeledTapTargetGuideline</code>). Required automatically by
+<code>make stage-release</code> and <code>make release</code>.</p></li>
 <li><p><code>make stage</code>: Builds web app with debug flags and runs
 <code>firebase_stage.pl</code>.</p></li>
 <li><p><code>make release</code>: Deploys production bundle to Firebase

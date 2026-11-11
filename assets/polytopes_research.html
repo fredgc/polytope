@@ -44,17 +44,17 @@ Polytopes (Regular 4-Polytopes / Polychora):</strong> There are exactly
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>ℝ</mi><mn>4</mn></msup><annotation encoding="application/x-tex">\mathbb{R}^4</annotation></semantics></math>
 Support in Codebase:</strong> Currently, 4 of the 6 are implemented:</p>
 <ol type="1">
-<li>5-cell (Regular Simplex, dim 4)</li>
-<li>8-cell / Tesseract (Hypercube, dim 4)</li>
-<li>16-cell / Orthoplex (Cross Polytope, dim 4)</li>
-<li>24-cell (Octaplex / Icositetrachoron)</li>
-</ol>
-<p>The remaining 2 are:</p>
-<ol start="5" type="1">
-<li>120-cell (Hecatonicosachoron)</li>
-<li>600-cell (Hexacosichoron)</li>
+<li><p>5-cell (Regular Simplex, dim 4)</p></li>
+<li><p>8-cell / Tesseract (Hypercube, dim 4)</p></li>
+<li><p>16-cell / Orthoplex (Cross Polytope, dim 4)</p></li>
+<li><p>24-cell (Octaplex / Icositetrachoron)</p></li>
 </ol></li>
 </ul>
+<p>The remaining 2 are:</p>
+<ol start="5" type="1">
+<li><p>120-cell (Hecatonicosachoron)</p></li>
+<li><p>600-cell (Hexacosichoron)</p></li>
+</ol>
 <hr />
 <h2 id="regular-polytopes-in-mathbbr3-platonic-solids">1. Regular
 Polytopes in
@@ -63,70 +63,70 @@ Polytopes in
 <p>All 5 are supported in the codebase:</p>
 <table style="width:100%;">
 <colgroup>
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
+<col style="width: 28%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 6%" />
+<col style="width: 6%" />
+<col style="width: 6%" />
+<col style="width: 28%" />
 </colgroup>
 <thead>
 <tr>
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Schläfli</th>
-<th style="text-align: left;">Vertices</th>
-<th style="text-align: left;">Edges</th>
-<th style="text-align: left;">Faces</th>
-<th style="text-align: left;">Cells</th>
-<th style="text-align: left;">Implementation Method</th>
+<th><code>makeIcosahedron(3)</code></th>
+<th><code>makeIcosahedron(3)</code></th>
+<th><code>makeIcosahedron(3)</code></th>
+<th><code>makeIcosahedron(3)</code></th>
+<th><code>makeIcosahedron(3)</code></th>
+<th><code>makeIcosahedron(3)</code></th>
+<th><code>makeIcosahedron(3)</code></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;">Simplex (Tetrahedron)</td>
-<td style="text-align: left;">{3,3}</td>
-<td style="text-align: left;">4</td>
-<td style="text-align: left;">6</td>
-<td style="text-align: left;">4</td>
-<td style="text-align: left;">-</td>
-<td style="text-align: left;"><code>makeSimplex(3)</code></td>
+<td><code>makeIcosahedron(3)</code></td>
+<td><code>makeIcosahedron(3)</code></td>
+<td><code>makeIcosahedron(3)</code></td>
+<td><code>makeIcosahedron(3)</code></td>
+<td><code>makeIcosahedron(3)</code></td>
+<td><code>makeIcosahedron(3)</code></td>
+<td><code>makeIcosahedron(3)</code></td>
 </tr>
 <tr>
-<td style="text-align: left;">Cube (Hexahedron)</td>
-<td style="text-align: left;">{4,3}</td>
-<td style="text-align: left;">8</td>
-<td style="text-align: left;">12</td>
-<td style="text-align: left;">6</td>
-<td style="text-align: left;">-</td>
-<td style="text-align: left;"><code>makeCube(3)</code></td>
+<td><code>makeIcosahedron(3)</code></td>
+<td><code>makeIcosahedron(3)</code></td>
+<td><code>makeIcosahedron(3)</code></td>
+<td><code>makeIcosahedron(3)</code></td>
+<td><code>makeIcosahedron(3)</code></td>
+<td><code>makeIcosahedron(3)</code></td>
+<td><code>makeIcosahedron(3)</code></td>
 </tr>
 <tr>
-<td style="text-align: left;">Cross (Octahedron)</td>
-<td style="text-align: left;">{3,4}</td>
-<td style="text-align: left;">6</td>
-<td style="text-align: left;">12</td>
-<td style="text-align: left;">8</td>
-<td style="text-align: left;">-</td>
-<td style="text-align: left;"><code>makeCross(3)</code></td>
+<td><code>makeIcosahedron(3)</code></td>
+<td><code>makeIcosahedron(3)</code></td>
+<td><code>makeIcosahedron(3)</code></td>
+<td><code>makeIcosahedron(3)</code></td>
+<td><code>makeIcosahedron(3)</code></td>
+<td><code>makeIcosahedron(3)</code></td>
+<td><code>makeIcosahedron(3)</code></td>
 </tr>
 <tr>
-<td style="text-align: left;">Dodecahedron</td>
-<td style="text-align: left;">{5,3}</td>
-<td style="text-align: left;">20</td>
-<td style="text-align: left;">30</td>
-<td style="text-align: left;">12</td>
-<td style="text-align: left;">-</td>
-<td style="text-align: left;"><code>makeDodecahedron(3)</code></td>
+<td><code>makeIcosahedron(3)</code></td>
+<td><code>makeIcosahedron(3)</code></td>
+<td><code>makeIcosahedron(3)</code></td>
+<td><code>makeIcosahedron(3)</code></td>
+<td><code>makeIcosahedron(3)</code></td>
+<td><code>makeIcosahedron(3)</code></td>
+<td><code>makeIcosahedron(3)</code></td>
 </tr>
 <tr>
-<td style="text-align: left;">Icosahedron</td>
-<td style="text-align: left;">{3,5}</td>
-<td style="text-align: left;">12</td>
-<td style="text-align: left;">30</td>
-<td style="text-align: left;">20</td>
-<td style="text-align: left;">-</td>
-<td style="text-align: left;"><code>makeIcosahedron(3)</code></td>
+<td><code>makeIcosahedron(3)</code></td>
+<td><code>makeIcosahedron(3)</code></td>
+<td><code>makeIcosahedron(3)</code></td>
+<td><code>makeIcosahedron(3)</code></td>
+<td><code>makeIcosahedron(3)</code></td>
+<td><code>makeIcosahedron(3)</code></td>
+<td><code>makeIcosahedron(3)</code></td>
 </tr>
 </tbody>
 </table>
@@ -136,81 +136,81 @@ Polytopes in
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>ℝ</mi><mn>4</mn></msup><annotation encoding="application/x-tex">\mathbb{R}^4</annotation></semantics></math>
 (Convex 4-Polytopes)</h2>
 <p>There are 6 regular convex polychora:</p>
-<table style="width:100%;">
+<table>
 <colgroup>
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
+<col style="width: 36%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 6%" />
+<col style="width: 6%" />
+<col style="width: 18%" />
+<col style="width: 11%" />
 </colgroup>
 <thead>
 <tr>
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Schläfli</th>
-<th style="text-align: left;">Vertices</th>
-<th style="text-align: left;">Edges</th>
-<th style="text-align: left;">Faces</th>
-<th style="text-align: left;">Cells</th>
-<th style="text-align: left;">Status</th>
+<th>Planned</th>
+<th>Planned</th>
+<th>Planned</th>
+<th>Planned</th>
+<th>Planned</th>
+<th>Planned</th>
+<th>Planned</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;">5-cell (Simplex)</td>
-<td style="text-align: left;">{3,3,3}</td>
-<td style="text-align: left;">5</td>
-<td style="text-align: left;">10</td>
-<td style="text-align: left;">10</td>
-<td style="text-align: left;">5 tetrahedra</td>
-<td style="text-align: left;">Supported</td>
+<td>Planned</td>
+<td>Planned</td>
+<td>Planned</td>
+<td>Planned</td>
+<td>Planned</td>
+<td>Planned</td>
+<td>Planned</td>
 </tr>
 <tr>
-<td style="text-align: left;">8-cell (Tesseract)</td>
-<td style="text-align: left;">{4,3,3}</td>
-<td style="text-align: left;">16</td>
-<td style="text-align: left;">32</td>
-<td style="text-align: left;">24</td>
-<td style="text-align: left;">8 cubes</td>
-<td style="text-align: left;">Supported</td>
+<td>Planned</td>
+<td>Planned</td>
+<td>Planned</td>
+<td>Planned</td>
+<td>Planned</td>
+<td>Planned</td>
+<td>Planned</td>
 </tr>
 <tr>
-<td style="text-align: left;">16-cell (Orthoplex)</td>
-<td style="text-align: left;">{3,3,4}</td>
-<td style="text-align: left;">8</td>
-<td style="text-align: left;">24</td>
-<td style="text-align: left;">32</td>
-<td style="text-align: left;">16 tetrahedra</td>
-<td style="text-align: left;">Supported</td>
+<td>Planned</td>
+<td>Planned</td>
+<td>Planned</td>
+<td>Planned</td>
+<td>Planned</td>
+<td>Planned</td>
+<td>Planned</td>
 </tr>
 <tr>
-<td style="text-align: left;">24-cell (Icositetrachoron)</td>
-<td style="text-align: left;">{3,4,3}</td>
-<td style="text-align: left;">24</td>
-<td style="text-align: left;">96</td>
-<td style="text-align: left;">96</td>
-<td style="text-align: left;">24 octahedra</td>
-<td style="text-align: left;">Supported</td>
+<td>Planned</td>
+<td>Planned</td>
+<td>Planned</td>
+<td>Planned</td>
+<td>Planned</td>
+<td>Planned</td>
+<td>Planned</td>
 </tr>
 <tr>
-<td style="text-align: left;">120-cell (Hecatonicosachoron)</td>
-<td style="text-align: left;">{5,3,3}</td>
-<td style="text-align: left;">600</td>
-<td style="text-align: left;">1200</td>
-<td style="text-align: left;">720</td>
-<td style="text-align: left;">120 dodecahedra</td>
-<td style="text-align: left;">Planned</td>
+<td>Planned</td>
+<td>Planned</td>
+<td>Planned</td>
+<td>Planned</td>
+<td>Planned</td>
+<td>Planned</td>
+<td>Planned</td>
 </tr>
 <tr>
-<td style="text-align: left;">600-cell (Hexacosichoron)</td>
-<td style="text-align: left;">{3,3,5}</td>
-<td style="text-align: left;">120</td>
-<td style="text-align: left;">720</td>
-<td style="text-align: left;">1200</td>
-<td style="text-align: left;">600 tetrahedra</td>
-<td style="text-align: left;">Planned</td>
+<td>Planned</td>
+<td>Planned</td>
+<td>Planned</td>
+<td>Planned</td>
+<td>Planned</td>
+<td>Planned</td>
+<td>Planned</td>
 </tr>
 </tbody>
 </table>
@@ -229,29 +229,34 @@ a quaternion
 sits on the 3-sphere
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>S</mi><mn>3</mn></msup><mo>⊂</mo><msup><mi>ℝ</mi><mn>4</mn></msup></mrow><annotation encoding="application/x-tex">S^3 \subset \mathbb{R}^4</annotation></semantics></math>.</p>
 <ul>
-<li><a
+<li><p><a
 href="https://en.wikipedia.org/wiki/Binary_icosahedral_group">Binary
-Icosahedral Group (Wikipedia)</a></li>
-<li><a
+Icosahedral Group (Wikipedia)</a></p></li>
+<li><p><a
 href="https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation">Quaternions
-and Spatial Rotation (Wikipedia)</a></li>
-<li><a href="https://en.wikipedia.org/wiki/600-cell">600-cell
-(Wikipedia)</a></li>
-<li><a href="https://en.wikipedia.org/wiki/120-cell">120-cell
-(Wikipedia)</a></li>
-<li><a href="https://mathworld.wolfram.com/600-Cell.html">Coxeter,
-Regular Polytopes (MathWorld)</a></li>
+and Spatial Rotation (Wikipedia)</a></p></li>
+<li><p><a href="https://en.wikipedia.org/wiki/600-cell">600-cell
+(Wikipedia)</a></p></li>
+<li><p><a href="https://en.wikipedia.org/wiki/120-cell">120-cell
+(Wikipedia)</a></p></li>
+<li><p><a href="https://mathworld.wolfram.com/600-Cell.html">Coxeter,
+Regular Polytopes (MathWorld)</a></p></li>
 </ul>
 <h3 id="vertex-coordinates">Vertex Coordinates</h3>
 <p>Let
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϕ</mi><mo>=</mo><mfrac><mrow><mn>1</mn><mo>+</mo><msqrt><mn>5</mn></msqrt></mrow><mn>2</mn></mfrac></mrow><annotation encoding="application/x-tex">\phi = \frac{1 + \sqrt{5}}{2}</annotation></semantics></math>
 denote the golden ratio.</p>
-<p>The 120 vertices of the unit 600-cell are: * 16 vertices:
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mi>±</mi><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>,</mo><mi>±</mi><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>,</mo><mi>±</mi><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>,</mo><mi>±</mi><mfrac><mn>1</mn><mn>2</mn></mfrac><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(\pm \frac{1}{2}, \pm \frac{1}{2}, \pm \frac{1}{2}, \pm \frac{1}{2})</annotation></semantics></math>
-* 8 vertices: permutations of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mi>±</mi><mn>1</mn><mo>,</mo><mn>0</mn><mo>,</mo><mn>0</mn><mo>,</mo><mn>0</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(\pm 1, 0, 0, 0)</annotation></semantics></math>
-* 96 vertices: even permutations of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mi>±</mi><mfrac><mi>ϕ</mi><mn>2</mn></mfrac><mo>,</mo><mi>±</mi><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>,</mo><mi>±</mi><mfrac><mn>1</mn><mrow><mn>2</mn><mi>ϕ</mi></mrow></mfrac><mo>,</mo><mn>0</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(\pm \frac{\phi}{2}, \pm \frac{1}{2}, \pm \frac{1}{2\phi}, 0)</annotation></semantics></math></p>
+<p>The 120 vertices of the unit 600-cell are:</p>
+<ul>
+<li><p>16 vertices:
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mi>±</mi><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>,</mo><mi>±</mi><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>,</mo><mi>±</mi><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>,</mo><mi>±</mi><mfrac><mn>1</mn><mn>2</mn></mfrac><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(\pm \frac{1}{2}, \pm \frac{1}{2}, \pm \frac{1}{2}, \pm
+\frac{1}{2})</annotation></semantics></math></p></li>
+<li><p>8 vertices: permutations of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mi>±</mi><mn>1</mn><mo>,</mo><mn>0</mn><mo>,</mo><mn>0</mn><mo>,</mo><mn>0</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(\pm 1, 0, 0, 0)</annotation></semantics></math></p></li>
+<li><p>96 vertices: even permutations of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mi>±</mi><mfrac><mi>ϕ</mi><mn>2</mn></mfrac><mo>,</mo><mi>±</mi><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>,</mo><mi>±</mi><mfrac><mn>1</mn><mrow><mn>2</mn><mi>ϕ</mi></mrow></mfrac><mo>,</mo><mn>0</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(\pm \frac{\phi}{2}, \pm \frac{1}{2}, \pm
+\frac{1}{2\phi}, 0)</annotation></semantics></math></p></li>
+</ul>
 <h3 id="edge-and-face-adjacency">Edge and Face Adjacency</h3>
 <ul>
 <li><p><strong>600-cell:</strong> Two vertices are connected by an edge
@@ -262,15 +267,16 @@ corresponds to a 3-clique of mutually connected vertices (1,200 faces).
 Each tetrahedral cell corresponds to a 4-clique (600 cells).</p></li>
 <li><p><strong>120-cell (Dual Construction):</strong></p>
 <ul>
-<li>The 600 vertices are the circumcenters (averages of 4 vertices) of
-the 600 tetrahedral cells of the 600-cell, projected to the unit sphere
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>S</mi><mn>3</mn></msup><annotation encoding="application/x-tex">S^3</annotation></semantics></math>.</li>
-<li>Two 120-cell vertices share an edge if their corresponding
-tetrahedra share a triangular face.</li>
-<li>120-cell faces are planar regular pentagons formed by cycles of 5
-edges.</li>
-<li>120-cell cells are regular dodecahedra corresponding to the 120
-vertices of the 600-cell.</li>
+<li><p>The 600 vertices are the circumcenters (averages of 4 vertices)
+of the 600 tetrahedral cells of the 600-cell, projected to the unit
+sphere
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>S</mi><mn>3</mn></msup><annotation encoding="application/x-tex">S^3</annotation></semantics></math>.</p></li>
+<li><p>Two 120-cell vertices share an edge if their corresponding
+tetrahedra share a triangular face.</p></li>
+<li><p>120-cell faces are planar regular pentagons formed by cycles of 5
+edges.</p></li>
+<li><p>120-cell cells are regular dodecahedra corresponding to the 120
+vertices of the 600-cell.</p></li>
 </ul></li>
 </ul>
 <hr />
@@ -279,39 +285,42 @@ vertices of the 600-cell.</li>
 <p>To ensure high performance and avoid freeze or jank when opening
 these shapes:</p>
 <ol type="1">
-<li><strong>Pre-generation Tool
-(<code>tool/generate_polychora.dart</code>):</strong>
+<li><p><strong>Pre-generation Tool
+(<code>tool/generate_polychora.dart</code>):</strong></p>
 <ul>
-<li>Computes the complete topological incidence mesh:
+<li><p>Computes the complete topological incidence mesh:</p>
 <ul>
-<li>Vertices
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo>,</mo><mi>z</mi><mo>,</mo><mi>w</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(x, y, z, w)</annotation></semantics></math></li>
-<li>Edges: pairs of vertex indices
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">[</mo><msub><mi>v</mi><mn>1</mn></msub><mo>,</mo><msub><mi>v</mi><mn>2</mn></msub><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[v_1, v_2]</annotation></semantics></math></li>
-<li>Faces: ordered sequences of edge indices forming closed loops</li>
-<li>Cells: sets of face indices forming 3D boundary cells</li>
+<li><p>Vertices
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo>,</mo><mi>z</mi><mo>,</mo><mi>w</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(x, y, z, w)</annotation></semantics></math></p></li>
+<li><p>Edges: pairs of vertex indices
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">[</mo><msub><mi>v</mi><mn>1</mn></msub><mo>,</mo><msub><mi>v</mi><mn>2</mn></msub><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[v_1, v_2]</annotation></semantics></math></p></li>
+<li><p>Faces: ordered sequences of edge indices forming closed
+loops</p></li>
+<li><p>Cells: sets of face indices forming 3D boundary cells</p></li>
 </ul></li>
-<li>Validates topological invariants (Euler characteristic
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mo>−</mo><mi>E</mi><mo>+</mo><mi>F</mi><mo>−</mo><mi>C</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">V - E + F - C = 0</annotation></semantics></math>,
-vertex degrees, cell counts).</li>
-<li>Serializes the meshes into compact JSON asset files:
+<li><p>Validates topological invariants (Euler characteristic
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mo>−</mo><mi>E</mi><mo>+</mo><mi>F</mi><mo>−</mo><mi>C</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">V - E + F - C =
+0</annotation></semantics></math>, vertex degrees, cell
+counts).</p></li>
+<li><p>Serializes the meshes into compact JSON asset files:</p>
 <ul>
-<li><code>assets/mesh/cell600.json</code></li>
-<li><code>assets/mesh/cell120.json</code></li>
+<li><p><code>assets/mesh/cell600.json</code></p></li>
+<li><p><code>assets/mesh/cell120.json</code></p></li>
 </ul></li>
 </ul></li>
-<li><strong>Asset Loading &amp; Runtime Integration
-(<code>Polytope.loadFromAsset</code>):</strong>
+<li><p><strong>Asset Loading &amp; Runtime Integration
+(<code>Polytope.loadFromAsset</code>):</strong></p>
 <ul>
-<li>Extend <code>Polytope</code> with a direct builder that reconstructs
-the incidence graph from precomputed index tables in
+<li><p>Extend <code>Polytope</code> with a direct builder that
+reconstructs the incidence graph from precomputed index tables in
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false" form="prefix">(</mo><mi>V</mi><mo>+</mo><mi>E</mi><mo>+</mo><mi>F</mi><mo>+</mo><mi>C</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">O(V + E + F + C)</annotation></semantics></math>
 time, avoiding slow combinatorial deduplication
-(<code>gather()</code>).</li>
-<li>Add <code>Regular.cell120</code> and <code>Regular.cell600</code> to
-the <code>Regular</code> enum.</li>
-<li>Connect with <code>scene.dart</code> and <code>slice.dart</code> to
-support full 4D rotation and real-time 3D hyperplane slicing.</li>
+(<code>gather()</code>).</p></li>
+<li><p>Add <code>Regular.cell120</code> and <code>Regular.cell600</code>
+to the <code>Regular</code> enum.</p></li>
+<li><p>Connect with <code>scene.dart</code> and <code>slice.dart</code>
+to support full 4D rotation and real-time 3D hyperplane
+slicing.</p></li>
 </ul></li>
 </ol>
 </body>

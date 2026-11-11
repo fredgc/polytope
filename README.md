@@ -1,7 +1,7 @@
-# Polytope Drawing Tool (v2.1.0+3)
+# Polytope Drawing Tool
 
-An interactive, educational application for constructing, rotating, and slicing
-regular polytopes across 3, 4, and higher dimensions.
+An interactive, educational application for constructing, rotating, and
+slicing regular polytopes across 3, 4, and higher dimensions.
 
 * **Live Web App**: [polytope.gchouse.org](https://polytope.gchouse.org)
 
@@ -13,33 +13,30 @@ regular polytopes across 3, 4, and higher dimensions.
 
 In-depth documentation and policies are located in `doc/`:
 
-* [doc/about.md](doc/about.md): Project origins, mathematical background on
+* [doc/about.md](doc/about.md) : Project origins, mathematical background on
   regular polytopes, and version details.
 
-* [doc/privacy.md](doc/privacy.md): Privacy policy and explanation of local
+* [doc/privacy.md](doc/privacy.md) : Privacy policy and explanation of local
   preference persistence via SharedPreferences.
 
-* [doc/terms.md](doc/terms.md): Terms of service.
+* [doc/terms.md](doc/terms.md) : Terms of service.
 
 ---
 
 ## Core Features
 
-* **Higher-Dimensional Regular Polytopes**:
-  Explore regular polytopes including the simplex, hypercube (tesseract),
-  cross-polytope (16-cell), 24-cell, 120-cell, and 600-cell.
+* **Higher-Dimensional Regular Polytopes**: Explore regular polytopes
+  including the simplex, hypercube (tesseract), cross-polytope (16-cell),
+  24-cell, 120-cell, and 600-cell.
 
-* **Dynamic Hyperplane Slicing**:
-  Observe animated 3D hyperplane slices intersecting 4D polytopes as the slice
-  offset varies continuously.
+* **Dynamic Hyperplane Slicing**: Observe animated 3D hyperplane slices
+  intersecting 4D polytopes as the slice offset varies continuously.
 
-* **N-Dimensional Rotations**:
-  Interact with multiple simultaneous 2D rotation planes with variable speed
-  and direction controls.
+* **N-Dimensional Rotations**: Interact with multiple simultaneous 2D rotation
+  planes with variable speed and direction controls.
 
-* **Spatial WebXR Support**:
-  Experience 3D cross-sections and 4D projections as interactive spatial
-  holograms in WebXR-compatible browsers and headsets.
+* **Spatial WebXR Support**: Experience 3D cross-sections and 4D projections
+  as interactive spatial holograms in WebXR-compatible browsers and headsets.
 
 ---
 
@@ -47,8 +44,8 @@ In-depth documentation and policies are located in `doc/`:
 
 ### Prerequisites
 
-* [Flutter SDK](https://docs.flutter.dev/get-started/install)
-  (3.24+ recommended)
+* [Flutter SDK](https://docs.flutter.dev/get-started/install) (3.24+
+  recommended)
 
 * `make` and [Pandoc](https://pandoc.org/) (for compiling documentation)
 
@@ -116,7 +113,7 @@ See [`CONTRIBUTING.md`](CONTRIBUTING.md) for details.
 ## License
 
 This project is open-source and licensed under the
-[Apache 2.0 License](LICENSE).
+[Apache 2.0 License](LICENSE) .
 
 ---
 

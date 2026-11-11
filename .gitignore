@@ -1,6 +1,7 @@
 # User / Project custom ignores
 cached/
 .git_chain_data
+untranslated_messages.json
 
 # Miscellaneous
 *.class

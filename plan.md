@@ -1,9 +1,10 @@
-# Polytope Project Plan (v2.1.0+3)
+# Polytope Project Plan
 
 This document outlines the strategic roadmap, architecture goals, and long-
 term milestones for the **Polytope** Flutter project.
 
 > **Note**: Active day-to-day tasks and issue tracking are managed >
+
 dynamically using `~/bin/todo.py`. Run `~/bin/todo.py list` to view active >
 tasks.
 
@@ -73,6 +74,7 @@ Current Architecture:
 
    - Currently, `CoordinateTransform.apply` projects points from $\mathbb{R}^d
      \to \mathbb{R}^3$ via:
+
      ```dart
      // 1. Rotation in R^d:
      temp.x[i] += A[i][j] * (p.x[j] - b.x[j]) * scale;
@@ -83,10 +85,12 @@ Current Architecture:
        }
      }
      ```
+
 At this point, `(temp.x[0], temp.x[1], temp.x[2])` are true **3D coordinates
 in $\mathbb{R}^3$**.
 
    - However, the code immediately flattens them to 2D screen space:
+
      ```dart
      p.sx = offset.x + zoom * temp.x[0];
      p.sy = offset.y - zoom * temp.x[1];
@@ -265,13 +269,13 @@ capabilities:
 
 ## 5. Phased Roadmap
 
-| Phase | Description | Deliverables |
-|---|---|---|
-| **Phase 1: 3D Data Pipeline** | Refactor `CoordinateTransform` to separate $\mathbb{R}^d \to \mathbb{R}^3$ from $\mathbb{R}^3 \to \mathbb{R}^2$. Create `SpatialScene` in pure Dart. | Pure Dart unit tests verifying 3D coordinate and slice vertex generation without canvas. |
-| **Phase 2: WebXR Rendering** | Connect `SpatialScene` to a WebGL rendering loop inside `xr_support_web.dart` with WebXR session management. | Working WebXR demo in Chrome Android / Meta Quest showing floating wireframe polytope. |
-| **Phase 3: WebXR UI & Interaction** | Add WebXR DOM Overlay for the Flutter controls (slice slider, dimension selection, 4D rotation buttons). | Fully interactive WebXR experience. |
-| **Phase 4: Android AR Mobile** | Integrate `SpatialScene` with `ar_flutter_plugin_2` (or lightweight ARCore renderer) in `xr_support_mobile.dart`. | Android AR passthrough experience on phone/tablet. |
-| **Phase 5: Android XR / Spatial Headsets** | Prepare Android XR manifest, spatial panel configuration, and OpenXR compatibility. | Ready for Android XR headsets. |
+| Ready for Android XR headsets.             | Ready for Android XR headsets.                                                                                                                       | Ready for Android XR headsets.                                                           |
+| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Ready for Android XR headsets.             | Ready for Android XR headsets.                                                                                                                       | Ready for Android XR headsets.                                                           |
+| Ready for Android XR headsets.             | Ready for Android XR headsets.                                                                                                                       | Ready for Android XR headsets.                                                           |
+| Ready for Android XR headsets.             | Ready for Android XR headsets.                                                                                                                       | Ready for Android XR headsets.                                                           |
+| Ready for Android XR headsets.             | Ready for Android XR headsets.                                                                                                                       | Ready for Android XR headsets.                                                           |
+| Ready for Android XR headsets.             | Ready for Android XR headsets.                                                                                                                       | Ready for Android XR headsets.                                                           |
 
 ---
 
@@ -437,3 +441,61 @@ Based on project priorities, the following decisions are adopted:
 
 - Test on Meta Quest Browser over local network / ADB.
 
+---
+
+## Visual & Accessibility Verification Checklist
+
+Perform these manual checks across supported locales (`en`, `es`, `de`, `fr`,
+`ja`, `lt`, `pt`, `zh`) on mobile and desktop viewports:
+
+* **Polytope Projections & Canvas**:
+
+  * [ ] Verify 2D, 3D, 4D, and 5D regular polytopes render correctly with
+        clear edge contrast in both light and dark modes.
+
+  * [ ] Verify hyperplane slicing renders intersection polygons smoothly when
+        toggling **Slice** on and off.
+
+* **Rotation & Transform Modes**:
+
+  * [ ] Cycle through rotation modes (R3, R4, R5, Zolly, Translate) and verify
+        drag gestures apply velocity and inertial spin smoothly.
+
+  * [ ] Test snap-to-element buttons (vertex, edge, face, 3-cell) and confirm
+        the projection snaps cleanly without visual distortion.
+
+* **Documentation & Help Screen**:
+
+  * [ ] Open Help dialog and verify all tabs load in the active language:
+
+    * `about`: Overview and attribution.
+
+    * `privacy`: Privacy policy.
+
+    * `terms`: Terms of service.
+
+    * `help`: Polytopes introduction and research notes.
+
+    * `slice`: Hyperplane slicing guide.
+
+    * `controls`: Controller and gesture guide.
+
+  * [ ] Verify that markdown formatting and equations render legibly without
+        horizontal clipping on narrow screens.
+
+* **Language Menu & Navigation**:
+
+  * [ ] Switch to each language from the top bar language menu and confirm all
+        UI labels, toolbars, and help tabs update immediately.
+
+  * [ ] Switch to **Auto** and verify the app reverts cleanly to the system
+        default locale.
+
+* **Touch Targets & Screen Readers**:
+
+  * [ ] Verify that top bar action buttons (About, Privacy, Terms, Overview,
+        Slices, Controls, Settings, Close) have sufficient touch padding on
+        mobile.
+
+  * [ ] Enable TalkBack (Android) or VoiceOver (iOS/macOS) and confirm screen
+        reader announcements for transform mode changes and snap actions.

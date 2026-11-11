@@ -5,11 +5,13 @@ USER_DOCS_HTML := $(patsubst doc/%.md,assets/%.html,$(USER_DOCS_MD))
 DEV_DOCS_MD := $(wildcard plan.md README.md GEMINI.md)
 DEV_DOCS_HTML := $(patsubst %.md,assets/dev/%.html,$(DEV_DOCS_MD))
 
-ASSETS := web/favicon.ico web/favicon.png web/privacy.html web/terms.html $(USER_DOCS_HTML) lib/firebase_options.dart android/app/google-services.json assets/mesh/cell600.json assets/mesh/cell120.json
+FIREBASE_FILES := lib/firebase_options.dart android/app/google-services.json firebase.json
 
-.PHONY: docs build_all stage release ASSETS
+ASSETS := web/favicon.ico web/favicon.png web/privacy.html web/privacy_es.html web/terms.html web/terms_es.html $(USER_DOCS_HTML) $(FIREBASE_FILES) assets/mesh/cell600.json assets/mesh/cell120.json
 
-docs: $(USER_DOCS_HTML) $(DEV_DOCS_HTML) web/privacy.html web/terms.html
+.PHONY: docs build_all stage release ASSETS audit stage-release test
+
+docs: $(USER_DOCS_HTML) $(DEV_DOCS_HTML) web/privacy.html web/privacy_es.html web/terms.html web/terms_es.html
 
 assets/%.html: doc/%.md
 	@mkdir -p assets
@@ -44,22 +46,27 @@ assets/mesh/cell600.json assets/mesh/cell120.json: tool/generate_polychora.dart
 	dart run tool/generate_polychora.dart
 
 test: $(ASSETS)
-	flutter test
+	flutter test --exclude-tags release_audit
+
+audit: $(ASSETS)
+	flutter test test/audit_test.dart
 
 stage:  $(ASSETS)
 	flutter build web
 	echo "PURPLE: Beginning push to staging."
 	firebase_stage.pl
 
-release: $(ASSETS)
+stage-release: $(ASSETS) audit
+	flutter build web
+	echo "PURPLE: Beginning push to staging."
+	firebase_stage.pl
+
+release: $(ASSETS) audit
 	make build_all
-	firebase deploy
+	firebase_release.pl
 
 
 # If this fails, you might have to run "firebase login" or maybe
 # "firebase logout" followed by  "firebase login".
-android/app/google-services.json:
-	flutterfire configure -y
-
-lib/firebase_options.dart:
+$(FIREBASE_FILES):
 	flutterfire configure -y

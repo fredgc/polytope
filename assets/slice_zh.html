@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>slice_zh</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+  </style>
+  <link rel="stylesheet" href="css/doc_style.css" />
+</head>
+<body>
+<h1 id="截面切片-slices">截面切片 (Slices)</h1>
+<p>为了帮助直观理解n维多胞体，本程序显示了多胞体与(n-1)维超平面的交集。该交集同样也是一个凸多胞体，但可能不再是正多胞体。当切片功能开启时，屏幕底部的滑动
+条可控制超平面的高度或位置。</p>
+<p>要理解其工作原理，请从3D立方体开始。点击“切片”按钮。移动滑动条可以看到，立方体与平行于其某一面的平面的交集是一个正方形。</p>
+<p>将立方体旋转为“棱朝前”，会生成一个先扩展为正方形然后缩小回一条棱的长方形。旋转为“顶点朝前”，会生成一个在立方体中心演变为正六边形的三角形。</p>
+<p>熟悉3D切片后，尝试用3维超平面去切一个4维超立方体。</p>
+</body>
+</html>

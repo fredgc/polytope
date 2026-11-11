@@ -21,14 +21,17 @@
 name: polytope
 description: "A drawing app for polytopes."
 publish_to: 'none'
-version: 2.1.1+0
+version: 2.2.0+0
 
 environment:
-  sdk: '>=3.3.4 <4.0.0'
+  sdk: '>=3.4.0 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: any
   cupertino_icons: ^1.0.2
   flex_color_picker: ^3.7.0
   flutter_inappwebview: ^6.1.5  # If the help page is html.
@@ -54,16 +57,73 @@ dev_dependencies:
     path: ./html_tweak
 
 flutter:
+  generate: true
   uses-material-design: true
   assets:
     - path: assets/about.html
       transformers:
         - package: html_tweak
+    - path: assets/about_es.html
+      transformers:
+        - package: html_tweak
+    - path: assets/about_de.html
+      transformers:
+        - package: html_tweak
+    - path: assets/about_fr.html
+      transformers:
+        - package: html_tweak
+    - path: assets/about_ja.html
+      transformers:
+        - package: html_tweak
+    - path: assets/about_lt.html
+      transformers:
+        - package: html_tweak
+    - path: assets/about_pt.html
+      transformers:
+        - package: html_tweak
+    - path: assets/about_zh.html
+      transformers:
+        - package: html_tweak
     - assets/privacy.html
+    - assets/privacy_es.html
     - assets/terms.html
+    - assets/terms_es.html
     - assets/help.html
+    - assets/help_es.html
+    - assets/help_de.html
+    - assets/help_fr.html
+    - assets/help_ja.html
+    - assets/help_lt.html
+    - assets/help_pt.html
+    - assets/help_zh.html
     - assets/slice.html
+    - assets/slice_es.html
+    - assets/slice_de.html
+    - assets/slice_fr.html
+    - assets/slice_ja.html
+    - assets/slice_lt.html
+    - assets/slice_pt.html
+    - assets/slice_zh.html
     - assets/controls.html
+    - assets/controls_es.html
+    - assets/controls_de.html
+    - assets/controls_fr.html
+    - assets/controls_ja.html
+    - assets/controls_lt.html
+    - assets/controls_pt.html
+    - assets/controls_zh.html
+    - assets/privacy_de.html
+    - assets/privacy_fr.html
+    - assets/privacy_ja.html
+    - assets/privacy_lt.html
+    - assets/privacy_pt.html
+    - assets/privacy_zh.html
+    - assets/terms_de.html
+    - assets/terms_fr.html
+    - assets/terms_ja.html
+    - assets/terms_lt.html
+    - assets/terms_pt.html
+    - assets/terms_zh.html
     - assets/css/
     - assets/images/
     - assets/mesh/

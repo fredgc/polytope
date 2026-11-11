@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 import 'help.dart';
+import 'l10n/l10n_extension.dart';
 import 'widget.dart';
 import 'settings.dart';
 import 'xr_support.dart';
@@ -30,6 +31,7 @@ void main() async {
 
   // The following is used by InAppWebView.
   WidgetsFlutterBinding.ensureInitialized();
+  await LocaleController.initialize();
   print("BLUE: kIsWeb = $kIsWeb.");
   if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
     print("BLUE: not web, and is Android.");
@@ -50,18 +52,43 @@ class MyAppBuilder {
 
   MyAppBuilder(this.xr) {
     routes[SettingsScreen.routeName] =
-        (BuildContext context) => SettingsScreen();
-    routes[HelpScreen.routeName] = (BuildContext context) => HelpScreen();
+        (BuildContext context) => const SettingsScreen();
+    routes[HelpScreen.routeName] = (BuildContext context) => const HelpScreen();
     routes[PolyAppWidget.routeName] =
         (BuildContext context) => PolyAppWidget(xr);
   }
 
-  MaterialApp makeApp() {
-    return MaterialApp(
-      title: "Polytope Demo",
-      routes: routes,
-      initialRoute: PolyAppWidget.routeName,
-      debugShowCheckedModeBanner: false,
+  Widget makeApp() {
+    return StreamBuilder<SettingsStatus>(
+      stream: Settings.instance.statusStream(),
+      initialData: Settings.instance.status,
+      builder: (context, _) {
+        return ValueListenableBuilder<Locale?>(
+          valueListenable: LocaleController.currentLocale,
+          builder: (context, locale, _) {
+            return MaterialApp(
+              locale: locale,
+              localeResolutionCallback: (deviceLocale, supportedLocales) {
+                if (deviceLocale != null) {
+                  for (final supported in supportedLocales) {
+                    if (supported.languageCode == deviceLocale.languageCode) {
+                      return supported;
+                    }
+                  }
+                }
+                return const Locale('en');
+              },
+              onGenerateTitle: (context) => context.l10n.appTitle,
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              theme: Settings.instance.theme.theme_data,
+              routes: routes,
+              initialRoute: PolyAppWidget.routeName,
+              debugShowCheckedModeBanner: false,
+            );
+          },
+        );
+      },
     );
   }
 }

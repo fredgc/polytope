@@ -8,9 +8,10 @@
 
 The **Polytope Demo** ("the App") is an interactive educational application
 designed to render and visualize regular polytopes and their cross-sectional
-slices in 2, 3, 4, and 5 dimensions. We adhere to strict **Privacy by Design**:
-we do not collect personal information, we do not require account registration,
-we do not track you across websites, and we do not sell or monetize user data.
+slices in 2, 3, 4, and 5 dimensions. We adhere to strict **Privacy by
+Design**: we do not collect personal information, we do not require account
+registration, we do not track you across websites, and we do not sell or
+monetize user data.
 
 This application is built for students, teachers, researchers, and geometry
 enthusiasts of all ages.
@@ -24,8 +25,8 @@ To maintain a zero-PII (Personally Identifiable Information) architecture:
 * **No User Accounts:** You can explore all polytopes and multidimensional
   projections without registering an account.
 
-* **No Device Sensors or Invasive Permissions:** The App does not access device
-  location (GPS), camera, microphone, contacts, or local file storage.
+* **No Device Sensors or Invasive Permissions:** The App does not access
+  device location (GPS), camera, microphone, contacts, or local file storage.
 
 * **No Advertising or Cross-Site Tracking:** The App is completely ad-free and
   contains no advertising networks, marketing trackers, or commercial
@@ -46,10 +47,11 @@ To maintain a zero-PII (Personally Identifiable Information) architecture:
 * These settings persist locally across sessions for user convenience.
 
 * On Web, clearing your browser application data or cache deletes these
-  preferences. On Android, uninstalling the app removes all stored preferences.
+  preferences. On Android, uninstalling the app removes all stored
+  preferences.
 
-* No personal data or geometry configurations are ever transmitted to or stored
-  on `gchouse.org` servers.
+* No personal data or geometry configurations are ever transmitted to or
+  stored on `gchouse.org` servers.
 
 ---
 
@@ -62,16 +64,17 @@ The App is hosted statically using **Google Firebase Hosting** (Google LLC):
   strictly for routing, security, and denial-of-service prevention.
 
 * For more information on Google's privacy practices, see the
-  [Google Privacy Policy](https://policies.google.com/privacy).
+  [Google Privacy Policy](https://policies.google.com/privacy) .
 
 ---
 
 ## Children & Classroom Safe (COPPA & FERPA)
 
-The App is designed to be fully compliant with educational privacy regulations:
+The App is designed to be fully compliant with educational privacy
+regulations:
 
-* **COPPA (Children’s Online Privacy Protection Act):**
-  The App does not collect personal information from children under 13.
+* **COPPA (Children’s Online Privacy Protection Act):** The App does not
+  collect personal information from children under 13.
 
 * **FERPA (Family Educational Rights and Privacy Act):** Because no student
   education records or personal identifiers are collected, maintained, or
@@ -85,8 +88,6 @@ The App is designed to be fully compliant with educational privacy regulations:
 The Polytope Demo is an open-source educational project. If you have questions
 or feedback regarding this Privacy Policy:
 
-* **File an Issue on GitHub:**
-  <https://github.com/fredgc/polytope/issues>
+* **File an Issue on GitHub:** <https://github.com/fredgc/polytope/issues>
 
-* **Visit GC House:**
-  <https://www.gchouse.org>
+* **Visit GC House:** <https://www.gchouse.org>

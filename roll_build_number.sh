@@ -10,15 +10,7 @@ fi
 
 # Extract the new version info
 version=$(grep '^version: ' pubspec.yaml | sed 's/version: //')
-v_num=$(echo "$version" | cut -d'+' -f1)
 echo "Rolling version to $version"
-
-# Update web/version.json
-cat <<EOF > web/version.json
-{
-  "version": "$version"
-}
-EOF
 
 make ASSETS
 

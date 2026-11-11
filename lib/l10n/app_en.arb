@@ -1,0 +1,341 @@
+{
+  "@@locale": "en",
+  "aboutTab": "About",
+  "@aboutTab": {
+    "description": "Tab label for the About screen in help"
+  },
+  "appTitle": "Polytope Demo",
+  "@appTitle": {
+    "description": "Title of the application"
+  },
+  "cancelButton": "Cancel",
+  "@cancelButton": {
+    "description": "Cancel button label"
+  },
+  "closeTooltip": "Close",
+  "@closeTooltip": {
+    "description": "Tooltip for close buttons"
+  },
+  "colorPickerTitle": "Pick Color",
+  "@colorPickerTitle": {
+    "description": "Title for color picker dialog"
+  },
+  "controlsTab": "Controls",
+  "@controlsTab": {
+    "description": "Tab label for the Controls documentation"
+  },
+  "debugTooltip": "Debug",
+  "@debugTooltip": {
+    "description": "Tooltip for debug button"
+  },
+  "decreaseSpeedTooltip": "Decrease speed",
+  "@decreaseSpeedTooltip": {
+    "description": "Tooltip for decreasing slider speed"
+  },
+  "dimButtonLabel": "Dim {dim}",
+  "@dimButtonLabel": {
+    "description": "Short label for dimension button on app bar",
+    "placeholders": {
+      "dim": {
+        "type": "int",
+        "example": "4"
+      }
+    }
+  },
+  "dimensionMenuLabel": "Dimension {dim}",
+  "@dimensionMenuLabel": {
+    "description": "Menu item label for selecting a dimension",
+    "placeholders": {
+      "dim": {
+        "type": "int",
+        "example": "4"
+      }
+    }
+  },
+  "doneButton": "Done",
+  "@doneButton": {
+    "description": "Done button label"
+  },
+  "doneTooltip": "Save and close",
+  "@doneTooltip": {
+    "description": "Tooltip for save and close button"
+  },
+  "helpTitle": "Help",
+  "@helpTitle": {
+    "description": "Title of the Help screen"
+  },
+  "helpTooltip": "Help",
+  "@helpTooltip": {
+    "description": "Tooltip for help button"
+  },
+  "increaseSpeedTooltip": "Increase speed",
+  "@increaseSpeedTooltip": {
+    "description": "Tooltip for increasing slider speed"
+  },
+  "initializingApp": "Initializing App...",
+  "@initializingApp": {
+    "description": "Status text while initializing application"
+  },
+  "initializingSettings": "Initializing Settings...",
+  "@initializingSettings": {
+    "description": "Status text while initializing settings"
+  },
+  "languageAuto": "Auto",
+  "@languageAuto": {
+    "description": "Option to use system locale"
+  },
+  "languageEnglish": "English",
+  "@languageEnglish": {
+    "description": "English language option"
+  },
+  "languageSpanish": "Español",
+  "@languageSpanish": {
+    "description": "Spanish language option"
+  },
+  "loadingText": "Loading...",
+  "@loadingText": {
+    "description": "Text displayed while web content is loading"
+  },
+  "movementRotate3": "Rotate R3",
+  "@movementRotate3": {
+    "description": "Camera movement mode: Rotate in 3D"
+  },
+  "movementRotate3Tip": "Mouse drags will rotate the polytope in R3",
+  "@movementRotate3Tip": {
+    "description": "Tooltip for 3D rotation mode"
+  },
+  "movementRotate4": "Rotate R4",
+  "@movementRotate4": {
+    "description": "Camera movement mode: Rotate in 4D"
+  },
+  "movementRotate4Tip": "Mouse drags will rotate the polytope in R4",
+  "@movementRotate4Tip": {
+    "description": "Tooltip for 4D rotation mode"
+  },
+  "movementRotate5": "Rotate R5",
+  "@movementRotate5": {
+    "description": "Camera movement mode: Rotate in 5D"
+  },
+  "movementRotate5Tip": "Mouse drags will rotate the polytope in R5",
+  "@movementRotate5Tip": {
+    "description": "Tooltip for 5D rotation mode"
+  },
+  "movementScale": "Scale",
+  "@movementScale": {
+    "description": "Camera movement mode: Scale"
+  },
+  "movementScaleTip": "Mouse drags will make the polytope larger or smaller",
+  "@movementScaleTip": {
+    "description": "Tooltip for scale mode"
+  },
+  "movementTranslate": "Translate",
+  "@movementTranslate": {
+    "description": "Camera movement mode: Translate"
+  },
+  "movementTranslateTip": "Mouse drags will move or translate the polytope",
+  "@movementTranslateTip": {
+    "description": "Tooltip for translation mode"
+  },
+  "movementZolly": "Zolly",
+  "@movementZolly": {
+    "description": "Camera movement mode: Zolly"
+  },
+  "movementZollyTip": "Zolly = zoom + dolly. Mouse drags will change the perspective.",
+  "@movementZollyTip": {
+    "description": "Tooltip for zolly mode"
+  },
+  "overviewTab": "Overview",
+  "@overviewTab": {
+    "description": "Tab label for the overview documentation"
+  },
+  "polytopeCell120": "120 Cell",
+  "@polytopeCell120": {
+    "description": "Name of the 120-cell regular polychoron"
+  },
+  "polytopeCell24": "24 Cell",
+  "@polytopeCell24": {
+    "description": "Name of the 24-cell regular polychoron"
+  },
+  "polytopeCell600": "600 Cell",
+  "@polytopeCell600": {
+    "description": "Name of the 600-cell regular polychoron"
+  },
+  "polytopeCross": "Cross Type",
+  "@polytopeCross": {
+    "description": "Name of the cross-polytope / orthoplex"
+  },
+  "polytopeCube": "Cube",
+  "@polytopeCube": {
+    "description": "Name of the hypercube / cube"
+  },
+  "polytopeDodec": "Dodecahedron",
+  "@polytopeDodec": {
+    "description": "Name of the dodecahedron"
+  },
+  "polytopeIco": "Icosahedron",
+  "@polytopeIco": {
+    "description": "Name of the icosahedron"
+  },
+  "polytopeSimplex": "Simplex",
+  "@polytopeSimplex": {
+    "description": "Name of the regular simplex"
+  },
+  "privacyTab": "Privacy",
+  "@privacyTab": {
+    "description": "Tab label for the privacy policy documentation"
+  },
+  "settingAppVersion": "Application {appName} version {version}.{buildNumber}",
+  "@settingAppVersion": {
+    "description": "Application version information text",
+    "placeholders": {
+      "appName": {
+        "type": "String",
+        "example": "polytope"
+      },
+      "version": {
+        "type": "String",
+        "example": "2.1.1"
+      },
+      "buildNumber": {
+        "type": "String",
+        "example": "0"
+      }
+    }
+  },
+  "settingBackgroundColor": "Background Color",
+  "@settingBackgroundColor": {
+    "description": "Label for background color setting"
+  },
+  "settingClipGapSize": "Clipping Gap Size",
+  "@settingClipGapSize": {
+    "description": "Label for clipping gap size setting"
+  },
+  "settingDebugLogs": "Periodic Debug Logs",
+  "@settingDebugLogs": {
+    "description": "Label for debug logs setting"
+  },
+  "settingEnableLineClipping": "Clip Crossing Lines",
+  "@settingEnableLineClipping": {
+    "description": "Label for enable line clipping setting"
+  },
+  "settingPolyColor": "Polytope Color",
+  "@settingPolyColor": {
+    "description": "Label for polytope color setting"
+  },
+  "settingPolyEdgeThickness": "Polytope Edge Thickness",
+  "@settingPolyEdgeThickness": {
+    "description": "Label for polytope edge thickness setting"
+  },
+  "settingShowHotkeyButtons": "Show Hotkey Buttons",
+  "@settingShowHotkeyButtons": {
+    "description": "Label for show hotkey buttons setting"
+  },
+  "settingSliceColor": "Slice Color",
+  "@settingSliceColor": {
+    "description": "Label for slice color setting"
+  },
+  "settingSliceEdgeThickness": "Slice Edge Thickness",
+  "@settingSliceEdgeThickness": {
+    "description": "Label for slice edge thickness setting"
+  },
+  "settingStickyDelay": "Sticky delay",
+  "@settingStickyDelay": {
+    "description": "Label for sticky delay setting"
+  },
+  "settingStickyRadius": "Sticky radius",
+  "@settingStickyRadius": {
+    "description": "Label for sticky radius setting"
+  },
+  "settingThemeBrightness": "Theme Brightness",
+  "@settingThemeBrightness": {
+    "description": "Label for theme brightness setting"
+  },
+  "settingThemeColor": "Theme Color",
+  "@settingThemeColor": {
+    "description": "Label for theme color setting"
+  },
+  "settingVertexRadius": "Vertex Size",
+  "@settingVertexRadius": {
+    "description": "Label for vertex size setting"
+  },
+  "settingsTitle": "Settings",
+  "@settingsTitle": {
+    "description": "Title of the Settings screen"
+  },
+  "settingsTooltip": "Settings",
+  "@settingsTooltip": {
+    "description": "Tooltip for settings button"
+  },
+  "showSliceTooltip": "Show slice",
+  "@showSliceTooltip": {
+    "description": "Tooltip for showing the slice checkbox"
+  },
+  "sliceLabel": "slice:",
+  "@sliceLabel": {
+    "description": "Label next to the slice checkbox"
+  },
+  "slicesTab": "Slices",
+  "@slicesTab": {
+    "description": "Tab label for the Slices documentation"
+  },
+  "sliderSlice": "Slice",
+  "@sliderSlice": {
+    "description": "Label for the hyperplane slice slider"
+  },
+  "snapCell": "3-Cell first",
+  "@snapCell": {
+    "description": "Rotation snap: 3-cell in front"
+  },
+  "snapCellTip": "Rotate polytope so a 3-cell is in front",
+  "@snapCellTip": {
+    "description": "Tooltip for 3-cell first rotation snap"
+  },
+  "snapEdge": "Edge first",
+  "@snapEdge": {
+    "description": "Rotation snap: edge in front"
+  },
+  "snapEdgeTip": "Rotate polytope so an edge is in front",
+  "@snapEdgeTip": {
+    "description": "Tooltip for edge first rotation snap"
+  },
+  "snapFace": "Face first",
+  "@snapFace": {
+    "description": "Rotation snap: face in front"
+  },
+  "snapFaceTip": "Rotate polytope so a face is in front",
+  "@snapFaceTip": {
+    "description": "Tooltip for face first rotation snap"
+  },
+  "snapVertex": "Vertex first",
+  "@snapVertex": {
+    "description": "Rotation snap: vertex in front"
+  },
+  "snapVertexTip": "Rotate polytope so a vertex is in front",
+  "@snapVertexTip": {
+    "description": "Tooltip for vertex first rotation snap"
+  },
+  "switchLanguageTooltip": "Switch Language",
+  "@switchLanguageTooltip": {
+    "description": "Tooltip for language switcher popup menu"
+  },
+  "switchToArTooltip": "Switch to AR mode",
+  "@switchToArTooltip": {
+    "description": "Tooltip for switching to augmented reality mode"
+  },
+  "termsTab": "Terms",
+  "@termsTab": {
+    "description": "Tab label for terms of service documentation"
+  },
+  "themeModeDark": "Dark",
+  "@themeModeDark": {
+    "description": "Dark theme mode option"
+  },
+  "themeModeLight": "Light",
+  "@themeModeLight": {
+    "description": "Light theme mode option"
+  },
+  "themeModeSystem": "System",
+  "@themeModeSystem": {
+    "description": "System default theme mode option"
+  }
+}
