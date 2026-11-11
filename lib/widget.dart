@@ -20,6 +20,7 @@ import 'package:flutter/scheduler.dart';
 
 import 'animate.dart';
 import 'help.dart';
+import 'l10n/l10n_extension.dart';
 import 'regular.dart';
 import 'scene.dart';
 import 'settings.dart';
@@ -118,6 +119,7 @@ class PolyAppWidgetState extends State<PolyAppWidget>
   @override
   void dispose() {
     // print("RED: Displose of widget.");
+    _statusListener.cancel();
     debug_timer.cancel();
     HardwareKeyboard.instance.removeHandler(keyHandler);
     animator.dispose();
@@ -148,18 +150,15 @@ class PolyAppWidgetState extends State<PolyAppWidget>
         _narrow = false;
         _constraints = constraints;
       }
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: Settings.instance.theme.theme_data,
-        home: Scaffold(
+      return Theme(
+        data: Settings.instance.theme.theme_data,
+        child: Scaffold(
           appBar: makeAppBar(context),
-          body: Container(
-            child: SafeArea(
-              child: Center(
-                child: Builder(
-                  // This makes all the children use my theme.
-                  builder: (BuildContext c) => _centerWidget(c),
-                ),
+          body: SafeArea(
+            child: Center(
+              child: Builder(
+                // This makes all the children use my theme.
+                builder: (BuildContext c) => _centerWidget(c),
               ),
             ),
           ),
@@ -173,8 +172,8 @@ class PolyAppWidgetState extends State<PolyAppWidget>
       onPressed: () {
         Navigator.pushNamed(context, SettingsScreen.routeName);
       },
-      icon: Icon(Icons.settings),
-      tooltip: "Settings",
+      icon: const Icon(Icons.settings),
+      tooltip: context.l10n.settingsTooltip,
     );
 
     return AppBar(
@@ -188,7 +187,7 @@ class PolyAppWidgetState extends State<PolyAppWidget>
     return MenuAnchor(
         menuChildren: Regular.values
             .map((poly) => MenuItemButton(
-                  child: Text(poly.name),
+                  child: Text(poly.localizedName(context)),
                   onPressed: () {
                     if (poly != scene.type) {
                       setState(() {
@@ -216,11 +215,12 @@ class PolyAppWidgetState extends State<PolyAppWidget>
   // Make a text widget that might be truncated. If the text is truncated, then
   // we want to switch to the narrow layout.
   Widget _polyTitle(BuildContext context) {
+    final title = scene.type.localizedName(context);
     return LayoutBuilder(builder: (context, size) {
       var tp = TextPainter(
         maxLines: 1,
         textDirection: TextDirection.ltr,
-        text: TextSpan(text: scene.type.name),
+        text: TextSpan(text: title),
       );
       tp.layout(maxWidth: size.maxWidth);
       var exceeded = tp.didExceedMaxLines;
@@ -236,7 +236,7 @@ class PolyAppWidgetState extends State<PolyAppWidget>
         }
       }
       return Text(
-        scene.type.name,
+        title,
         softWrap: false,
         overflow: TextOverflow.ellipsis,
       );
@@ -246,9 +246,11 @@ class PolyAppWidgetState extends State<PolyAppWidget>
   List<Widget> _getButtons(BuildContext context) {
     // print("Get buttons.");
     List<Widget> list = [];
-    if (!_narrow) _getOtherButtons(list, context);
+    final isCompact = MediaQuery.sizeOf(context).width < 600;
+    if (!_narrow && !isCompact) _getOtherButtons(list, context);
     if (widget.xr.supported && !kReleaseMode) {
-      list.add(_makeButton("Switch to AR mode", Icons.view_in_ar, () {
+      list.add(
+          _makeButton(context.l10n.switchToArTooltip, Icons.view_in_ar, () {
         print("RED: switch to XR.");
         widget.xr.switchToXR().then((bool itWorked) {
           print("it_worked = $itWorked");
@@ -258,20 +260,25 @@ class PolyAppWidgetState extends State<PolyAppWidget>
         });
       }));
     }
-    list.add(_makeButton("Help", Icons.help, () {
+    list.add(_makeButton(context.l10n.helpTooltip, Icons.help, () {
       Navigator.pushNamed(context, HelpScreen.routeName);
     }));
     if (debug_logs.value) {
-      list.add(_makeButton("Debug", Icons.info, () {
+      list.add(_makeButton(context.l10n.debugTooltip, Icons.info, () {
         scene.dumpDebugInfo();
       }));
     }
+    list.add(_buildLanguageSwitcher(context));
     return list;
   }
 
+  Widget _buildLanguageSwitcher(BuildContext context) {
+    return const LanguageMenuButton();
+  }
+
   void _getOtherButtons(List<Widget> list, BuildContext context) {
-    list.add(_pickDim());
-    list.add(_sliceControl());
+    list.add(_pickDim(context));
+    list.add(_sliceControl(context));
     list.add(scene.buildMovementMenu(context, this));
   }
 
@@ -287,13 +294,13 @@ class PolyAppWidgetState extends State<PolyAppWidget>
     );
   }
 
-  Widget _pickDim() {
+  Widget _pickDim(BuildContext context) {
     // print("Pick dim. current = ${scene.polytope.dim}");
     return MenuAnchor(
         menuChildren: [
           for (var i = Regular.min_dim; i <= Regular.max_dim; i++)
             MenuItemButton(
-              child: Text("Dimension $i"),
+              child: Text(context.l10n.dimensionMenuLabel(i)),
               onPressed: () {
                 if (i != scene.polytope.dim) {
                   setState(() {
@@ -314,17 +321,17 @@ class PolyAppWidgetState extends State<PolyAppWidget>
                 controller.open();
               }
             },
-            child: Text("Dim ${scene.polytope.dim}"),
+            child: Text(context.l10n.dimButtonLabel(scene.polytope.dim)),
           );
         });
   }
 
-  Widget _sliceControl() {
+  Widget _sliceControl(BuildContext context) {
     return Tooltip(
-        message: 'Show slice',
-        waitDuration: Duration(seconds: 3),
+        message: context.l10n.showSliceTooltip,
+        waitDuration: const Duration(seconds: 3),
         child: Row(children: <Widget>[
-          Text("slice:"),
+          Text(context.l10n.sliceLabel),
           Checkbox(
               value: scene.slice_active,
               onChanged: (bool? value) {
@@ -338,7 +345,7 @@ class PolyAppWidgetState extends State<PolyAppWidget>
   Widget _centerWidget(BuildContext context) {
     if (Settings.instance.status == SettingsStatus.NotInitialized) {
       Settings.instance.initialize(context);
-      return Text("Initializing Settings...");
+      return Text(context.l10n.initializingSettings);
     }
     if (use_xr) {
       print("BLUE: building xr widget.");
@@ -346,10 +353,16 @@ class PolyAppWidgetState extends State<PolyAppWidget>
     }
 
     List<Widget> column = [];
-    if (_narrow) {
+    final isCompact = MediaQuery.sizeOf(context).width < 600;
+    if (_narrow || isCompact) {
       List<Widget> list = [];
       _getOtherButtons(list, context);
-      column.add(Row(children: list));
+      column.add(
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(children: list),
+        ),
+      );
     }
     column.add(Expanded(child: mainViewWidget(context)));
     if (scene.slice != null) {
@@ -362,7 +375,10 @@ class PolyAppWidgetState extends State<PolyAppWidget>
     return Container(
       decoration: BoxDecoration(
         color: Settings.instance.background_color,
-        border: Border.all(width: 2.0),
+        border: Border.all(
+          width: 2.0,
+          color: Settings.instance.theme.scheme.outline,
+        ),
       ),
       child: ClipRect(child: scene.build(context, this)),
     );

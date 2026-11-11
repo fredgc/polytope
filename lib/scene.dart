@@ -21,6 +21,7 @@ import "drawable.dart";
 import "printer.dart";
 import "vector.dart";
 import 'color.dart';
+import 'l10n/l10n_extension.dart';
 import 'polytope.dart';
 import 'regular.dart';
 import 'settings.dart';
@@ -416,7 +417,8 @@ class Scene {
     var movements = CameraMovement.values
         .where((item) => (item.dim < polytope.dim))
         .map((item) => MenuItemButton(
-              child: makeTip(item.tip, item.hotkeys, Text(item.name)),
+              child: makeTip(item.localizedTip(context), item.hotkeys,
+                  Text(item.localizedName(context))),
               onPressed: () {
                 if (item != movement) {
                   state.setState(() {
@@ -429,7 +431,8 @@ class Scene {
     var snaps = RotationSnap.values
         .where((item) => (item.dim < polytope.dim))
         .map((item) => MenuItemButton(
-              child: makeTip(item.tip, item.character, Text(item.name)),
+              child: makeTip(item.localizedTip(context), item.character,
+                  Text(item.localizedName(context))),
               onPressed: () {
                 // print("Menu $item");
                 state.setState(() {
@@ -444,7 +447,7 @@ class Scene {
         builder:
             (BuildContext context, MenuController controller, Widget? child) {
           return Tooltip(
-              message: movement.tip,
+              message: movement.localizedTip(context),
               waitDuration: Duration(seconds: 2),
               child: TextButton(
                 onPressed: () {
@@ -454,7 +457,7 @@ class Scene {
                     controller.open();
                   }
                 },
-                child: Text(movement.name),
+                child: Text(movement.localizedName(context)),
               ));
         });
   }
@@ -605,6 +608,40 @@ enum CameraMovement {
   final String hotkeys;
   @override
   String toString() => name;
+
+  String localizedName(BuildContext context) {
+    switch (this) {
+      case CameraMovement.rotate3:
+        return context.l10n.movementRotate3;
+      case CameraMovement.rotate4:
+        return context.l10n.movementRotate4;
+      case CameraMovement.rotate5:
+        return context.l10n.movementRotate5;
+      case CameraMovement.zolly:
+        return context.l10n.movementZolly;
+      case CameraMovement.translate:
+        return context.l10n.movementTranslate;
+      case CameraMovement.scale:
+        return context.l10n.movementScale;
+    }
+  }
+
+  String localizedTip(BuildContext context) {
+    switch (this) {
+      case CameraMovement.rotate3:
+        return context.l10n.movementRotate3Tip;
+      case CameraMovement.rotate4:
+        return context.l10n.movementRotate4Tip;
+      case CameraMovement.rotate5:
+        return context.l10n.movementRotate5Tip;
+      case CameraMovement.zolly:
+        return context.l10n.movementZollyTip;
+      case CameraMovement.translate:
+        return context.l10n.movementTranslateTip;
+      case CameraMovement.scale:
+        return context.l10n.movementScaleTip;
+    }
+  }
 }
 
 enum RotationSnap {
@@ -620,6 +657,33 @@ enum RotationSnap {
   final String character;
   @override
   String toString() => name;
+
+  String localizedName(BuildContext context) {
+    switch (this) {
+      case RotationSnap.vertex:
+        return context.l10n.snapVertex;
+      case RotationSnap.edge:
+        return context.l10n.snapEdge;
+      case RotationSnap.face:
+        return context.l10n.snapFace;
+      case RotationSnap.cell:
+        return context.l10n.snapCell;
+    }
+  }
+
+  String localizedTip(BuildContext context) {
+    switch (this) {
+      case RotationSnap.vertex:
+        return context.l10n.snapVertexTip;
+      case RotationSnap.edge:
+        return context.l10n.snapEdgeTip;
+      case RotationSnap.face:
+        return context.l10n.snapFaceTip;
+      case RotationSnap.cell:
+        return context.l10n.snapCellTip;
+    }
+  }
+
   void snap(Scene scene) {
     scene.transform.resetRotation();
     // rotate so that the cell points in the direction most away from the

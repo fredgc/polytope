@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>slice_de</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+  </style>
+  <link rel="stylesheet" href="css/doc_style.css" />
+</head>
+<body>
+<h1 id="schnitte">Schnitte</h1>
+<p>Um die Veranschaulichung eines n-dimensionalen Polytops zu
+erleichtern, zeigt dieses Programm den Schnitt des Polytops mit einer
+(n-1)-dimensionalen Hyperebene. Der Schnitt ist ebenfalls ein konvexes
+Polytop, wenngleich er nicht zwingend regelmäßig ist. Wenn der Schnitt
+aktiviert ist, steuert ein Schieberegler am unteren Bildschirmrand die
+Höhe oder Position der Hyperebene.</p>
+<p>Um die Funktionsweise zu verstehen, beginnen Sie mit einem 3D-Würfel.
+Klicken Sie auf die Schnitt-Schaltfläche. Das Bewegen des Schiebereglers
+zeigt, dass der Schnitt eines Würfels mit einer zu einer Fläche
+parallelen Ebene ein Quadrat ist.</p>
+<p>Wird der Würfel mit einer Kante nach vorne gedreht („Edge first“),
+entsteht ein Rechteck, das zu einem Quadrat anwächst und wieder zu einer
+Kante schrumpft. Wird er mit einer Ecke nach vorne gedreht („Vertex
+first“), entsteht ein Dreieck, das im Mittelpunkt des Würfels zu einem
+regelmäßigen Sechseck wird.</p>
+<p>Sobald Sie mit 3D-Schnitten vertraut sind, probieren Sie den Schnitt
+eines 4D-Hyperwürfels mit einer dreidimensionalen Hyperebene aus.</p>
+</body>
+</html>

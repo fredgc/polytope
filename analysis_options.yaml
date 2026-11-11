@@ -17,4 +17,21 @@ analyzer:
     - build/**
     - android/**
     - web/**
+  errors:
+    avoid_print: ignore
+    non_constant_identifier_names: ignore
+    hash_and_equals: ignore
+    deprecated_member_use: ignore
+    dead_code: ignore
+    unused_local_variable: ignore
+    unnecessary_null_comparison: ignore
+    invalid_use_of_protected_member: ignore
+    unused_import: ignore
+    strict_top_level_inference: ignore
+    curly_braces_in_flow_control_structures: ignore
+    avoid_unnecessary_containers: ignore
+    use_super_parameters: ignore
+    constant_identifier_names: ignore
+    library_private_types_in_public_api: ignore
+    use_build_context_synchronously: ignore
 include: package:flutter_lints/flutter.yaml

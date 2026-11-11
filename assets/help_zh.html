@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>help_zh</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+  </style>
+  <link rel="stylesheet" href="css/doc_style.css" />
+</head>
+<body>
+<h1 id="多胞体-polytope">多胞体 (Polytope)</h1>
+<p>“多胞体（Polytope）”是指多边形或多面体向任意维度的推广。我们称多胞体的组成单元为“胞（cell）”，它是边或面的推广概念。</p>
+<p>本程序仅研究正凸多胞体。这意味着它们的所有胞和夹角都是全等的。在3维空间中，五种正多胞体被称为柏拉图立体。</p>
+<table>
+<colgroup>
+<col style="width: 12%" />
+<col style="width: 20%" />
+<col style="width: 68%" />
+</colgroup>
+<thead>
+<tr>
+<th>每个胞都是 (n-1) 维多胞体</th>
+<th>每个胞都是 (n-1) 维多胞体</th>
+<th>每个胞都是 (n-1) 维多胞体</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>每个胞都是 (n-1) 维多胞体</td>
+<td>每个胞都是 (n-1) 维多胞体</td>
+<td>每个胞都是 (n-1) 维多胞体</td>
+</tr>
+<tr>
+<td>每个胞都是 (n-1) 维多胞体</td>
+<td>每个胞都是 (n-1) 维多胞体</td>
+<td>每个胞都是 (n-1) 维多胞体</td>
+</tr>
+<tr>
+<td>每个胞都是 (n-1) 维多胞体</td>
+<td>每个胞都是 (n-1) 维多胞体</td>
+<td>每个胞都是 (n-1) 维多胞体</td>
+</tr>
+<tr>
+<td>每个胞都是 (n-1) 维多胞体</td>
+<td>每个胞都是 (n-1) 维多胞体</td>
+<td>每个胞都是 (n-1) 维多胞体</td>
+</tr>
+<tr>
+<td>每个胞都是 (n-1) 维多胞体</td>
+<td>每个胞都是 (n-1) 维多胞体</td>
+<td>每个胞都是 (n-1) 维多胞体</td>
+</tr>
+<tr>
+<td>每个胞都是 (n-1) 维多胞体</td>
+<td>每个胞都是 (n-1) 维多胞体</td>
+<td>每个胞都是 (n-1) 维多胞体</td>
+</tr>
+</tbody>
+</table>
+<h2 id="类型">类型</h2>
+<h3 id="单纯形-simplex">单纯形 (Simplex)</h3>
+<p>单纯形是最基本的多胞体。线段、三角形和四面体都是单纯形。在更高维度中，取一个(n-1)维单纯形并在其上方增加一个新顶点连接所有既有顶点，即可构造出n维单纯形
+。各个维度均存在单纯形。</p>
+<h3 id="超立方体-hypercube">超立方体 (Hypercube)</h3>
+<p>超立方体（或n维立方体）是正方形或立方体的推广。各个维度均存在超立方体。</p>
+<h3 id="正轴体-orthoplex-cross-polytope">正轴体 (Orthoplex /
+Cross-polytope)</h3>
+<p>n维正轴体是通过取一个(n-1)维立方体并在其上下各添加一个新点，并将每个顶点与这两个新点相连而构成的。各个维度均存在正轴体。</p>
+<h3 id="正十二面体">正十二面体</h3>
+<p>正十二面体仅存在于3维空间中，拥有12个正五边形面。</p>
+<h3 id="正二十面体">正二十面体</h3>
+<p>正二十面体仅存在于3维空间中，拥有20个正三角形面。</p>
+<h3 id="胞体">24-胞体</h3>
+<p>24-胞体仅存在于4维空间中，拥有24个正八面体胞。</p>
+</body>
+</html>

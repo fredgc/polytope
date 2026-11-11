@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>slice_ja</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+  </style>
+  <link rel="stylesheet" href="css/doc_style.css" />
+</head>
+<body>
+<h1 id="断面スライス">断面スライス</h1>
+<p>n次元多胞体の可視化を助けるため、本プログラムは多胞体と(n-1)次元超平面との交差（断面スライス）を表示します。交差図形も凸多胞体になりますが、正多胞体と
+は限りません。スライスが有効な場合、画面下部のスライダーで超平面の高さや位置を調節できます。</p>
+<p>仕組みを理解するには、まず3次元立方体から始めます。「スライス」ボタンをクリックします。スライダーを動かすと、立方体と面に平行な平面との交差が正方形になるこ
+とが確認できます。</p>
+<p>立方体を「辺を正面」に回転させると、長方形が現れて正方形へと広がり、再び辺へと縮小します。「頂点を正面」に回転させると、三角形が現れ、立方体の中心で正六角形
+へと変化します。</p>
+<p>3次元スライスに慣れたら、4次元超立方体を3次元超平面で切断してみてください。</p>
+</body>
+</html>

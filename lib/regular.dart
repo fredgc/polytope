@@ -13,7 +13,9 @@
 // limitations under the License.
 
 import 'dart:math' as math;
+import 'package:flutter/widgets.dart';
 
+import 'l10n/l10n_extension.dart';
 import "printer.dart";
 import "polytope.dart";
 import "permute.dart";
@@ -33,6 +35,28 @@ enum Regular {
   const Regular(this.name);
 
   final String name;
+
+  String localizedName(BuildContext context) {
+    switch (this) {
+      case Regular.simplex:
+        return context.l10n.polytopeSimplex;
+      case Regular.cube:
+        return context.l10n.polytopeCube;
+      case Regular.cross:
+        return context.l10n.polytopeCross;
+      case Regular.dodec:
+        return context.l10n.polytopeDodec;
+      case Regular.ico:
+        return context.l10n.polytopeIco;
+      case Regular.cell24:
+        return context.l10n.polytopeCell24;
+      case Regular.cell120:
+        return context.l10n.polytopeCell120;
+      case Regular.cell600:
+        return context.l10n.polytopeCell600;
+    }
+  }
+
   static final int min_dim = 2;
   static final int max_dim = Vector.d;
   static final double golden =

@@ -39,6 +39,7 @@ void main(List<String> arguments) async {
     var worker = MyReWriter();
     int result = await worker.rewrite(inputFilePath, outputFilePath);
     print("Done with worker.");
+    print("Done with main.");
     exit(result);
   } catch (e) {
     // The flutter command line tool will see a non-zero exit code (1 in this case)
@@ -50,7 +51,6 @@ void main(List<String> arguments) async {
     );
     exit(1);
   }
-  print("Done with main.");
 }
 
 class MyReWriter {

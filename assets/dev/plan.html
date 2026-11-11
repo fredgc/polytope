@@ -89,16 +89,16 @@
   <link rel="stylesheet" href="../css/doc_style.css" />
 </head>
 <body>
-<h1 id="polytope-project-plan-v2.1.03">Polytope Project Plan
-(v2.1.0+3)</h1>
+<h1 id="polytope-project-plan">Polytope Project Plan</h1>
 <p>This document outlines the strategic roadmap, architecture goals, and
 long- term milestones for the <strong>Polytope</strong> Flutter
 project.</p>
 <blockquote>
 <p><strong>Note</strong>: Active day-to-day tasks and issue tracking are
-managed &gt; dynamically using <code>~/bin/todo.py</code>. Run
-<code>~/bin/todo.py list</code> to view active &gt; tasks.</p>
+managed &gt;</p>
 </blockquote>
+<p>dynamically using <code>~/bin/todo.py</code>. Run
+<code>~/bin/todo.py list</code> to view active &gt; tasks.</p>
 <hr />
 <p>This document outlines the architecture, roadmap, and open questions
 for adding <strong>Virtual Reality (VR)</strong> and
@@ -168,10 +168,13 @@ class="sourceCode dart"><code class="sourceCode dart"><span id="cb2-1"><a href="
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (<span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span>; i <span class="op">&lt;</span> j; i<span class="op">++</span>) <span class="op">{</span></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    temp<span class="op">.</span>x[i] <span class="op">=</span> temp<span class="op">.</span>x[i] <span class="op">/</span> (<span class="fl">1.0</span> <span class="op">-</span> zolly[j] <span class="op">*</span> temp<span class="op">.</span>x[j]);</span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div></li>
+</ul></li>
+</ol>
 <p>At this point, <code>(temp.x[0], temp.x[1], temp.x[2])</code> are
 true <strong>3D coordinates in
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>ℝ</mi><mn>3</mn></msup><annotation encoding="application/x-tex">\mathbb{R}^3</annotation></semantics></math></strong>.</p></li>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>ℝ</mi><mn>3</mn></msup><annotation encoding="application/x-tex">\mathbb{R}^3</annotation></semantics></math></strong>.</p>
+<ul>
 <li><p>However, the code immediately flattens them to 2D screen
 space:</p>
 <div class="sourceCode" id="cb3"><pre
@@ -181,7 +184,8 @@ class="sourceCode dart"><code class="sourceCode dart"><span id="cb3-1"><a href="
 <li><p>In XR, we do <strong>not</strong> flatten to 2D! The XR device’s
 head tracking and stereoscopic cameras handle the final 3D-to-eye
 projection. We need the 3D vertices and 3D line/polygon edges.</p></li>
-</ul></li>
+</ul>
+<ol start="2" type="1">
 <li><p><strong>Rendering Technology</strong>:</p>
 <ul>
 <li><p>Flutter’s standard <code>Canvas</code> is a 2D rendering
@@ -358,52 +362,41 @@ at eye level.</li>
 <h2 id="phased-roadmap">5. Phased Roadmap</h2>
 <table>
 <colgroup>
-<col style="width: 33%" />
-<col style="width: 33%" />
-<col style="width: 33%" />
+<col style="width: 15%" />
+<col style="width: 53%" />
+<col style="width: 31%" />
 </colgroup>
 <thead>
 <tr>
-<th>Phase</th>
-<th>Description</th>
-<th>Deliverables</th>
+<th>Ready for Android XR headsets.</th>
+<th>Ready for Android XR headsets.</th>
+<th>Ready for Android XR headsets.</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Phase 1: 3D Data Pipeline</strong></td>
-<td>Refactor <code>CoordinateTransform</code> to separate
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>ℝ</mi><mi>d</mi></msup><mo>→</mo><msup><mi>ℝ</mi><mn>3</mn></msup></mrow><annotation encoding="application/x-tex">\mathbb{R}^d \to \mathbb{R}^3</annotation></semantics></math>
-from
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>ℝ</mi><mn>3</mn></msup><mo>→</mo><msup><mi>ℝ</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">\mathbb{R}^3 \to \mathbb{R}^2</annotation></semantics></math>.
-Create <code>SpatialScene</code> in pure Dart.</td>
-<td>Pure Dart unit tests verifying 3D coordinate and slice vertex
-generation without canvas.</td>
+<td>Ready for Android XR headsets.</td>
+<td>Ready for Android XR headsets.</td>
+<td>Ready for Android XR headsets.</td>
 </tr>
 <tr>
-<td><strong>Phase 2: WebXR Rendering</strong></td>
-<td>Connect <code>SpatialScene</code> to a WebGL rendering loop inside
-<code>xr_support_web.dart</code> with WebXR session management.</td>
-<td>Working WebXR demo in Chrome Android / Meta Quest showing floating
-wireframe polytope.</td>
+<td>Ready for Android XR headsets.</td>
+<td>Ready for Android XR headsets.</td>
+<td>Ready for Android XR headsets.</td>
 </tr>
 <tr>
-<td><strong>Phase 3: WebXR UI &amp; Interaction</strong></td>
-<td>Add WebXR DOM Overlay for the Flutter controls (slice slider,
-dimension selection, 4D rotation buttons).</td>
-<td>Fully interactive WebXR experience.</td>
+<td>Ready for Android XR headsets.</td>
+<td>Ready for Android XR headsets.</td>
+<td>Ready for Android XR headsets.</td>
 </tr>
 <tr>
-<td><strong>Phase 4: Android AR Mobile</strong></td>
-<td>Integrate <code>SpatialScene</code> with
-<code>ar_flutter_plugin_2</code> (or lightweight ARCore renderer) in
-<code>xr_support_mobile.dart</code>.</td>
-<td>Android AR passthrough experience on phone/tablet.</td>
+<td>Ready for Android XR headsets.</td>
+<td>Ready for Android XR headsets.</td>
+<td>Ready for Android XR headsets.</td>
 </tr>
 <tr>
-<td><strong>Phase 5: Android XR / Spatial Headsets</strong></td>
-<td>Prepare Android XR manifest, spatial panel configuration, and OpenXR
-compatibility.</td>
+<td>Ready for Android XR headsets.</td>
+<td>Ready for Android XR headsets.</td>
 <td>Ready for Android XR headsets.</td>
 </tr>
 </tbody>
@@ -588,6 +581,68 @@ Testing</h3>
 <li><p>Verify build with <code>flutter test</code> and
 <code>flutter build web</code>.</p></li>
 <li><p>Test on Meta Quest Browser over local network / ADB.</p></li>
+</ul>
+<hr />
+<h2 id="visual-accessibility-verification-checklist">Visual &amp;
+Accessibility Verification Checklist</h2>
+<p>Perform these manual checks across supported locales
+(<code>en</code>, <code>es</code>, <code>de</code>, <code>fr</code>,
+<code>ja</code>, <code>lt</code>, <code>pt</code>, <code>zh</code>) on
+mobile and desktop viewports:</p>
+<ul>
+<li><p><strong>Polytope Projections &amp; Canvas</strong>:</p>
+<ul class="task-list">
+<li><p><label><input type="checkbox" />Verify 2D, 3D, 4D, and 5D regular
+polytopes render correctly with clear edge contrast in both light and
+dark modes.</label></p></li>
+<li><p><label><input type="checkbox" />Verify hyperplane slicing renders
+intersection polygons smoothly when toggling <strong>Slice</strong> on
+and off.</label></p></li>
+</ul></li>
+<li><p><strong>Rotation &amp; Transform Modes</strong>:</p>
+<ul class="task-list">
+<li><p><label><input type="checkbox" />Cycle through rotation modes (R3,
+R4, R5, Zolly, Translate) and verify drag gestures apply velocity and
+inertial spin smoothly.</label></p></li>
+<li><p><label><input type="checkbox" />Test snap-to-element buttons
+(vertex, edge, face, 3-cell) and confirm the projection snaps cleanly
+without visual distortion.</label></p></li>
+</ul></li>
+<li><p><strong>Documentation &amp; Help Screen</strong>:</p>
+<ul class="task-list">
+<li><p><label><input type="checkbox" />Open Help dialog and verify all
+tabs load in the active language:</label></p>
+<ul>
+<li><p><code>about</code>: Overview and attribution.</p></li>
+<li><p><code>privacy</code>: Privacy policy.</p></li>
+<li><p><code>terms</code>: Terms of service.</p></li>
+<li><p><code>help</code>: Polytopes introduction and research
+notes.</p></li>
+<li><p><code>slice</code>: Hyperplane slicing guide.</p></li>
+<li><p><code>controls</code>: Controller and gesture guide.</p></li>
+</ul></li>
+<li><p><label><input type="checkbox" />Verify that markdown formatting
+and equations render legibly without horizontal clipping on narrow
+screens.</label></p></li>
+</ul></li>
+<li><p><strong>Language Menu &amp; Navigation</strong>:</p>
+<ul class="task-list">
+<li><p><label><input type="checkbox" />Switch to each language from the
+top bar language menu and confirm all UI labels, toolbars, and help tabs
+update immediately.</label></p></li>
+<li><p><label><input type="checkbox" />Switch to <strong>Auto</strong>
+and verify the app reverts cleanly to the system default
+locale.</label></p></li>
+</ul></li>
+<li><p><strong>Touch Targets &amp; Screen Readers</strong>:</p>
+<ul class="task-list">
+<li><p><label><input type="checkbox" />Verify that top bar action
+buttons (About, Privacy, Terms, Overview, Slices, Controls, Settings,
+Close) have sufficient touch padding on mobile.</label></p></li>
+<li><p><label><input type="checkbox" />Enable TalkBack (Android) or
+VoiceOver (iOS/macOS) and confirm screen reader announcements for
+transform mode changes and snap actions.</label></p></li>
+</ul></li>
 </ul>
 </body>
 </html>

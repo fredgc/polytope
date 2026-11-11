@@ -14,6 +14,7 @@
 
 import 'package:flutter/material.dart';
 
+import 'l10n/l10n_extension.dart';
 import "printer.dart";
 import 'settings.dart';
 
@@ -318,6 +319,13 @@ class MySlider with ChangeNotifier {
     painter.paint(canvas, offset);
   }
 
+  String localizedName(BuildContext context) {
+    if (name.toLowerCase() == "slice") {
+      return context.l10n.sliderSlice;
+    }
+    return name;
+  }
+
   Widget build(BuildContext context) {
     build_counter++;
     // print("BLUE: sticky_delay = ${zzz(sticky_delay)}, radius=${zzz(sticky_radius)}");
@@ -327,11 +335,12 @@ class MySlider with ChangeNotifier {
     grid_color = theme.colorScheme.primary;
     return IntrinsicHeight(
         child: Row(children: <Widget>[
-      Text("$name: "),
+      Text("${localizedName(context)}: "),
       Opacity(
           opacity: allow_animate ? 1.0 : 0.0,
           child: IconButton(
-              icon: Icon(Icons.arrow_left),
+              icon: const Icon(Icons.arrow_left),
+              tooltip: context.l10n.decreaseSpeedTooltip,
               onPressed: () {
                 // print("Button $name decrease speed.");
                 incrementSpeed(-speed_delta);
@@ -351,7 +360,8 @@ class MySlider with ChangeNotifier {
       Opacity(
           opacity: allow_animate ? 1.0 : 0.0,
           child: IconButton(
-              icon: Icon(Icons.arrow_right),
+              icon: const Icon(Icons.arrow_right),
+              tooltip: context.l10n.increaseSpeedTooltip,
               onPressed: () {
                 // print("Button $name increase speed.");
                 incrementSpeed(speed_delta);

@@ -85,6 +85,7 @@ void main() {
     test('Triangle.', () {
       DebugPrint.print_debug = 0; //XXX put at start of all tests?
       Polytope triangle = Regular.simplex.make(2);
+      checkSizes(triangle, [3, 3]);
     });
     test('Square.', () {
       Polytope square = Regular.cube.make(2);

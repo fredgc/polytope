@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 
+import 'l10n/l10n_extension.dart';
 import 'settings.dart';
 
 class SavableColor extends Savable<Color> {
@@ -48,7 +49,7 @@ class SavableColor extends Savable<Color> {
   @override
   List<Widget?> build(BuildContext context, VoidCallback rebuild) {
     return [
-      Text('$description: '),
+      Text('${localizedName(context)}: '),
       ColorIndicator(
         width: 30,
         height: 30,
@@ -74,7 +75,8 @@ class SavableColor extends Savable<Color> {
       context,
       // We use the dialogSelectColor, as its starting color.
       value,
-      title: Text('Pick', style: Theme.of(context).textTheme.titleLarge),
+      title: Text(context.l10n.colorPickerTitle,
+          style: Theme.of(context).textTheme.titleLarge),
       width: 40,
       height: 40,
       spacing: 0,
@@ -226,6 +228,8 @@ class SavableColorArray extends Savable<List<Color>> {
 }
 
 class SavableTheme extends Savable<int> {
+  static const Color darkPurpleBackground = Color(0xFF1A0F2E);
+
   late VoidCallback _callback;
 
   Brightness _sys_brightness = Brightness.light;
@@ -290,7 +294,20 @@ class SavableTheme extends Savable<int> {
     // print("update theme from color ${theme_color.value}, brightness=$brightness.");
     _scheme = ColorScheme.fromSeed(
         seedColor: theme_color.value, brightness: brightness);
-    theme_data = ThemeData(colorScheme: _scheme);
+    if (brightness == Brightness.dark) {
+      _scheme = _scheme.copyWith(
+        surface: darkPurpleBackground,
+        surfaceContainerLowest: const Color(0xFF120822),
+        surfaceContainerLow: const Color(0xFF160D28),
+        surfaceContainer: const Color(0xFF22153D),
+        surfaceContainerHigh: const Color(0xFF291B47),
+        surfaceContainerHighest: const Color(0xFF322254),
+      );
+    }
+    theme_data = ThemeData(
+      colorScheme: _scheme,
+      scaffoldBackgroundColor: _scheme.surface,
+    );
     background_color.value = _scheme.surface;
     // print("--- scheme.brightness = ${scheme.brightness}");
     // print("--- surface = ${scheme.surface}.");
@@ -322,7 +339,7 @@ class SavableTheme extends Savable<int> {
     List<bool> isSelected = List<bool>.filled(ThemeMode.values.length, false);
     isSelected[theme_mode.index] = true;
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-      Text('Theme Brightness: '),
+      Text('${context.l10n.settingThemeBrightness}: '),
       SizedBox(width: 10),
       ToggleButtons(
         isSelected: isSelected,
@@ -334,7 +351,11 @@ class SavableTheme extends Savable<int> {
           updateAndCallback();
           callback();
         },
-        children: ThemeMode.values.map((e) => Text(e.name)).toList(),
+        children: [
+          Text(context.l10n.themeModeSystem),
+          Text(context.l10n.themeModeLight),
+          Text(context.l10n.themeModeDark),
+        ],
       ),
     ]);
   }

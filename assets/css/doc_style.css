@@ -36,7 +36,7 @@ img {
 
 header {
     padding-top: 20px;
-    background: #c1bff1;
+    background: inherit;
     /* background-image:url('../images/grid.png'); */
     background-repeat:repeat;
     background-position: 50%  36px; /*  1 + padding + x = 55 pix image height*/
@@ -170,4 +170,49 @@ div.field, div.actions {
 
 .debug {
     display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+    html, body, .container {
+        background: #1a0f2e;
+        color: #e6e1e5;
+    }
+    section {
+        background: #24173f;
+        border: 1px solid #79747e;
+        color: #e6e1e5;
+    }
+    h1, h2, h3, h4 {
+        color: #d0bcff;
+    }
+    p, li, td, th {
+        color: #e6e1e5;
+    }
+    table, th, td {
+        border-color: #79747e;
+    }
+    th {
+        background: #2b2930;
+        color: #d0bcff;
+    }
+    a {
+        color: #d0bcff;
+    }
+    a:visited {
+        color: #cbc4cf;
+    }
+    a:hover {
+        color: #e6e1e5;
+    }
+    code {
+        background: #36343b;
+        color: #e6e1e5;
+    }
+    nav {
+        background-color: #2b2930;
+    }
+    header, footer {
+        background: inherit;
+        color: #e6e1e5;
+    }
 }

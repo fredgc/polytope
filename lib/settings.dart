@@ -19,7 +19,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import 'color.dart';
+import 'l10n/l10n_extension.dart';
 import 'printer.dart';
+import 'web_cache.dart';
 
 enum SettingsStatus {
   NotInitialized, // Before Settings intiialized.
@@ -46,6 +48,39 @@ abstract class Savable<T> {
   List<Widget?> build(BuildContext context, VoidCallback rebuild);
   void dispose() {}
 
+  String localizedName(BuildContext context) {
+    switch (name) {
+      case "poly_color":
+        return context.l10n.settingPolyColor;
+      case "poly_edge_thickness":
+        return context.l10n.settingPolyEdgeThickness;
+      case "vertex_radius":
+        return context.l10n.settingVertexRadius;
+      case "enable_line_clipping":
+        return context.l10n.settingEnableLineClipping;
+      case "clip_gap_size":
+        return context.l10n.settingClipGapSize;
+      case "show_hotkey_buttons":
+        return context.l10n.settingShowHotkeyButtons;
+      case "slice_color":
+        return context.l10n.settingSliceColor;
+      case "slice_edge_thickness":
+        return context.l10n.settingSliceEdgeThickness;
+      case "sticky_delay":
+        return context.l10n.settingStickyDelay;
+      case "sticky_radius":
+        return context.l10n.settingStickyRadius;
+      case "debug_logs":
+        return context.l10n.settingDebugLogs;
+      case "theme_color":
+        return context.l10n.settingThemeColor;
+      case "backgroud_color":
+        return context.l10n.settingBackgroundColor;
+      default:
+        return description;
+    }
+  }
+
   @override
   String toString() {
     return "Savable $name ($description) value=$value";
@@ -69,7 +104,7 @@ class SavableBool extends Savable<bool> {
   @override
   List<Widget?> build(BuildContext context, VoidCallback rebuild) {
     return [
-      Text("$description: "),
+      Text("${localizedName(context)}: "),
       Checkbox(
           value: value,
           onChanged: (bool? value) {
@@ -122,7 +157,7 @@ class SavableDouble extends Savable<double> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text("$description: ${value.toStringAsFixed(1)}"),
+            Text("${localizedName(context)}: ${value.toStringAsFixed(1)}"),
             Slider(
               value: value.clamp(min!, max!),
               min: min!,
@@ -145,7 +180,7 @@ class SavableDouble extends Savable<double> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text("$description: "),
+          Text("${localizedName(context)}: "),
           SizedBox(
             width: 80,
             child: TextField(
@@ -285,6 +320,11 @@ class Settings {
     status = SettingsStatus.Initialized;
     _loading_future = null;
     // print("Finished loading settings.");
+    if (foundation.kIsWeb) {
+      final clientVersion =
+          build_number.isNotEmpty ? '$version+$build_number' : version;
+      unawaited(checkServerVersionAndReload(clientVersion));
+    }
   }
 
   Future<void> save() async {
@@ -355,7 +395,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       Settings.instance.initialize(context).then((_) {
         setState(() {});
       });
-      return Text("Initiaizing Settings...");
+      return Text(context.l10n.initializingSettings);
     }
     // print("Building SettingsScreen.");
     List<Widget?> children = _pickChildren(context);
@@ -373,10 +413,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
       },
       separatorBuilder: (BuildContext context, int index) => const Divider(),
     );
-    return MaterialApp(
-      // XXX debugShowCheckedModeBanner: false,
-      theme: Settings.instance.theme.theme_data,
-      home: Scaffold(
+    return Theme(
+      data: Settings.instance.theme.theme_data,
+      child: Scaffold(
         appBar: appBar(context),
         body: list,
       ),
@@ -385,19 +424,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   AppBar appBar(BuildContext context) {
     return AppBar(
-      title: Text("Settings"),
+      title: Text(context.l10n.settingsTitle),
       actions: <Widget>[
-        ElevatedButton(
-          child: const Icon(Icons.close),
+        const LanguageMenuButton(),
+        IconButton(
+          icon: const Icon(Icons.close),
+          tooltip: context.l10n.closeTooltip,
           onPressed: () {
-            // print("Cancel.");
             quit(context);
           },
         ),
-        ElevatedButton(
-          child: const Icon(Icons.done),
+        IconButton(
+          icon: const Icon(Icons.done),
+          tooltip: context.l10n.doneTooltip,
           onPressed: () {
-            // print("Done.");
             done(context);
           },
         ),
@@ -409,12 +449,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
   // Then flatten this list of lists so we get one big list.
   List<Widget?> _pickChildren(BuildContext context) {
     if (Settings.instance.status == SettingsStatus.NotInitialized) {
-      return [Text("Initializing App...")];
+      return [Text(context.l10n.initializingApp)];
     }
     List<List<Widget?>> list1 = [
       [
-        SelectableText("Application ${Settings.instance.app_name} "
-            "version ${Settings.instance.version}.${Settings.instance.build_number}"),
+        SelectableText(context.l10n.settingAppVersion(
+            Settings.instance.app_name,
+            Settings.instance.version,
+            Settings.instance.build_number)),
         null,
       ],
       for (var s in Settings.instance.savables)
@@ -426,11 +468,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
         null,
         ElevatedButton(
           onPressed: () => done(context),
-          child: Text("Done"),
+          child: Text(context.l10n.doneButton),
         ),
         ElevatedButton(
           onPressed: () => quit(context),
-          child: Text("Cancel"),
+          child: Text(context.l10n.cancelButton),
         ),
       ]
     ];
