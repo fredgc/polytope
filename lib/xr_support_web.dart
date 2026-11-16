@@ -257,8 +257,11 @@ class _WebXRWidgetState extends State<WebXRWidget> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.view_in_ar,
-                  size: 72, color: Colors.indigoAccent),
+              Icon(
+                Icons.view_in_ar,
+                size: 72,
+                color: Theme.of(context).colorScheme.primary,
+              ),
               const SizedBox(height: 20),
               Text(
                 _status,
@@ -282,8 +285,10 @@ class _WebXRWidgetState extends State<WebXRWidget> {
                   icon: const Icon(Icons.stop),
                   label: const Text("End XR Session"),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.redAccent,
-                    foregroundColor: Colors.white,
+                    backgroundColor:
+                        Theme.of(context).colorScheme.errorContainer,
+                    foregroundColor:
+                        Theme.of(context).colorScheme.onErrorContainer,
                     padding: const EdgeInsets.symmetric(
                         horizontal: 24, vertical: 14),
                   ),

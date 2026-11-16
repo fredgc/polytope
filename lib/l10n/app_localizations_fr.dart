@@ -159,6 +159,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settingClipGapSize => 'Taille de l\'écart de découpe';
 
   @override
+  String get settingColorByX4 => 'Colorer les lignes selon la distance x4';
+
+  @override
   String get settingDebugLogs => 'Journaux de débogage périodiques';
 
   @override
@@ -175,6 +178,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get settingSliceColor => 'Couleur de la coupe';
+
+  @override
+  String get settingSliceColorByX4 =>
+      'Colorer les lignes de coupe selon la distance x4';
 
   @override
   String get settingSliceEdgeThickness => 'Épaisseur des arêtes de la coupe';

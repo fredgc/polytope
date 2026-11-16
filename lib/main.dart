@@ -14,7 +14,6 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 import 'help.dart';
 import 'l10n/l10n_extension.dart';
@@ -29,14 +28,9 @@ void main() async {
   await xr.checkSupport();
   print("xr.supported  = ${xr.supported}.");
 
-  // The following is used by InAppWebView.
   WidgetsFlutterBinding.ensureInitialized();
   await LocaleController.initialize();
   print("BLUE: kIsWeb = $kIsWeb.");
-  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
-    print("BLUE: not web, and is Android.");
-    await InAppWebViewController.setWebContentsDebuggingEnabled(kDebugMode);
-  }
   print("Building app.");
   MyAppBuilder builder = MyAppBuilder(xr);
   PolyAppWidgetState.initSettings(Settings.instance);
@@ -46,7 +40,6 @@ void main() async {
 }
 
 class MyAppBuilder {
-  final settings = Settings();
   Map<String, WidgetBuilder> routes = {};
   final XRSupport xr;
 

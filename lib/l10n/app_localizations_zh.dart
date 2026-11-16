@@ -153,6 +153,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingClipGapSize => '裁剪间隔大小';
 
   @override
+  String get settingColorByX4 => '按 x4 距离为线条着色';
+
+  @override
   String get settingDebugLogs => '定期调试日志';
 
   @override
@@ -169,6 +172,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get settingSliceColor => '截面颜色';
+
+  @override
+  String get settingSliceColorByX4 => '按 x4 距离为截面线条着色';
 
   @override
   String get settingSliceEdgeThickness => '截面边缘粗细';

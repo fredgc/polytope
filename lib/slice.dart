@@ -20,6 +20,7 @@ import "printer.dart";
 import "vector.dart";
 import 'color.dart';
 import 'polytope.dart';
+import 'scene.dart';
 import 'settings.dart';
 import 'slider.dart';
 
@@ -30,6 +31,13 @@ class Slice with ChangeNotifier {
   static final double tolerance = 1e-6;
   static SavableColor slice_color = SavableColor("slice_color", "Slice Color",
       Colors.yellow, (scheme) => scheme.inversePrimary);
+  static SavableBool slice_color_by_x4 = SavableBool(
+    "slice_color_by_x4",
+    "Color Slice Lines by x4 Distance",
+    false,
+    tip:
+        "Color slice lines with a rainbow gradient from red (lowest x4) to violet (highest x4)",
+  );
   static SavableDouble slice_edge_thickness = SavableDouble(
     "slice_edge_thickness",
     "Slice Edge Thickness",
@@ -42,6 +50,7 @@ class Slice with ChangeNotifier {
 
   static void initSettings(Settings settings) {
     settings.add(slice_color);
+    settings.add(slice_color_by_x4);
     settings.add(slice_edge_thickness);
   }
 
@@ -197,7 +206,9 @@ class SingularDot with Intersection {
   @override
   void paint(Canvas canvas) {
     if (!visible) return;
-    Paint paint = Paint()..color = color;
+    Paint paint = Paint()
+      ..color =
+          Slice.slice_color_by_x4.value ? Scene.x4Color(pt.vertex.wx4) : color;
     Offset c = Offset(pt.vertex.sx, pt.vertex.sy);
     canvas.drawCircle(c, radius, paint);
     dprint("Painting $this, visible = $visible. c=${zzz(c)}");
@@ -256,7 +267,8 @@ class SlideDot extends Point with Intersection {
   @override
   void paint(Canvas canvas) {
     if (!visible) return;
-    Paint paint = Paint()..color = color;
+    Paint paint = Paint()
+      ..color = Slice.slice_color_by_x4.value ? Scene.x4Color(wx4) : color;
     Offset c = Offset(sx, sy);
     canvas.drawCircle(c, radius, paint);
     dprint("Painting $this, visible = $visible. c=${zzz(c)}");
@@ -332,11 +344,17 @@ class SingularEdge with Intersection implements ClippableEdge {
   void paint(Canvas canvas) {
     dprint("Painting $this, visible = $visible");
     if (!visible) return;
-    Paint paint = Paint()
-      ..color = color
-      ..strokeWidth = Slice.slice_edge_thickness.value;
     Offset p1 = Offset(a.pt.vertex.sx, a.pt.vertex.sy);
     Offset p2 = Offset(b.pt.vertex.sx, b.pt.vertex.sy);
+    Paint paint = LineSegment.makeLinePaint(
+      p1,
+      p2,
+      a.pt.vertex,
+      b.pt.vertex,
+      color,
+      Slice.slice_edge_thickness.value,
+      Slice.slice_color_by_x4.value,
+    );
     LineSegment.paintGappedLine(canvas, p1, p2, paint, gaps);
     dprint("  a = $a =  ${zzz(a)} -> ${zzz(a.pt)}");
     dprint("  b = $b =  ${zzz(b)} -> ${zzz(a.pt)}");
@@ -421,11 +439,17 @@ class SlideEdge with Intersection implements ClippableEdge {
   void paint(Canvas canvas) {
     dprint("Painting $this, visible = $visible");
     if (!visible) return;
-    Paint paint = Paint()
-      ..color = color
-      ..strokeWidth = Slice.slice_edge_thickness.value;
     Offset p1 = Offset(a.sx, a.sy);
     Offset p2 = Offset(b.sx, b.sy);
+    Paint paint = LineSegment.makeLinePaint(
+      p1,
+      p2,
+      a,
+      b,
+      color,
+      Slice.slice_edge_thickness.value,
+      Slice.slice_color_by_x4.value,
+    );
     LineSegment.paintGappedLine(canvas, p1, p2, paint, gaps);
     dprint("  a = $a =  ${zzz(a)} -> ${zzz(p1)}");
     dprint("  b = $b =  ${zzz(b)} -> ${zzz(p2)}");

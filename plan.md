@@ -1,25 +1,19 @@
 # Polytope Project Plan
 
-This document outlines the strategic roadmap, architecture goals, and long-
-term milestones for the **Polytope** Flutter project.
+This document outlines the strategic roadmap, architecture goals, and long-term
+milestones for adding **Virtual Reality (VR)** and **Augmented/Extended Reality
+(XR)** support to the **Polytope** Flutter application across WebXR and Android
+builds.
 
-> **Note**: Active day-to-day tasks and issue tracking are managed >
-
-dynamically using `~/bin/todo.py`. Run `~/bin/todo.py list` to view active >
-tasks.
-
----
-
-This document outlines the architecture, roadmap, and open questions for
-adding **Virtual Reality (VR)** and **Augmented/Extended Reality (XR)**
-support to the **Polytope** Flutter application.
+> **Note**: Active day-to-day tasks and issue tracking are managed dynamically
+> using `~/bin/todo.py`. Run `~/bin/todo.py list` to view active tasks.
 
 ---
 
 ## 1. Executive Summary & Goals
 
 The goal is to allow users to experience regular polytopes (hypercubes,
-24-cells, 120-cells, etc.) and their dynamic 3D hyperplane slices as
+24-cells, 120-cells, 600-cells, etc.) and their dynamic 3D hyperplane slices as
 **interactive 3D holographic objects** in physical space (AR) or immersive
 space (VR).
 
@@ -27,23 +21,24 @@ space (VR).
 
 1. **Maximum Shared Dart / Flutter Code**:
 
-   - All high-dimensional mathematics, n-dimensional rotation matrices,
-     perspective/zolly projections down to 3D, slice calculation, animations,
-     and UI controls remain **100% in pure Dart**.
+   - All high-dimensional mathematics, $n$-dimensional rotation matrices,
+     perspective/zolly projections down to 3D, slice calculation, $x_4$ rainbow
+     coloring, animations, and UI controls remain **100% in pure Dart**.
 
 2. **Minimal Target-Specific Glue**:
 
    - Platform-dependent code is isolated behind a clean abstract interface
-     (`XRSupport` / `XRRenderer`) for:
+     (`XRSupport`) for:
 
-     - **WebXR** (Meta Quest Browser, Chrome on Android, Vision Pro Safari,
-       desktop XR emulators).
+     - **WebXR** (`lib/xr_support_web.dart` + `lib/webxr_renderer.dart` —
+       Meta Quest Browser, Chrome on Android, Vision Pro Safari, desktop XR
+       emulators).
 
-     - **Android AR / ARCore** (Mobile phones/tablets with camera
-       passthrough).
+     - **Android Mobile AR / ARCore** (`lib/xr_support_mobile.dart` — Android
+       phones and tablets with camera passthrough).
 
-     - **Android XR** (Headsets running the new Android XR platform / OpenXR /
-       Jetpack XR).
+     - **Android XR Headsets** (`lib/xr_support_mobile.dart` — standalone
+       spatial headsets running Android XR / OpenXR / Jetpack XR).
 
 3. **Preserve Existing 2D Web & Mobile Functionality**:
 
@@ -52,433 +47,274 @@ space (VR).
 
 ---
 
-## 2. Current Architecture & Gap Analysis
+## 2. Current Architecture & Implementation Status
 
-```
-Current Architecture:
-[Polytope Math (d-dimensions)]
-       │
-       ▼
-[CoordinateTransform] ── (Rotates in d-dim, zolly projects to R3, scales & offsets to R2)
-       │
-       ▼
-[Drawables (Dot, LineSegment, SliceEdge)]
-       │
-       ▼
-[Flutter Canvas (CustomPainter)] ── 2D pixel drawing (sx, sy)
-```
-
-### The Gap for XR:
-
-1. **Projection Target**:
-
-   - Currently, `CoordinateTransform.apply` projects points from $\mathbb{R}^d
-     \to \mathbb{R}^3$ via:
-
-     ```dart
-     // 1. Rotation in R^d:
-     temp.x[i] += A[i][j] * (p.x[j] - b.x[j]) * scale;
-     // 2. Perspective/zolly reduction down to R^3:
-     for (int j = zolly.length - 1; j > 1; j--) {
-       for (int i = 0; i < j; i++) {
-         temp.x[i] = temp.x[i] / (1.0 - zolly[j] * temp.x[j]);
-       }
-     }
-     ```
-
-At this point, `(temp.x[0], temp.x[1], temp.x[2])` are true **3D coordinates
-in $\mathbb{R}^3$**.
-
-   - However, the code immediately flattens them to 2D screen space:
-
-     ```dart
-     p.sx = offset.x + zoom * temp.x[0];
-     p.sy = offset.y - zoom * temp.x[1];
-     p.sz = zoom * temp.x[2]; // sz is only used for z-sorting/coloring
-     ```
-
-   - In XR, we do **not** flatten to 2D! The XR device's head tracking and
-     stereoscopic cameras handle the final 3D-to-eye projection. We need the
-     3D vertices and 3D line/polygon edges.
-
-2. **Rendering Technology**:
-
-   - Flutter's standard `Canvas` is a 2D rendering API.
-
-   - For 3D stereoscopic XR, the target device requires either a 3D scene
-     graph, WebGL (for WebXR), or native 3D mesh nodes (ARCore / Android XR).
-
----
-
-## 3. Proposed Architecture
-
-```
-                          ┌─────────────────────────┐
-                          │   Polytope Geometry &   │
-                          │   Slice Engine (Dart)   │
-                          └────────────┬────────────┘
-                                       │
-                                       ▼
-                          ┌─────────────────────────┐
-                          │  CoordinateTransform3D  │
-                          │  (R^d -> R^3 projection) │
-                          └────────────┬────────────┘
-                                       │
-                                       ▼
-                          ┌─────────────────────────┐
-                          │      SpatialScene       │
-                          │ (3D Vertices, Edges,    │
-                          │  Slice Mesh, Colors)    │
-                          └────────────┬────────────┘
-                                       │
-                ┌──────────────────────┴──────────────────────┐
-                ▼                                             ▼
-     ┌──────────────────────┐                      ┌──────────────────────┐
-     │     WebXR Backend    │                      │   Android AR / XR    │
-     │   (WebGL / WebXR)    │                      │ (ARCore / AndroidXR) │
-     └──────────────────────┘                      └──────────────────────┘
+```text
+                     ┌─────────────────────────┐
+                     │   Polytope Geometry &   │
+                     │   Slice Engine (Dart)   │
+                     └────────────┬────────────┘
+                                  │
+                                  ▼
+                     ┌─────────────────────────┐
+                     │   CoordinateTransform   │
+                     │ (R^d -> R^3 + wx4 math) │
+                     └────────────┬────────────┘
+                                  │
+            ┌─────────────────────┴─────────────────────┐
+            ▼                                           ▼
+ ┌──────────────────────┐                    ┌──────────────────────┐
+ │   2D Canvas Engine   │                    │     SpatialScene     │
+ │  (Dot, LineSegment,  │                    │ (Float32List sphere  │
+ │  SlideEdge, Clipper) │                    │  & cylinder buffers) │
+ └──────────────────────┘                    └──────────┬───────────┘
+                                                        │
+                              ┌─────────────────────────┴───┐
+                              ▼                             ▼
+                   ┌──────────────────────┐      ┌──────────────────────┐
+                   │     WebXR Backend    │      │   Android AR / XR    │
+                   │ (WebGL2 Instancing)  │      │ (ARCore / OpenXR)    │
+                   └──────────────────────┘      └──────────────────────┘
 ```
 
-### 3.1 The Shared 3D Data Layer (`SpatialScene`)
+### Completed Shared & WebXR Components
 
-A pure Dart class that produces geometry buffers without any dependencies on
-WebGL, Android, or Flutter UI:
+* **3D Projection (`lib/transform.dart`, `lib/vector.dart`)**:
+  `CoordinateTransform.projectTo3D` and `apply` compute 3D world coordinates
+  (`wx`, `wy`, `wz`) and the 4D depth coordinate (`wx4 = temp.x[3]`) prior to
+  2D screen flattening (`sx`, `sy`, `sz`).
 
-- **Vertices**: `Float32List` containing $(x, y, z)$ coordinates.
+* **Shared 3D Scene Graph (`lib/spatial_scene.dart`)**:
+  `SpatialScene` converts `Scene` vertices, edges, and active hyperplane slice
+  intersections into contiguous GPU-ready buffers every frame:
 
-- **Edges (Polytope wireframe)**: `Int32List` of index pairs `[v1, v2, v3, v4,
-  ...]`.
+  - `sphereBuffer`: `8` floats per sphere (`[x, y, z, radius, r, g, b, a]`).
 
-- **Slice Geometry**:
+  - `cylinderBuffer`: `12` floats per cylinder
+    (`[x1, y1, z1, x2, y2, z2, radius, r, g, b, a, 0.0]`).
 
-  - Slice edges (wireframe) and/or slice faces (triangulated 3D polygons).
+  - Supports both solid colors (`poly_color`, `slice_color`) and $x_4$ rainbow
+    coloring (`color_by_x4`, `slice_color_by_x4`).
 
-- **Colors & Opacity**: Node colors (polytope color, slice color, vertex dot
-  color).
+* **WebXR Backend (`lib/xr_support_web.dart`, `lib/webxr_renderer.dart`)**:
+  Complete WebGL2 instanced renderer (`glDrawElementsInstanced`) with
+  Blinn-Phong lighting, supporting `immersive-vr`, `immersive-ar`, and `inline`
+  WebXR sessions.
 
-- **Transform**: Translation / scale anchor in physical space (e.g., 1 meter
-  in front of user, 0.5m radius).
+### Current Gap on Android (`lib/xr_support_mobile.dart`)
 
-### 3.2 Target 1: WebXR (`xr_support_web.dart`)
+* `AndroidXRSupport` currently mounts a placeholder `ARView` from
+  `ar_flutter_plugin_2` (`showPlanes: true`, `showWorldOrigin: true`) without
+  consuming `SpatialScene` buffers or rendering polytope geometry.
 
-- **Session Modes**:
+* `AndroidXRSupport.checkSupport()` currently sets `supported = true`
+  unconditionally without querying device ARCore or OpenXR availability.
 
-  - Supports `immersive-ar` (passthrough on phone Chrome or Quest 3) and
-    `immersive-vr` (Quest, Vision Pro, VR headsets).
-
-- **Rendering Strategy Options**:
-
-  - *Option A: Lightweight WebGL2 line/mesh renderer in Dart*
-
-    - Uses `package:web` to obtain `web.WebGLRenderingContext` from an HTML
-      `<canvas>`.
-
-    - Simple vertex/fragment shader to render line segments with custom colors
-      and simple shaded spheres/triangles.
-
-    - Highly efficient, zero external JS libraries needed, compiles directly
-      with `dart2js` / WASM.
-
-  - *Option B: Three.js bridge or Three-dart*
-
-    - Easier lighting and material effects, but requires larger bundle size
-      and JS interop overhead.
-
-  - **Recommendation**: Option A (a clean, ~200-line WebGL shader loop in
-    Dart) keeps the codebase lightweight and dependency-free.
-
-- **UI Overlay**:
-
-  - Uses WebXR **DOM Overlay** (`dom-overlay` feature).
-
-  - This allows the standard Flutter UI (rotation mode selector, dimension
-    picker, slice slider) to float as an HTML layer directly over the XR
-    session!
-
-### 3.3 Target 2: Android AR on Mobile (`xr_support_mobile.dart`)
-
-- **Session Mode**: ARCore camera passthrough.
-
-- **Rendering Strategy Options**:
-
-  - *Option A: `ar_flutter_plugin_2`* (Already in `pubspec.yaml`)
-
-    - Uses ARCore on Android.
-
-    - Can anchor a 3D node and update geometry.
-
-  - *Option B: Google SceneView / Filament (via Flutter platform view)*
-
-    - Supports dynamic line and primitive drawing with low latency.
-
-- **UI Overlay**:
-
-  - Standard Flutter widgets laid over the AR camera view using a Flutter
-    `Stack`.
-
-### 3.4 Target 3: Android XR (Spatial OS / Headsets)
-
-- Google has announced the **Android XR platform** (for spatial headsets,
-  e.g., Samsung XR headset).
-
-- Android XR supports:
-
-  - **Spatial Panels**: Standard 2D Android/Flutter apps running on a floating
-    curved panel in 3D space.
-
-  - **Spatial Scenes / OpenXR**: Apps taking over full 3D space with 6DoF
-    tracking.
-
-- By structuring our abstraction as `XRSupport`, we can drop in an
-  `AndroidXRSupport` implementation when the official Android XR Flutter SDK /
-  OpenXR bindings are released.
+* `AndroidXRSupport.buildScene()` lacks the 2D Flutter control overlay (exit
+  button, polytope/dimension selectors, $R^4$ rotation pad, and slice slider).
 
 ---
 
-## 4. UI & Interaction in XR
+## 3. Plan for Adding XR Support on the Android Build
 
-In a 2D screen, interaction is done via mouse drag and touch gestures (drag =
-rotate 3D, shift-drag = rotate 4D, etc.). In XR, we have new spatial
-capabilities:
+Android XR support targets two complementary form factors from a single Android
+build:
 
-1. **Viewing (Head movement)**:
+1. **Android Mobile AR (Phones & Tablets via ARCore)**: Camera passthrough
+   where the 3D polytope and slice hologram is anchored on a physical tabletop
+   or floating 0.5–0.8m in front of the device camera.
 
-   - 3D perspective and rotation around the 3D projection are natural: the
-     user simply walks around or turns their head!
+2. **Android XR Headsets (Spatial OS / OpenXR / Jetpack XR)**: Headsets and XR
+   glasses running Android XR, supporting both **Home Space** (2D Flutter
+   spatial panel alongside a 3D volume) and **Full Space** (stereoscopic 6DoF
+   passthrough/VR).
 
-2. **Higher-Dimensional Rotation ($R^4, R^5$)**:
+### 3.1 Rendering Strategy on Android
 
-   - Head movement only moves our view in $\mathbb{R}^3$. To rotate planes
-     like $x-w$ (the 4th dimension), the user still needs an active rotation
-     input.
+Polytopes such as the 120-cell (600 vertices, 1,200 edges) and 600-cell (120
+vertices, 720 edges) animate continuously at 60–120 Hz during 4D rotations and
+hyperplane slicing. Creating and mutating hundreds of individual high-level
+scene-graph nodes (`ARNode`) over a Flutter `MethodChannel` every frame would
+introduce severe serialization overhead and frame drops.
 
-   - **Approach**: Floating 2D Flutter buttons / joystick / gesture raycast
-     (e.g. pinch-drag horizontally to rotate $x-w$).
+Instead, the Android build will mirror the proven `WebXRRenderer` architecture:
 
-3. **Slice Slider**:
+* **Single-Call Hardware Instancing (OpenGL ES 3.0 / Vulkan)**:
 
-   - A floating slider panel next to the polytope, or controller thumbstick to
-     slide through the hyperplane slice in real time.
+  - Reuse the exact same `SpatialScene.sphereBuffer` and
+    `SpatialScene.cylinderBuffer` (`Float32List`) generated in Dart.
 
-4. **World Anchoring**:
+  - Pass the two flat `Float32List` byte buffers (`Uint8List` / `Float32List`)
+    across a single lightweight platform call per frame (or shared FFI buffer)
+    to a native Kotlin/C++ OpenGL ES 3.0 renderer.
 
-   - Tap/pinch to place the polytope on a detected tabletop or suspend it at
-     eye level.
+  - Reuse the GLSL ES 3.0 instanced sphere and cylinder vertex/fragment shaders
+    from `lib/webxr_renderer.dart`: one unit sphere VBO and one unit cylinder
+    VBO on the GPU, drawn in 2 draw calls per eye (`glDrawElementsInstanced`).
 
----
+* **Camera & Pose Integration**:
 
-## 5. Phased Roadmap
+  - **On Mobile ARCore**: The native GLES3 renderer draws the ARCore background
+    camera texture, queries the ARCore `Camera` `viewMatrix` and
+    `projectionMatrix` plus the active world `Anchor` pose, and renders the
+    instanced spheres and cylinders into the Flutter `Texture` /
+    `PlatformView`.
 
-| Ready for Android XR headsets.             | Ready for Android XR headsets.                                                                                                                       | Ready for Android XR headsets.                                                           |
-| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| Ready for Android XR headsets.             | Ready for Android XR headsets.                                                                                                                       | Ready for Android XR headsets.                                                           |
-| Ready for Android XR headsets.             | Ready for Android XR headsets.                                                                                                                       | Ready for Android XR headsets.                                                           |
-| Ready for Android XR headsets.             | Ready for Android XR headsets.                                                                                                                       | Ready for Android XR headsets.                                                           |
-| Ready for Android XR headsets.             | Ready for Android XR headsets.                                                                                                                       | Ready for Android XR headsets.                                                           |
-| Ready for Android XR headsets.             | Ready for Android XR headsets.                                                                                                                       | Ready for Android XR headsets.                                                           |
+  - **On Android XR Headsets**: When running in an OpenXR / Jetpack XR full
+    space session, the same GLES3 instanced renderer runs per-eye using the
+    headset's `XRView` projection and view matrices.
 
----
+### 3.2 UI & Interaction Design on Android XR
 
-## 6. Architecture Decisions (Confirmed)
+1. **2D Flutter Control Overlay (`Stack`)**:
 
-Based on project priorities, the following decisions are adopted:
+   - `AndroidXRSupport.buildScene(BuildContext context)` will render a `Stack`
+     with the 3D AR/XR viewport filling the background and translucent Material
+     controls pinned to the top and bottom edges:
 
-### 1. Visual Style: Shaded 3D Tubes and Spheres
+     - **Top Bar**: Back button (`onExitXR` to return to 2D canvas), Polytope
+       selector menu, Dimension menu, Movement mode menu ($R^3$, $R^4$, $R^5$,
+       Zolly), and Re-center / Reset Anchor button.
 
-- **Polytope Vertices**: Shaded 3D spheres (using polytope vertex color).
+     - **Bottom Bar**: Slice toggle checkbox and `MySlider` hyperplane slice
+       slider with speed controls.
 
-- **Polytope Edges**: Shaded 3D cylinders / tubes connecting the projected 3D
-  vertices.
+2. **Spatial Touch & Hand Gestures**:
 
-- **Slice Vertices & Edges**: Shaded 3D spheres and cylinders with the
-  distinct slice color.
+   - **Viewing in $\mathbb{R}^3$**: Moving the phone or headset naturally moves
+     the camera around the 3D projection in physical space.
 
-- **Slice Faces**: Translucent shaded planar polygons (triangulated from the
-  slice intersections).
+   - **Higher-Dimensional Rotation ($\mathbb{R}^4, \mathbb{R}^5$)**: 1-finger
+     drag on the viewport background routes to `scene.transform.rotatePair` for
+     the active movement dimension (defaulting to `Rotate R4` in XR since 3D
+     viewing is handled by physical camera motion).
 
-- **Rendering Technique**: **Hardware Instancing** in shaders:
-
-  - One unit sphere mesh buffer and one unit cylinder mesh buffer stored on
-    GPU.
-
-  - Each frame, Dart provides an instance array of segment endpoints $(A, B)$,
-    radius, and color.
-
-  - Vertex shader aligns and scales cylinders between $A$ and $B$, giving
-    smooth 90Hz/120Hz rendering on standalone headsets like Meta Quest.
-
-### 2. Target Priority & Fallback Architecture
-
-- **Priority Order**:
-
-  1. **WebXR on Meta Quest** (and WebXR-enabled browsers like Chrome Android /
-     Vision Pro Safari).
-
-  2. **Android Mobile AR** (ARCore camera passthrough on phones/tablets).
-
-  3. **Android XR Headsets** (Spatial OS / OpenXR).
-
-- **Settings & Fallback**:
-
-  - Add an "XR Mode" setting in `Settings`:
-
-    - Options: `Auto` (detects best supported system), `WebXR`, `Android AR`,
-      or `Disabled`.
-
-  - Graceful fallback: If an XR session fails or is unsupported, the app
-    seamlessly falls back to standard 2D canvas mode with an informative
-    banner.
-
-### 3. UI & Control Scheme: Easiest First (Floating 2D Overlay)
-
-- **WebXR**: Use **WebXR DOM Overlay** (`dom-overlay`).
-
-  - The standard Flutter 2D UI (dimension picker, polytope selection, 4D
-    rotation buttons, slice slider, help) floats as a familiar overlay panel
-    over the immersive 3D scene.
-
-- **Android AR**: Use a standard Flutter `Stack` containing the 3D AR view
-  beneath the 2D Flutter control widgets.
-
-- **Spatial Expansion (Future)**: Once the core 3D scene is proven and
-  interactive, optional in-world 3D spatial handles or wrist menus can be
-  introduced.
-
-### 4. WebXR 3D Backend: Direct WebGL2 in Dart
-
-- **Recommendation & Decision**: **Direct WebGL2 via `package:web`**.
-
-  - **Why Direct WebGL2?**
-
-    - **Broadest & Native Support**: WebXR’s `XRWebGLLayer` directly binds to
-      WebGL2 contexts. Every WebXR browser (Meta Quest Browser, Chrome,
-      Safari) natively supports WebGL2.
-
-    - **No External JS Dependencies**: Zero npm packages, zero external CDNs,
-      zero version mismatches.
-
-    - **Fast & Modern**: Direct typed buffer uploads (`Float32List`) from Dart
-      to GPU buffers, fully compatible with `dart2js` and Dart WASM
-      compilation.
-
-    - **Instancing Simplicity**: For procedural mathematical objects
-      (cylinders and spheres), direct shaders are compact (~150-200 lines of
-      shader code) and outperform heavy general-purpose 3D engines.
+   - **Scale & Placement**: 2-finger pinch adjusts `SpatialScene.worldScale`
+     (default `0.35m` radius), and tapping a detected ARCore plane anchors the
+     polytope at that 3D hit location (defaulting to `0.6m` in front of the
+     initial camera pose before any plane is tapped).
 
 ---
 
-## 7. Detailed Step-by-Step Implementation Plan
+## 4. Phased Implementation Roadmap for Android XR
 
-### Step 1: Geometry Extraction in Pure Dart (`SpatialScene`)
+| Phase | Milestone              | Key Deliverables                           |
+| ----- | ---------------------- | ------------------------------------------ |
+| 1     | Manifest & Capabilities| Optional ARCore/XR manifest, runtime check |
+| 2     | Flutter XR Overlay     | `Stack` UI controls, `repaint_counter` sync|
+| 3     | GLES3 Instancing       | Kotlin GLES3 shaders using `SpatialScene`  |
+| 4     | ARCore Anchoring       | Plane tap placement, 4D drag, pinch scale  |
+| 5     | Android XR & Release   | OpenXR headset mode, device audit, release |
 
-- Create `lib/spatial_scene.dart`:
+### Phase 1: Android Manifest, Permissions & Capability Detection
 
-  - Extracts the $\mathbb{R}^d \to \mathbb{R}^3$ projection from
-    `CoordinateTransform`.
+* **Update `android/app/src/main/AndroidManifest.xml`**:
 
-  - Produces typed arrays for:
+  - Add `<uses-permission android:name="android.permission.CAMERA" />`.
 
-    - `sphereInstances`: `[x, y, z, radius, r, g, b, a]` for polytope and
-      slice vertices.
+  - Add `<uses-feature android:name="android.hardware.camera.ar"
+    android:required="false" />` and `<meta-data
+    android:name="com.google.ar.core" android:value="optional" />` so the app
+    remains installable on non-AR devices.
 
-    - `cylinderInstances`: `[x1, y1, z1, x2, y2, z2, radius, r, g, b, a]` for
-      edges.
+  - Add Android XR spatial activity metadata so Android XR headsets can launch
+    the app in spatial panel or full-space mode.
 
-    - `faceTriangles`: 3D vertices and normals for slice polygon fill.
+* **Runtime Capability Check (`AndroidXRSupport.checkSupport`)**:
 
-- Add unit tests in `test/spatial_scene_test.dart` to verify vertex/edge
-  counts and coordinates match existing polytopes (simplex, hypercube,
-  24-cell, etc.).
+  - Query the native platform channel for ARCore availability
+    (`ArCoreApk.getInstance().checkAvailability`) or Android XR / OpenXR
+    runtime presence, and set `supported` accurately instead of hardcoding
+    `true`.
 
-### Step 2: WebGL Shader Pipeline (`WebXRRenderer`)
+### Phase 2: Flutter XR Overlay & Animation Sync (`lib/xr_support_mobile.dart`)
 
-- Implement the WebGL2 pipeline in pure Dart:
+* Build `AndroidXRWidget` in `lib/xr_support_mobile.dart` (mirroring
+  `WebXRWidget` in `lib/xr_support_web.dart`):
 
-  - Shaders with Blinn-Phong directional lighting (ambient + diffuse +
-    specular highlights).
+  - Listen to `scene.repaint_counter` so any 4D rotation, slice slider change,
+    or `MyAnimator` tick immediately updates `SpatialScene` and pushes new
+    instance buffers to the Android renderer.
 
-  - Instanced cylinder generator (transforming a unit cylinder to connect any
-    two 3D points).
+  - Render translucent top/bottom control bars over the AR viewport for
+    switching polytopes, dimensions, $R^4$/$R^5$ rotation, slice position, and
+    exiting back to 2D mode (`onExitXR`).
 
-  - Instanced sphere generator.
+### Phase 3: Native GLES3 Instanced Renderer on Android
 
-  - Single draw call for all edges (`glDrawArraysInstanced` /
-    `glDrawElementsInstanced`), and single draw call for all vertices.
+* Implement a lightweight Kotlin OpenGL ES 3.0 renderer in
+  `android/app/src/main/kotlin/...`:
 
-### Step 3: WebXR Session & Render Loop (`xr_support_web.dart`)
+  - Port the vertex and fragment shaders from `lib/webxr_renderer.dart`
+    (instanced spheres + instanced cylinders with Blinn-Phong lighting).
 
-- Update `xr_support_web.dart`:
+  - Expose a `MethodChannel` / `EventChannel` (`org.gchouse.polytope/xr`) with
+    methods:
 
-  - Request `immersive-vr` or `immersive-ar` session with `dom-overlay`
-    enabled.
+    - `checkXrSupport()` -> returns `{arCore: bool, openXr: bool}`
 
-  - Setup WebXR render loop via `XRSession.requestAnimationFrame`.
+    - `startSession()` / `stopSession()`
 
-  - Bind XR projection and view matrices (per eye) into the shader uniforms.
+    - `updateGeometry(Float32List spheres, Float32List cylinders)`
 
-  - Connect user head position (viewer pose) to the scene camera.
+    - `resetAnchor()`
 
-### Step 4: WebXR UI Overlay & Controls
+* Verify that the 120-cell (600 spheres + 1,200 cylinders) renders at a steady
+  60+ FPS on an Android device connected via `adb` on host `raven`.
 
-- Configure Flutter web container to participate as the `dom-overlay` root.
+### Phase 4: ARCore World Anchoring & Touch Gestures
 
-- Ensure the slice slider, polytope picker, and higher-dimensional rotation
-  controls remain fully responsive via Quest touch controllers or hand
-  tracking clicks.
+* Default the polytope origin to `(0, 0, -0.6)` meters in local session space
+  so the polytope is immediately visible upon entering AR without requiring the
+  user to scan a floor/table first.
 
-### Step 5: Android Mobile AR Adapter (`xr_support_mobile.dart`)
+* Allow tapping a detected ARCore plane to move the world anchor to the hit
+  pose, and provide a "Reset Position" button in the overlay to re-center the
+  hologram in front of the current camera view.
 
-- Wire up `ar_flutter_plugin_2` or platform view to render the same
-  `SpatialScene` instance buffers using ARCore anchors.
+* Connect single-finger drag on the AR view to 4D rotation (`Rotate R4`) and
+  two-finger pinch to `SpatialScene.worldScale`.
 
-- Add camera permission handling and plane detection.
+### Phase 5: Android XR Headsets, Settings & Production Enablement
 
-### Step 6: Settings & Release Testing
+* Add a setting in `lib/settings.dart` (`enable_xr` or XR mode selector) or
+  enable the AR/XR app bar button in release builds once Android ARCore and
+  WebXR sessions are verified end-to-end.
 
-- Add XR toggle and mode selection to `lib/settings.dart`.
-
-- Verify build with `flutter test` and `flutter build web`.
-
-- Test on Meta Quest Browser over local network / ADB.
+* Test on physical Android hardware via `adb` (`flutter run -d <device-id>`)
+  and verify clean fallback to 2D canvas mode when camera permission is denied.
 
 ---
 
-## Visual & Accessibility Verification Checklist
+## 5. Visual & Accessibility Verification Checklist
 
-Perform these manual checks across supported locales (`en`, `es`, `de`, `fr`,
-`ja`, `lt`, `pt`, `zh`) on mobile and desktop viewports:
+Perform these checks across supported locales (`en`, `es`, `de`, `fr`, `ja`,
+`lt`, `pt`, `zh`) on mobile and desktop viewports:
 
 * **Polytope Projections & Canvas**:
 
   * [ ] Verify 2D, 3D, 4D, and 5D regular polytopes render correctly with
         clear edge contrast in both light and dark modes.
 
+  * [ ] Verify $x_4$ rainbow coloring (`Color Lines by x4 Distance` and
+        `Color Slice Lines by x4 Distance`) renders smooth red-to-violet
+        gradients along edges.
+
   * [ ] Verify hyperplane slicing renders intersection polygons smoothly when
         toggling **Slice** on and off.
 
 * **Rotation & Transform Modes**:
 
-  * [ ] Cycle through rotation modes (R3, R4, R5, Zolly, Translate) and verify
-        drag gestures apply velocity and inertial spin smoothly.
+  * [ ] Cycle through rotation modes (R3, R4, R5, Zolly, Translate, Scale) and
+        verify drag gestures apply velocity and inertial spin smoothly.
 
   * [ ] Test snap-to-element buttons (vertex, edge, face, 3-cell) and confirm
         the projection snaps cleanly without visual distortion.
 
 * **Documentation & Help Screen**:
 
-  * [ ] Open Help dialog and verify all tabs load in the active language:
-
-    * `about`: Overview and attribution.
-
-    * `privacy`: Privacy policy.
-
-    * `terms`: Terms of service.
-
-    * `help`: Polytopes introduction and research notes.
-
-    * `slice`: Hyperplane slicing guide.
-
-    * `controls`: Controller and gesture guide.
+  * [ ] Open Help dialog and verify all tabs load in the active language
+        (`about`, `privacy`, `terms`, `help`, `slice`, `controls`).
 
   * [ ] Verify that markdown formatting and equations render legibly without
         horizontal clipping on narrow screens.
@@ -486,16 +322,12 @@ Perform these manual checks across supported locales (`en`, `es`, `de`, `fr`,
 * **Language Menu & Navigation**:
 
   * [ ] Switch to each language from the top bar language menu and confirm all
-        UI labels, toolbars, and help tabs update immediately.
+        UI labels, toolbars, settings, and help tabs update immediately.
 
   * [ ] Switch to **Auto** and verify the app reverts cleanly to the system
         default locale.
 
 * **Touch Targets & Screen Readers**:
 
-  * [ ] Verify that top bar action buttons (About, Privacy, Terms, Overview,
-        Slices, Controls, Settings, Close) have sufficient touch padding on
-        mobile.
-
-  * [ ] Enable TalkBack (Android) or VoiceOver (iOS/macOS) and confirm screen
-        reader announcements for transform mode changes and snap actions.
+  * [ ] Run `make audit` to verify zero layout overflows at `1.5x` text scaling
+        and full compliance with `labeledTapTargetGuideline`.

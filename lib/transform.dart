@@ -74,6 +74,7 @@ class CoordinateTransform {
       p.wx = temp.x[0];
       p.wy = temp.x[1];
       p.wz = temp.x[2];
+      p.wx4 = temp.x[3];
       p.sx = offset.x + zoom * temp.x[0];
       p.sy = offset.y - zoom * temp.x[1];
       p.sz = zoom * temp.x[2];

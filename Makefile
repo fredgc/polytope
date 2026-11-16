@@ -9,7 +9,7 @@ FIREBASE_FILES := lib/firebase_options.dart android/app/google-services.json fir
 
 ASSETS := web/favicon.ico web/favicon.png web/privacy.html web/privacy_es.html web/terms.html web/terms_es.html $(USER_DOCS_HTML) $(FIREBASE_FILES) assets/mesh/cell600.json assets/mesh/cell120.json
 
-.PHONY: docs build_all stage release ASSETS audit stage-release test
+.PHONY: docs build_all stage release ASSETS audit stage-release test test-fast test-all test-stress
 
 docs: $(USER_DOCS_HTML) $(DEV_DOCS_HTML) web/privacy.html web/privacy_es.html web/terms.html web/terms_es.html
 
@@ -28,7 +28,7 @@ web/%.html: assets/%.html
 
 build_all: $(ASSETS)
 	flutter build web
-	echo XXX flutter build apk
+	flutter build apk
 
 web/favicon.png: assets/icons/icon.png
 	convert $< -background transparent -colorspace RGB -filter Lanczos -resize 32x32 -colorspace sRGB $@
@@ -48,6 +48,15 @@ assets/mesh/cell600.json assets/mesh/cell120.json: tool/generate_polychora.dart
 test: $(ASSETS)
 	flutter test --exclude-tags release_audit
 
+test-fast: $(ASSETS)
+	flutter test --exclude-tags release_audit,stress
+
+test-all: $(ASSETS)
+	flutter test --exclude-tags release_audit
+
+test-stress: $(ASSETS)
+	flutter test --tags stress
+
 audit: $(ASSETS)
 	flutter test test/audit_test.dart
 
@@ -56,12 +65,12 @@ stage:  $(ASSETS)
 	echo "PURPLE: Beginning push to staging."
 	firebase_stage.pl
 
-stage-release: $(ASSETS) audit
+stage-release: $(ASSETS) test-all audit
 	flutter build web
 	echo "PURPLE: Beginning push to staging."
 	firebase_stage.pl
 
-release: $(ASSETS) audit
+release: $(ASSETS) test-all audit
 	make build_all
 	firebase_release.pl
 

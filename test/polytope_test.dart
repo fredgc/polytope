@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:test/test.dart';
 
@@ -216,7 +217,7 @@ void main() {
         });
       }
     }
-  });
+  }, tags: 'stress');
 
   group('Line clipping.', () {
     test('Crossing lines clip the one further away in Z', () {
@@ -331,6 +332,53 @@ void main() {
       // sliceEdge2 is in back at z=0, so it gets a gap around crossing point (0, 10)
       expect(sliceEdge2.gaps, isNotNull);
       expect(sliceEdge2.gaps!.length, 2);
+    });
+  });
+
+  group('Color lines by x4 distance.', () {
+    test('Rainbow color maps lowest x4 to red and highest x4 to violet', () {
+      Scene scene = Scene();
+      scene.setPolytope(Regular.cube);
+      scene.setDim(4);
+      expect(Scene.min_x4, closeTo(-0.5, tolerance));
+      expect(Scene.max_x4, closeTo(0.5, tolerance));
+
+      // Lowest x4 -> Red (hue 0: R=255, G=0, B=0)
+      Color lowColor = Scene.x4Color(Scene.min_x4);
+      expect(lowColor, const Color(0xFFFF0000));
+
+      // Highest x4 -> Violet (hue 270: R=128, G=0, B=255)
+      Color highColor = Scene.x4Color(Scene.max_x4);
+      expect(highColor.r, closeTo(0.5, 0.02));
+      expect(highColor.g, closeTo(0.0, 0.01));
+      expect(highColor.b, closeTo(1.0, 0.01));
+
+      // Midpoint x4 -> Green/Cyan spectrum
+      Color midColor = Scene.x4Color(0.0);
+      expect(midColor.g, closeTo(1.0, 0.01));
+    });
+
+    test(
+        'Painting scene with color_by_x4 and slice_color_by_x4 enabled succeeds',
+        () {
+      Scene scene = Scene();
+      scene.setPolytope(Regular.cube);
+      scene.setDim(4);
+      scene.changeSlice(true);
+      scene.slice!.slider.value = 0.0;
+      scene.updateScene();
+      Scene.color_by_x4.value = true;
+      Slice.slice_color_by_x4.value = true;
+      addTearDown(() {
+        Scene.color_by_x4.value = false;
+        Slice.slice_color_by_x4.value = false;
+      });
+
+      final recorder = ui.PictureRecorder();
+      final canvas = Canvas(recorder);
+      scene.paint(canvas, const Size(400, 400));
+      final picture = recorder.endRecording();
+      picture.dispose();
     });
   });
 }

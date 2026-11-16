@@ -210,6 +210,10 @@
   "@settingClipGapSize": {
     "description": "Label for clipping gap size setting"
   },
+  "settingColorByX4": "Color Lines by x4 Distance",
+  "@settingColorByX4": {
+    "description": "Label for coloring lines by x4 distance setting"
+  },
   "settingDebugLogs": "Periodic Debug Logs",
   "@settingDebugLogs": {
     "description": "Label for debug logs setting"
@@ -233,6 +237,10 @@
   "settingSliceColor": "Slice Color",
   "@settingSliceColor": {
     "description": "Label for slice color setting"
+  },
+  "settingSliceColorByX4": "Color Slice Lines by x4 Distance",
+  "@settingSliceColorByX4": {
+    "description": "Label for coloring slice lines by x4 distance setting"
   },
   "settingSliceEdgeThickness": "Slice Edge Thickness",
   "@settingSliceEdgeThickness": {

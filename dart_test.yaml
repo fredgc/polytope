@@ -1,0 +1,5 @@
+tags:
+  release_audit:
+    description: "Pre-release layout and accessibility audit tests"
+  stress:
+    description: "Long-running stress tests like Monte Carlo loops"

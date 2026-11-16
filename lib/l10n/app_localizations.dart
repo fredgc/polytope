@@ -386,6 +386,12 @@ abstract class AppLocalizations {
   /// **'Clipping Gap Size'**
   String get settingClipGapSize;
 
+  /// Label for coloring lines by x4 distance setting
+  ///
+  /// In en, this message translates to:
+  /// **'Color Lines by x4 Distance'**
+  String get settingColorByX4;
+
   /// Label for debug logs setting
   ///
   /// In en, this message translates to:
@@ -421,6 +427,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Slice Color'**
   String get settingSliceColor;
+
+  /// Label for coloring slice lines by x4 distance setting
+  ///
+  /// In en, this message translates to:
+  /// **'Color Slice Lines by x4 Distance'**
+  String get settingSliceColorByX4;
 
   /// Label for slice edge thickness setting
   ///

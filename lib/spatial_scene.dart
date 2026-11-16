@@ -123,6 +123,8 @@ class SpatialScene {
       scene.transform,
       polyColor: Scene.poly_color.value,
       sliceColor: Slice.slice_color.value,
+      colorByX4: Scene.color_by_x4.value,
+      sliceColorByX4: Slice.slice_color_by_x4.value,
     );
   }
 
@@ -133,6 +135,8 @@ class SpatialScene {
     CoordinateTransform transform, {
     Color polyColor = Colors.white,
     Color sliceColor = Colors.yellow,
+    bool colorByX4 = false,
+    bool sliceColorByX4 = false,
   }) {
     spheres.clear();
     cylinders.clear();
@@ -145,7 +149,7 @@ class SpatialScene {
         y: p.wy * worldScale,
         z: p.wz * worldScale,
         radius: vertexRadius,
-        color: polyColor,
+        color: colorByX4 ? Scene.x4Color(p.wx4) : polyColor,
       ));
     }
 
@@ -164,7 +168,7 @@ class SpatialScene {
           y2: p2.wy * worldScale,
           z2: p2.wz * worldScale,
           radius: edgeRadius,
-          color: polyColor,
+          color: colorByX4 ? Scene.x4Color((p1.wx4 + p2.wx4) * 0.5) : polyColor,
         ));
       }
     }
@@ -181,7 +185,7 @@ class SpatialScene {
             y: p.wy * worldScale,
             z: p.wz * worldScale,
             radius: sliceVertexRadius,
-            color: sliceColor,
+            color: sliceColorByX4 ? Scene.x4Color(p.wx4) : sliceColor,
           ));
         } else if (item is SlideDot) {
           spheres.add(SphereInstance(
@@ -189,7 +193,7 @@ class SpatialScene {
             y: item.wy * worldScale,
             z: item.wz * worldScale,
             radius: sliceVertexRadius,
-            color: sliceColor,
+            color: sliceColorByX4 ? Scene.x4Color(item.wx4) : sliceColor,
           ));
         } else if (item is SingularEdge) {
           Point p1 = item.a.pt.vertex;
@@ -202,7 +206,9 @@ class SpatialScene {
             y2: p2.wy * worldScale,
             z2: p2.wz * worldScale,
             radius: sliceEdgeRadius,
-            color: sliceColor,
+            color: sliceColorByX4
+                ? Scene.x4Color((p1.wx4 + p2.wx4) * 0.5)
+                : sliceColor,
           ));
         } else if (item is SlideEdge) {
           cylinders.add(CylinderInstance(
@@ -213,7 +219,9 @@ class SpatialScene {
             y2: item.b.wy * worldScale,
             z2: item.b.wz * worldScale,
             radius: sliceEdgeRadius,
-            color: sliceColor,
+            color: sliceColorByX4
+                ? Scene.x4Color((item.a.wx4 + item.b.wx4) * 0.5)
+                : sliceColor,
           ));
         }
       }

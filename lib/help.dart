@@ -17,12 +17,13 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 import 'help_nav_listener.dart';
 import 'l10n/l10n_extension.dart';
 import 'settings.dart';
+import 'webview_stub.dart' if (dart.library.js_interop) 'webview_web.dart';
 
 class HelpScreen extends StatefulWidget {
   static const routeName = "/help";
@@ -50,10 +51,10 @@ class HelpScreen extends StatefulWidget {
   }
 
   static String colorToHex(Color color) {
-    return '#${color.value.toRadixString(16).padLeft(8, '0').substring(2)}';
+    return '#${color.toARGB32().toRadixString(16).padLeft(8, '0').substring(2)}';
   }
 
-  static String generateDarkCss(ColorScheme scheme) {
+  static String generateThemeCss(ColorScheme scheme) {
     final bgHex = colorToHex(scheme.surface);
     final textHex = colorToHex(scheme.onSurface);
     final sectionHex = colorToHex(scheme.surfaceContainerHighest);
@@ -110,65 +111,22 @@ header, footer {
 ''';
   }
 
-  static String generateLightCss() {
-    return '''
-<style id="theme-style">
-html, body, .container {
-  background: #dcd2e3 !important;
-  color: #000000 !important;
-}
-section {
-  background: #eae4ee !important;
-  border: 1px solid #733e8c !important;
-  color: #000000 !important;
-}
-h1, h2, h3, h4, .title {
-  color: #000000 !important;
-}
-p, li, td, th {
-  color: #000000 !important;
-}
-table, th, td {
-  border-color: #733e8c !important;
-}
-th {
-  background: #dcd2e3 !important;
-  color: #000000 !important;
-}
-a {
-  color: #0033cc !important;
-}
-a:visited {
-  color: #006699 !important;
-}
-a:hover {
-  color: #00cc99 !important;
-}
-code {
-  background: #dcd2e3 !important;
-  color: #000000 !important;
-  padding: 2px 4px !important;
-  border-radius: 4px !important;
-}
-nav {
-  background-color: #ffffff !important;
-}
-header, footer {
-  background: inherit !important;
-  color: #000000 !important;
-}
-</style>
-''';
-  }
+  static String generateDarkCss(ColorScheme scheme) => generateThemeCss(scheme);
+
+  static String generateLightCss([ColorScheme? scheme]) => generateThemeCss(
+        scheme ??
+            ColorScheme.fromSeed(
+              seedColor: Colors.purple,
+              brightness: Brightness.light,
+            ),
+      );
 
   @override
   State<HelpScreen> createState() => _HelpScreenState();
 }
 
 class _HelpScreenState extends State<HelpScreen> {
-  final GlobalKey webViewKey = GlobalKey();
-
-  InAppWebViewController? webViewController;
+  late final WebViewController webViewController;
   double progress = 0;
   String currentFile = "about.html";
   String? _lastLocale;
@@ -187,9 +145,8 @@ document.addEventListener('click', function(e) {
       if (window.parent && window.parent !== window) {
         window.parent.postMessage('help_navigate:' + href, '*');
       }
-      var f = window.flutter_inappwebview;
-      if (f && f.callHandler) {
-        f.callHandler('helpNavigate', href);
+      if (window.HelpNavigate && window.HelpNavigate.postMessage) {
+        window.HelpNavigate.postMessage(href);
       }
     }
   }
@@ -200,6 +157,63 @@ document.addEventListener('click', function(e) {
   @override
   void initState() {
     super.initState();
+    if (kIsWeb) {
+      initWebviewPlatform();
+    }
+    webViewController = WebViewController();
+    try {
+      webViewController.setBackgroundColor(
+        Settings.instance.theme.scheme.surface,
+      );
+    } catch (_) {}
+    if (!kIsWeb) {
+      try {
+        webViewController
+          ..setJavaScriptMode(JavaScriptMode.unrestricted)
+          ..addJavaScriptChannel(
+            'HelpNavigate',
+            onMessageReceived: (JavaScriptMessage message) {
+              _handleNavigation(message.message);
+            },
+          )
+          ..setNavigationDelegate(
+            NavigationDelegate(
+              onProgress: (int p) {
+                if (mounted) {
+                  setState(() {
+                    progress = p / 100.0;
+                  });
+                }
+              },
+              onPageFinished: (String url) {
+                if (mounted && progress < 1.0) {
+                  setState(() {
+                    progress = 1.0;
+                  });
+                }
+              },
+              onNavigationRequest: (NavigationRequest request) {
+                final urlString = request.url;
+                if (HelpScreen.isExternalUrl(urlString)) {
+                  final uri = Uri.tryParse(urlString.trim());
+                  if (uri != null) {
+                    launchUrl(uri, mode: LaunchMode.externalApplication);
+                  }
+                  return NavigationDecision.prevent;
+                }
+                if (urlString != 'about:blank' &&
+                    !urlString.startsWith('data:')) {
+                  _handleNavigation(urlString);
+                  return NavigationDecision.prevent;
+                }
+                return NavigationDecision.navigate;
+              },
+            ),
+          );
+      } catch (_) {}
+    } else {
+      progress = 1.0;
+    }
     LocaleController.currentLocale.addListener(_onLocaleChanged);
     _statusListener = Settings.instance.statusStream().listen((status) {
       if (mounted) {
@@ -208,6 +222,7 @@ document.addEventListener('click', function(e) {
       }
     });
     _helpNavListener = HelpNavListener(_handleNavigation);
+    loadFile(currentFile);
   }
 
   @override
@@ -247,8 +262,8 @@ document.addEventListener('click', function(e) {
     }
     final systemLang =
         WidgetsBinding.instance.platformDispatcher.locale.languageCode;
-    const supported = {'en', 'es'};
-    if (supported.contains(systemLang)) {
+    if (LocaleController.supportedLocales
+        .any((l) => l.languageCode == systemLang)) {
       return systemLang;
     }
     return 'en';
@@ -273,10 +288,6 @@ document.addEventListener('click', function(e) {
     final cleanBase =
         baseWithExt.replaceAll(RegExp(r'_[a-z]{2}\.html$'), '.html');
     currentFile = cleanBase;
-    if (webViewController == null) {
-      print("Not loading $filename because controller is null.");
-      return;
-    }
     final lang = _effectiveLanguage();
     String target = cleanBase;
     if (lang != 'en') {
@@ -305,9 +316,7 @@ document.addEventListener('click', function(e) {
     } catch (_) {}
 
     final scheme = Settings.instance.theme.scheme;
-    final themeCss = scheme.brightness == Brightness.dark
-        ? HelpScreen.generateDarkCss(scheme)
-        : HelpScreen.generateLightCss();
+    final themeCss = HelpScreen.generateThemeCss(scheme);
     if (htmlContent.contains('</head>')) {
       htmlContent = htmlContent.replaceFirst('</head>', '$themeCss</head>');
     } else {
@@ -321,7 +330,7 @@ document.addEventListener('click', function(e) {
     }
 
     try {
-      await webViewController?.loadData(data: htmlContent);
+      await webViewController.loadHtmlString(htmlContent);
     } catch (e) {
       print("Error loading data into webview: $e");
     }
@@ -387,87 +396,28 @@ document.addEventListener('click', function(e) {
     );
   }
 
-  InAppWebView webview(BuildContext c) {
-    return InAppWebView(
-      key: webViewKey,
-      initialSettings: InAppWebViewSettings(
-        useShouldOverrideUrlLoading: true,
-        javaScriptEnabled: true,
-      ),
-      onWebViewCreated: (controller) {
-        webViewController = controller;
-        controller.addJavaScriptHandler(
-          handlerName: 'helpNavigate',
-          callback: (args) {
-            if (args.isNotEmpty && args[0] is String) {
-              _handleNavigation(args[0] as String);
-            }
-          },
-        );
-        loadFile("about.html");
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted) {
-            loadFile("about.html");
-          }
-        });
-      },
-      onLoadStop: (controller, url) {
-        if (progress < 1.0) {
-          setState(() {
-            progress = 1.0;
-          });
-        }
-      },
-      shouldOverrideUrlLoading: (controller, navigationAction) async {
-        final uri = navigationAction.request.url;
-        if (uri == null) return NavigationActionPolicy.ALLOW;
-        final urlString = uri.toString();
-        if (urlString.startsWith('http://') ||
-            urlString.startsWith('https://') ||
-            urlString.startsWith('mailto:')) {
-          await launchUrl(uri.uriValue, mode: LaunchMode.externalApplication);
-          return NavigationActionPolicy.CANCEL;
-        }
-        if (urlString != 'about:blank' && !urlString.startsWith('data:')) {
-          _handleNavigation(urlString);
-          return NavigationActionPolicy.CANCEL;
-        }
-        return NavigationActionPolicy.ALLOW;
-      },
-      onProgressChanged: (controller, progress) {
-        setState(() {
-          this.progress = progress / 100;
-        });
-      },
-      onConsoleMessage: (controller, consoleMessage) {
-        if (kDebugMode) {
-          print(consoleMessage);
-        }
-      },
-    );
+  Widget webview(BuildContext c) {
+    return WebViewWidget(controller: webViewController);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Theme(
-      data: Settings.instance.theme.theme_data,
-      child: Scaffold(
-        appBar: appBar(context),
-        body: SafeArea(
-          child: Column(
-            children: <Widget>[
-              Expanded(
-                child: Stack(
-                  children: [
-                    Builder(builder: (BuildContext c) => webview(context)),
-                    progress < 1.0
-                        ? LinearProgressIndicator(value: progress)
-                        : Container(),
-                  ],
-                ),
+    return Scaffold(
+      appBar: appBar(context),
+      body: SafeArea(
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              child: Stack(
+                children: [
+                  Builder(builder: (BuildContext c) => webview(context)),
+                  progress < 1.0
+                      ? LinearProgressIndicator(value: progress)
+                      : Container(),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

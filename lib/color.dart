@@ -228,15 +228,13 @@ class SavableColorArray extends Savable<List<Color>> {
 }
 
 class SavableTheme extends Savable<int> {
-  static const Color darkPurpleBackground = Color(0xFF1A0F2E);
-
   late VoidCallback _callback;
 
   Brightness _sys_brightness = Brightness.light;
   SavableColor theme_color = SavableColor(
-      "theme_color", "Theme Color", Colors.purple, (scheme) => Colors.red);
+      "theme_color", "Theme Color", Colors.purple, (scheme) => scheme.primary);
   SavableColor background_color = SavableColor("backgroud_color",
-      "Background Color", Colors.black, (scheme) => Colors.red);
+      "Background Color", Colors.black, (scheme) => scheme.surface);
   ColorScheme _scheme = ColorScheme.light();
   ThemeMode theme_mode = ThemeMode.system;
   ThemeData theme_data = ThemeData.light();
@@ -267,8 +265,8 @@ class SavableTheme extends Savable<int> {
       // print("Bad theme value? ${prefs.getInt("theme_mode")}");
     }
     theme_color.load(prefs);
-    background_color.load(prefs);
     update();
+    background_color.load(prefs);
   }
 
   @override
@@ -287,34 +285,26 @@ class SavableTheme extends Savable<int> {
   }
 
   // Update the colors based on the theme color.
-  void update() {
+  void update({bool resetBackground = true}) {
     Brightness brightness = _sys_brightness;
     if (theme_mode == ThemeMode.light) brightness = Brightness.light;
     if (theme_mode == ThemeMode.dark) brightness = Brightness.dark;
     // print("update theme from color ${theme_color.value}, brightness=$brightness.");
     _scheme = ColorScheme.fromSeed(
         seedColor: theme_color.value, brightness: brightness);
-    if (brightness == Brightness.dark) {
-      _scheme = _scheme.copyWith(
-        surface: darkPurpleBackground,
-        surfaceContainerLowest: const Color(0xFF120822),
-        surfaceContainerLow: const Color(0xFF160D28),
-        surfaceContainer: const Color(0xFF22153D),
-        surfaceContainerHigh: const Color(0xFF291B47),
-        surfaceContainerHighest: const Color(0xFF322254),
-      );
-    }
     theme_data = ThemeData(
       colorScheme: _scheme,
       scaffoldBackgroundColor: _scheme.surface,
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: _scheme.primaryContainer,
+          foregroundColor: _scheme.onPrimaryContainer,
+        ),
+      ),
     );
-    background_color.value = _scheme.surface;
-    // print("--- scheme.brightness = ${scheme.brightness}");
-    // print("--- surface = ${scheme.surface}.");
-    // print("--- onSurface = ${scheme.onSurface}.");
-    // print("--- primary = ${scheme.primary}.");
-    // print("--- secondary = ${scheme.secondary}.");
-    // print("--- tertiary = ${scheme.tertiary}.");
+    if (resetBackground) {
+      background_color.value = _scheme.surface;
+    }
   }
 
   void updateAndCallback() {

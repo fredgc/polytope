@@ -150,16 +150,12 @@ class PolyAppWidgetState extends State<PolyAppWidget>
         _narrow = false;
         _constraints = constraints;
       }
-      return Theme(
-        data: Settings.instance.theme.theme_data,
-        child: Scaffold(
-          appBar: makeAppBar(context),
-          body: SafeArea(
-            child: Center(
-              child: Builder(
-                // This makes all the children use my theme.
-                builder: (BuildContext c) => _centerWidget(c),
-              ),
+      return Scaffold(
+        appBar: makeAppBar(context),
+        body: SafeArea(
+          child: Center(
+            child: Builder(
+              builder: (BuildContext c) => _centerWidget(c),
             ),
           ),
         ),

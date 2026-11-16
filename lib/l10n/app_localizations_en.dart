@@ -156,6 +156,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingClipGapSize => 'Clipping Gap Size';
 
   @override
+  String get settingColorByX4 => 'Color Lines by x4 Distance';
+
+  @override
   String get settingDebugLogs => 'Periodic Debug Logs';
 
   @override
@@ -172,6 +175,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingSliceColor => 'Slice Color';
+
+  @override
+  String get settingSliceColorByX4 => 'Color Slice Lines by x4 Distance';
 
   @override
   String get settingSliceEdgeThickness => 'Slice Edge Thickness';

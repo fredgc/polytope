@@ -21,7 +21,7 @@
 name: polytope
 description: "A drawing app for polytopes."
 publish_to: 'none'
-version: 2.2.0+0
+version: 2.2.2+0
 
 environment:
   sdk: '>=3.4.0 <4.0.0'
@@ -34,14 +34,16 @@ dependencies:
   intl: any
   cupertino_icons: ^1.0.2
   flex_color_picker: ^3.7.0
-  flutter_inappwebview: ^6.1.5  # If the help page is html.
+  webview_flutter: ^4.12.1
+  webview_flutter_web: ^0.2.3
+  webview_flutter_platform_interface: ^2.15.1
   # flutter_markdown_plus: ^1.0.7 # If the help page is in markdown.
   google_fonts: ^8.0.0
   ordered_set: ^8.0.0
-  package_info_plus: ^9.0.0     # get version number from code.
+  package_info_plus: ^10.2.0     # get version number from code.
   shared_preferences: ^2.5.2
   url_launcher: ^6.3.1
-  firebase_core: ^4.4.0
+  firebase_core: ^5.1.0
   webxr: ^0.2.0
   ar_flutter_plugin_2: ^0.0.3
 
