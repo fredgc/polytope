@@ -153,6 +153,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get settingClipGapSize => 'クリッピング間隔サイズ';
 
   @override
+  String get settingColorByX4 => 'x4距離で線を色分け';
+
+  @override
   String get settingDebugLogs => '定期デバッグログ';
 
   @override
@@ -169,6 +172,9 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get settingSliceColor => '切断面の色';
+
+  @override
+  String get settingSliceColorByX4 => 'x4距離で切断面の線を色分け';
 
   @override
   String get settingSliceEdgeThickness => '切断面のエッジの太さ';

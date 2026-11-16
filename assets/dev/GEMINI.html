@@ -101,16 +101,20 @@ Environment Configuration</h2>
 in <code>~/source/gemini/config/rules/</code>:</p>
 <ul>
 <li><p><strong>Task Management (<code>todo.md</code>)</strong>: Project
-tasks and issues are tracked using <code>~/bin/todo.py</code>. When
-asked about tasks or what to work on next, execute:</p>
+tasks and issues are tracked using <code>~/bin/todo.py</code>. Always
+execute <code>~/bin/todo.py</code> directly (do not prefix with
+<code>python</code> or <code>python3</code>):</p>
 <div class="sourceCode" id="cb1"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">~/bin/todo.py</span> list</span></code></pre></div></li>
-</ul>
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">~/bin/todo.py</span> list</span></code></pre></div>
 <p>Before starting an item, mark it in progress
 (<code>~/bin/todo.py doing &lt;N&gt;</code>). Once completed, mark it
 done (<code>~/bin/todo.py done &lt;N&gt;</code>). Do not archive
-completed tasks until reviewed and verified.</p>
-<ul>
+completed tasks (<code>~/bin/todo.py archive</code>) until reviewed and
+verified. Cross-project recipes live in
+<code>~/source/gemini/recipes/&lt;name&gt;.md</code> and are managed via
+<code>~/bin/todo.py recipes</code>. If <code>~/bin/todo.py</code> fails
+due to expired Google Cloud tokens, stop and ask the user to run
+<code>gcloud auth login</code>.</p></li>
 <li><p><strong>Communication Style (<code>style.md</code>)</strong>: Be
 blunt and direct. Avoid polite filler and superlatives. Keep responses
 concise, technical, and focused strictly on facts and
@@ -120,59 +124,157 @@ instructions.</p></li>
 characters. Always separate list items with a blank line. Always follow
 headers with a blank line. Visually align markdown table column borders
 (<code>|</code>).</p></li>
+<li><p><strong>Tool &amp; Git Usage (<code>tools.md</code>)</strong>:
+Always use native <code>read_file</code>, <code>edit_file</code>, and
+<code>write_file</code> tools instead of shell commands like
+<code>cat</code>, <code>head</code>, <code>tail</code>,
+<code>sed -i</code>, or <code>perl -i</code>. Prefer
+<code>git -C &lt;path&gt; &lt;subcommand&gt;</code> over
+<code>cd &lt;path&gt; &amp;&amp; git &lt;subcommand&gt;</code>. Never
+rewrite git history using <code>git reset</code> or squash commits on
+dev branches; always add incremental commits.</p></li>
 <li><p><strong>Emacs Integration (<code>emacs.md</code>)</strong>: When
 requested to send a file to Emacs, run
-<code>emacs-maybe-client -f &lt;file&gt;</code>.</p></li>
+<code>emacs-maybe-client -f &lt;file&gt;</code> (or omit <code>-f</code>
+to wait for editing).</p></li>
 <li><p><strong>Hardware &amp; Testing
 (<code>devices.md</code>)</strong>: On host <code>raven</code>, an
-Android device may be connected via <code>adb</code> for Android
-testing.</p></li>
+Android device may be connected via <code>adb</code> for Android testing
+(<code>adb reverse tcp:5505 tcp:5505</code>).</p></li>
 </ul>
 <hr />
 <h2 id="project-purpose-features">1. Project Purpose &amp; Features</h2>
 <p>The <strong>Polytope Drawing Tool</strong> is an interactive,
 cross-platform (Web and Android) application used to construct, rotate,
-project, and slice regular polytopes in 3, 4, and higher dimensions.</p>
+project, and slice regular polytopes in 2, 3, 4, and 5 dimensions.</p>
 <h3 id="key-features">Key Features</h3>
 <ul>
 <li><p><strong>Higher-Dimensional Polytopes</strong>: Supports regular
-polytopes including simplexes, hypercubes, cross-polytopes, the 24-cell,
-the 120-cell, and the 600-cell.</p></li>
+polytopes including simplexes, hypercubes, cross-polytopes
+(orthoplexes), dodecahedra, icosahedra, the 24-cell, the 120-cell, and
+the 600-cell.</p></li>
 <li><p><strong>Dynamic Hyperplane Slicing</strong>: Calculates the exact
-3D cross-sections formed by intersecting 4D polytopes with moving 3D
-hyperplanes.</p></li>
+3D cross-sections formed by intersecting higher-dimensional polytopes
+with moving hyperplanes, with sticky transition points at
+vertices.</p></li>
 <li><p><strong>Interactive N-Dimensional Rotation</strong>: Manipulate
-rotation planes in 3D and 4D space with continuous speed and angle
-controls.</p></li>
+rotation planes in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>ℝ</mi><mn>3</mn></msup><annotation encoding="application/x-tex">\mathbb{R}^3</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>ℝ</mi><mn>4</mn></msup><annotation encoding="application/x-tex">\mathbb{R}^4</annotation></semantics></math>,
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>ℝ</mi><mn>5</mn></msup><annotation encoding="application/x-tex">\mathbb{R}^5</annotation></semantics></math>,
+perspective (zolly), translation, scaling, and orientation snaps
+(vertex, edge, face, 3-cell first).</p></li>
+<li><p><strong>Depth Cues &amp;
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>x</mi><mn>4</mn></msub><annotation encoding="application/x-tex">x_4</annotation></semantics></math>
+Rainbow Coloring</strong>: Supports 2D crossing-line gap clipping
+(<code>enable_line_clipping</code>) to show 3D depth
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>z</mi><annotation encoding="application/x-tex">z</annotation></semantics></math>)
+and optional smooth rainbow gradient coloring (<code>color_by_x4</code>,
+<code>slice_color_by_x4</code>) mapping the lowest
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>x</mi><mn>4</mn></msub><annotation encoding="application/x-tex">x_4</annotation></semantics></math>
+coordinate to red and highest
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>x</mi><mn>4</mn></msub><annotation encoding="application/x-tex">x_4</annotation></semantics></math>
+coordinate to violet.</p></li>
+<li><p><strong>Internationalization (i18n)</strong>: Localized across 8
+languages (<code>de</code>, <code>en</code>, <code>es</code>,
+<code>fr</code>, <code>ja</code>, <code>lt</code>, <code>pt</code>,
+<code>zh</code>) for both UI strings (<code>lib/l10n/*.arb</code>) and
+compiled HTML help documentation (<code>doc/*.md</code>).</p></li>
 <li><p><strong>WebXR and Spatial Rendering</strong>: Provides
-experimental immersive WebXR rendering allowing users to view and
-manipulate 3D slices and 4D wireframes as holographic spatial
-objects.</p></li>
+experimental immersive 3D rendering allowing users to view and
+manipulate 3D slices and 4D wireframes as holographic spatial objects
+via instanced spheres and cylinders.</p></li>
 </ul>
 <hr />
 <h2 id="codebase-architecture">2. Codebase Architecture</h2>
 <pre class="text"><code>lib/
-├── animate.dart           # Animation timing and controller utilities
-├── color.dart             # Color schemes and face palette management
-├── drawable.dart          # Canvas drawable primitives (dots, edges, faces)
-├── help.dart              # In-app help viewer loading doc HTML assets
-├── main.dart              # App entry point
-├── permute.dart           # Coordinate permutation and symmetry generators
-├── polytope.dart          # Base polytope data models and topological mesh
-├── printer.dart           # Debug logging utilities
-├── regular.dart           # Generators for regular polytopes across dimensions
-├── scene.dart             # Scene layout and high-dimensional viewport
-├── settings.dart          # SharedPreferences persistence and settings dialog
-├── slice.dart             # Hyperplane slicing and polygon intersection math
-├── slider.dart            # Custom parameter slider widgets
-├── spatial_scene.dart     # 3D spatial scene graph for XR pipelines
-├── transform.dart         # N-dimensional rotation and projection matrices
-├── vector.dart            # Vector and matrix algebra
-├── webxr_renderer.dart    # WebXR JavaScript bridge and 3D WebGL renderer
-├── widget.dart            # Top-level UI widgets and responsive scaffolding
-└── xr_support.dart        # Platform-agnostic XR capability detection</code></pre>
+├── animate.dart                 # Animation timing and controller utilities
+├── color.dart                   # Color schemes, pickers, and theme management
+├── drawable.dart                # 2D canvas drawables (Dot, LineSegment, gaps)
+├── firebase_options.dart        # Firebase platform configuration
+├── help.dart                    # In-app help viewer loading doc HTML assets
+├── help_nav_listener.dart       # Conditional export for help navigation
+├── help_nav_listener_stub.dart  # Non-web stub for help navigation listener
+├── help_nav_listener_web.dart   # Web postMessage listener for help links
+├── l10n/                        # ARB translation files and generated l10n
+├── main.dart                    # App entry point and route registration
+├── mesh_data.dart               # Precomputed 4D meshes (120-cell, 600-cell)
+├── permute.dart                 # Coordinate permutation and symmetry helpers
+├── polytope.dart                # Base polytope data models and topology mesh
+├── printer.dart                 # Debug formatting and logging utilities
+├── regular.dart                 # Generators for regular polytopes across dims
+├── scene.dart                   # Scene state, clipping, x4 bounds, and input
+├── settings.dart                # SharedPreferences persistence and UI screen
+├── slice.dart                   # Hyperplane slicing &amp; intersection drawables
+├── slider.dart                  # Custom parameter slider with sticky stops
+├── spatial_scene.dart           # 3D instanced sphere/cylinder scene for XR
+├── transform.dart               # N-dimensional rotation and zolly projection
+├── vector.dart                  # Vector and Point algebra in R^d
+├── web_cache.dart               # Conditional export for web version checking
+├── web_cache_stub.dart          # Non-web stub for cache checking
+├── web_cache_web.dart           # Web version.json polling and cache busting
+├── webxr_renderer.dart          # WebGL2 instanced sphere/cylinder shader loop
+├── widget.dart                  # Top-level responsive UI and app bar controls
+├── xr_support.dart              # Platform-agnostic XR capability interface
+├── xr_support_mobile.dart       # Android AR / XR implementation
+├── xr_support_stub.dart         # Fallback stub for unsupported platforms
+└── xr_support_web.dart          # WebXR session and render loop implementation</code></pre>
 <hr />
-<h2 id="build-versioning-deployment-workflow">3. Build, Versioning &amp;
+<h2 id="development-best-practices-gotchas">3. Development Best
+Practices &amp; Gotchas</h2>
+<ul>
+<li><p><strong>Localization Parity</strong>: Whenever adding a
+user-visible string or setting, add the key and metadata to
+<code>lib/l10n/app_en.arb</code>, add translations to all 7 other ARB
+files (<code>app_de.arb</code>, <code>app_es.arb</code>,
+<code>app_fr.arb</code>, <code>app_ja.arb</code>,
+<code>app_lt.arb</code>, <code>app_pt.arb</code>,
+<code>app_zh.arb</code>), and run <code>flutter gen-l10n</code>.
+<code>test/localization_test.dart</code> enforces strict key parity
+across all ARB files.</p></li>
+<li><p><strong>Settings Registration</strong>: New settings
+(<code>SavableBool</code>, <code>SavableDouble</code>,
+<code>SavableColor</code>) must have a unique <code>name</code> key, be
+registered in <code>Scene.initSettings</code> or
+<code>Slice.initSettings</code>, and map their <code>name</code> to a
+localized label in <code>Savable.localizedName</code>
+(<code>lib/settings.dart</code>).</p></li>
+<li><p><strong>Responsive Layout &amp; Accessibility</strong>:
+<code>SettingsScreen</code> uses <code>Wrap</code> rows separated by
+<code>EndOfRow</code> markers, and <code>PolyAppWidget</code>
+automatically collapses toolbar items into a secondary scrollable bar on
+compact viewports (<code>width &lt; 600</code> or text overflow). Any
+new interactive widget must pass <code>make audit</code> across all
+locales at <code>1.5x</code> text scaling and satisfy WCAG AA tap target
+guidelines (<code>labeledTapTargetGuideline</code>).</p></li>
+<li><p><strong>Coordinate Pipeline</strong>:
+<code>CoordinateTransform.projectTo3D</code> rotates in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>ℝ</mi><mi>d</mi></msup><annotation encoding="application/x-tex">\mathbb{R}^d</annotation></semantics></math>
+and applies perspective (<code>zolly</code>) down to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>ℝ</mi><mn>3</mn></msup><annotation encoding="application/x-tex">\mathbb{R}^3</annotation></semantics></math>.
+<code>CoordinateTransform.apply</code> populates 3D world coordinates
+(<code>wx</code>, <code>wy</code>, <code>wz</code>), the 4D coordinate
+(<code>wx4 = temp.x[3]</code>), and 2D screen coordinates
+(<code>sx</code>, <code>sy</code>, <code>sz</code>).
+<code>SlideDot</code> instances are included in
+<code>scene.points</code> so they receive the same transform updates
+every frame.</p></li>
+<li><p><strong>Platform Conditional Imports</strong>: Web-only packages
+(<code>package:web</code>, <code>dart:js_interop</code>,
+<code>package:webxr</code>) and mobile-only packages
+(<code>ar_flutter_plugin_2</code>) must never be imported directly in
+shared files. Use conditional exports (<code>xr_support.dart</code>,
+<code>web_cache.dart</code>, <code>help_nav_listener.dart</code>) so
+unit tests and cross-platform builds compile cleanly.</p></li>
+<li><p><strong>Window Size in Widget Tests</strong>: Avoid deprecated
+<code>tester.binding.window</code> APIs; use
+<code>tester.view.physicalSize</code> and
+<code>tester.view.devicePixelRatio</code> with
+<code>addTearDown</code>.</p></li>
+</ul>
+<hr />
+<h2 id="build-versioning-deployment-workflow">4. Build, Versioning &amp;
 Deployment Workflow</h2>
 <h3 id="build-and-asset-automation-makefile">Build and Asset Automation
 (<code>Makefile</code>)</h3>
@@ -183,23 +285,26 @@ compilation and builds:</p>
 <code>doc/*.md</code> into <code>assets/*.html</code> and developer docs
 (<code>plan.md</code>, <code>README.md</code>, <code>GEMINI.md</code>)
 into <code>assets/dev/*.html</code> via <code>pandoc</code>.</p></li>
-<li><p><code>make ASSETS</code>: Generates icons, favicons, version
-metadata, and docs.</p></li>
+<li><p><code>make ASSETS</code>: Generates icons, favicons, mesh JSON,
+and compiled HTML docs.</p></li>
 <li><p><code>make test</code>: Runs standard Flutter unit, widget, and
-ARB localization parity tests on every commit
+ARB localization parity tests
 (<code>flutter test --exclude-tags release_audit</code>). Fast execution
-(~2-5 seconds).</p></li>
+(~2-8 seconds).</p></li>
 <li><p><code>make audit</code>: Runs exhaustive pre-release
 accessibility and multi-locale layout audits
 (<code>flutter test test/audit_test.dart</code>). Tests all supported
-locales, compact mobile/tablet/desktop viewports, 1.5x/2.0x font
+locales, compact mobile/tablet/desktop viewports, <code>1.5x</code> font
 scaling, and WCAG AA guidelines
 (<code>labeledTapTargetGuideline</code>). Required automatically by
 <code>make stage-release</code> and <code>make release</code>.</p></li>
-<li><p><code>make stage</code>: Builds web app with debug flags and runs
-<code>firebase_stage.pl</code>.</p></li>
-<li><p><code>make release</code>: Deploys production bundle to Firebase
-(<code>polytope.gchouse.org</code>).</p></li>
+<li><p><code>make stage</code>: Builds web app and deploys to the
+Firebase staging channel via <code>firebase_stage.pl</code>.</p></li>
+<li><p><code>make stage-release</code>: Runs <code>make audit</code>,
+builds web app, and deploys to the Firebase staging channel.</p></li>
+<li><p><code>make release</code>: Runs <code>make audit</code>, builds
+all targets (<code>make build_all</code>), and deploys production bundle
+to Firebase (<code>polytope.gchouse.org</code>).</p></li>
 </ul>
 <h3 id="version-rolling-roll_build_number.sh">Version Rolling
 (<code>roll_build_number.sh</code>)</h3>
@@ -208,19 +313,48 @@ propagates the update to <code>web/version.json</code>:</p>
 <div class="sourceCode" id="cb3"><pre
 class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./roll_build_number.sh</span></span></code></pre></div>
 <hr />
-<h2 id="code-style-guidelines">4. Code Style Guidelines</h2>
+<h2 id="code-style-guidelines">5. Code Style Guidelines</h2>
 <ul>
 <li><p><strong>Markdown</strong>: Keep line lengths strictly under 80
 characters. Always separate list items with a blank line. Always follow
-headers with a blank line.</p></li>
+headers with a blank line. Visually align markdown table column borders
+(<code>|</code>).</p></li>
 <li><p><strong>Dart</strong>: Run <code>dart format .</code> after
-modifying any code. Keep static analysis free of errors and
-lints.</p></li>
+modifying any code. Keep <code>flutter analyze</code> free of errors,
+warnings, and lints.</p></li>
 </ul>
 <hr />
-<h2 id="testing-guidelines">5. Testing Guidelines</h2>
-<p>Run tests before committing:</p>
+<h2 id="testing-guidelines">6. Testing Guidelines</h2>
+<p>Run targeted tests during development for fast feedback, and run the
+full test suite before committing:</p>
+<ul>
+<li><p><strong>Polytope Topology, Slicing, Clipping &amp;
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>x</mi><mn>4</mn></msub><annotation encoding="application/x-tex">x_4</annotation></semantics></math>
+Coloring</strong>:</p>
 <div class="sourceCode" id="cb4"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">flutter</span> test</span></code></pre></div>
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">flutter</span> test test/polytope_test.dart</span></code></pre></div></li>
+<li><p><strong>Coordinate Transform &amp; Projection Math</strong>:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">flutter</span> test test/transform_test.dart</span></code></pre></div></li>
+<li><p><strong>3D Spatial Scene Buffers</strong>:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">flutter</span> test test/spatial_scene_test.dart</span></code></pre></div></li>
+<li><p><strong>Localization &amp; ARB Key Parity</strong>:</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">flutter</span> test test/localization_test.dart</span></code></pre></div></li>
+<li><p><strong>Theme &amp; Settings UI</strong>:</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">flutter</span> test test/theme_test.dart</span></code></pre></div></li>
+<li><p><strong>Help Screen &amp; Documentation Tabs</strong>:</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">flutter</span> test test/help_test.dart</span></code></pre></div></li>
+<li><p><strong>Pre-Release Multi-Locale Layout &amp; Accessibility
+Audit</strong>:</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> audit</span></code></pre></div></li>
+<li><p><strong>Full Standard Test Suite</strong>:</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> test</span></code></pre></div></li>
+</ul>
 </body>
 </html>

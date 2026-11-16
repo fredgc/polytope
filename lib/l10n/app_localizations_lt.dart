@@ -154,6 +154,9 @@ class AppLocalizationsLt extends AppLocalizations {
   String get settingClipGapSize => 'Karpymo tarpo dydis';
 
   @override
+  String get settingColorByX4 => 'Spalvinti linijas pagal x4 atstumą';
+
+  @override
   String get settingDebugLogs => 'Periodiniai derinimo žurnalai';
 
   @override
@@ -170,6 +173,10 @@ class AppLocalizationsLt extends AppLocalizations {
 
   @override
   String get settingSliceColor => 'Pjūvio spalva';
+
+  @override
+  String get settingSliceColorByX4 =>
+      'Spalvinti pjūvio linijas pagal x4 atstumą';
 
   @override
   String get settingSliceEdgeThickness => 'Pjūvio briaunų storis';

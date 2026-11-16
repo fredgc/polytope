@@ -62,9 +62,16 @@ void main() {
     expect(darkCss, contains('color:'));
     expect(darkCss, contains(HelpScreen.colorToHex(darkScheme.surface)));
 
-    final lightCss = HelpScreen.generateLightCss();
+    final lightScheme = ColorScheme.fromSeed(
+      seedColor: Colors.purple,
+      brightness: Brightness.light,
+    );
+    final lightCss = HelpScreen.generateLightCss(lightScheme);
     expect(lightCss, contains('<style id="theme-style">'));
-    expect(lightCss, contains('#dcd2e3'));
-    expect(lightCss, contains('#eae4ee'));
+    expect(lightCss, contains(HelpScreen.colorToHex(lightScheme.surface)));
+    expect(
+      lightCss,
+      contains(HelpScreen.colorToHex(lightScheme.surfaceContainerHighest)),
+    );
   });
 }

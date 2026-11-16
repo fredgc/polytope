@@ -155,6 +155,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingClipGapSize => 'Schnittabstandsgröße';
 
   @override
+  String get settingColorByX4 => 'Linien nach x4-Abstand färben';
+
+  @override
   String get settingDebugLogs => 'Regelmäßige Debug-Protokolle';
 
   @override
@@ -171,6 +174,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get settingSliceColor => 'Schnittfarbe';
+
+  @override
+  String get settingSliceColorByX4 => 'Schnittlinien nach x4-Abstand färben';
 
   @override
   String get settingSliceEdgeThickness => 'Schnitt-Kantenstärke';

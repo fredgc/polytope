@@ -1,7 +1,6 @@
 # User / Project custom ignores
 cached/
 .git_chain_data
-untranslated_messages.json
 
 # Miscellaneous
 *.class
@@ -30,6 +29,7 @@ out/
 #.vscode/
 
 # Flutter/Dart/Pub related
+untranslated_messages.json
 **/doc/api/
 **/ios/Flutter/.last_build_id
 .dart_tool/
@@ -77,6 +77,7 @@ firebase_options.dart
 lib/firebase_options.dart
 google-services.json
 android/app/google-services.json
+serviceAccount.json
 
 # Environment variables
 .env

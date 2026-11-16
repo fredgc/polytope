@@ -109,7 +109,10 @@ double norm(Vector v) => v.norm();
 class Point extends Vector {
   int id = -1; // An id of -1 means it is unique.
   double sx = 0, sy = 0, sz = 0; // Screen coordinates. sz is for clipping.
-  double wx = 0, wy = 0, wz = 0; // 3D world coordinates before 2D projection.
+  double wx = 0,
+      wy = 0,
+      wz = 0,
+      wx4 = 0; // 3D/4D world coordinates before 2D projection.
 
   Point({this.id = -1});
   Point.from(super.other) : super.from();

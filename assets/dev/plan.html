@@ -20,115 +20,53 @@
       margin: 0 0.8em 0.2em -1.6em;
       vertical-align: middle;
     }
-    /* CSS for syntax highlighting */
-    html { -webkit-text-size-adjust: 100%; }
-    pre > code.sourceCode { white-space: pre; position: relative; }
-    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-    pre > code.sourceCode > span:empty { height: 1.2em; }
-    .sourceCode { overflow: visible; }
-    code.sourceCode > span { color: inherit; text-decoration: inherit; }
-    div.sourceCode { margin: 1em 0; }
-    pre.sourceCode { margin: 0; }
-    @media screen {
-    div.sourceCode { overflow: auto; }
-    }
-    @media print {
-    pre > code.sourceCode { white-space: pre-wrap; }
-    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-    }
-    pre.numberSource code
-      { counter-reset: source-line 0; }
-    pre.numberSource code > span
-      { position: relative; left: -4em; counter-increment: source-line; }
-    pre.numberSource code > span > a:first-child::before
-      { content: counter(source-line);
-        position: relative; left: -1em; text-align: right; vertical-align: baseline;
-        border: none; display: inline-block;
-        -webkit-touch-callout: none; -webkit-user-select: none;
-        -khtml-user-select: none; -moz-user-select: none;
-        -ms-user-select: none; user-select: none;
-        padding: 0 4px; width: 4em;
-        color: #aaaaaa;
-      }
-    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
-    div.sourceCode
-      {   }
-    @media screen {
-    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-    }
-    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-    code span.at { color: #7d9029; } /* Attribute */
-    code span.bn { color: #40a070; } /* BaseN */
-    code span.bu { color: #008000; } /* BuiltIn */
-    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-    code span.ch { color: #4070a0; } /* Char */
-    code span.cn { color: #880000; } /* Constant */
-    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-    code span.dt { color: #902000; } /* DataType */
-    code span.dv { color: #40a070; } /* DecVal */
-    code span.er { color: #ff0000; font-weight: bold; } /* Error */
-    code span.ex { } /* Extension */
-    code span.fl { color: #40a070; } /* Float */
-    code span.fu { color: #06287e; } /* Function */
-    code span.im { color: #008000; font-weight: bold; } /* Import */
-    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-    code span.op { color: #666666; } /* Operator */
-    code span.ot { color: #007020; } /* Other */
-    code span.pp { color: #bc7a00; } /* Preprocessor */
-    code span.sc { color: #4070a0; } /* SpecialChar */
-    code span.ss { color: #bb6688; } /* SpecialString */
-    code span.st { color: #4070a0; } /* String */
-    code span.va { color: #19177c; } /* Variable */
-    code span.vs { color: #4070a0; } /* VerbatimString */
-    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
   </style>
   <link rel="stylesheet" href="../css/doc_style.css" />
 </head>
 <body>
 <h1 id="polytope-project-plan">Polytope Project Plan</h1>
 <p>This document outlines the strategic roadmap, architecture goals, and
-long- term milestones for the <strong>Polytope</strong> Flutter
-project.</p>
+long-term milestones for adding <strong>Virtual Reality (VR)</strong>
+and <strong>Augmented/Extended Reality (XR)</strong> support to the
+<strong>Polytope</strong> Flutter application across WebXR and Android
+builds.</p>
 <blockquote>
 <p><strong>Note</strong>: Active day-to-day tasks and issue tracking are
-managed &gt;</p>
+managed dynamically using <code>~/bin/todo.py</code>. Run
+<code>~/bin/todo.py list</code> to view active tasks.</p>
 </blockquote>
-<p>dynamically using <code>~/bin/todo.py</code>. Run
-<code>~/bin/todo.py list</code> to view active &gt; tasks.</p>
-<hr />
-<p>This document outlines the architecture, roadmap, and open questions
-for adding <strong>Virtual Reality (VR)</strong> and
-<strong>Augmented/Extended Reality (XR)</strong> support to the
-<strong>Polytope</strong> Flutter application.</p>
 <hr />
 <h2 id="executive-summary-goals">1. Executive Summary &amp; Goals</h2>
 <p>The goal is to allow users to experience regular polytopes
-(hypercubes, 24-cells, 120-cells, etc.) and their dynamic 3D hyperplane
-slices as <strong>interactive 3D holographic objects</strong> in
-physical space (AR) or immersive space (VR).</p>
+(hypercubes, 24-cells, 120-cells, 600-cells, etc.) and their dynamic 3D
+hyperplane slices as <strong>interactive 3D holographic objects</strong>
+in physical space (AR) or immersive space (VR).</p>
 <h3 id="guiding-principles">Guiding Principles</h3>
 <ol type="1">
 <li><p><strong>Maximum Shared Dart / Flutter Code</strong>:</p>
 <ul>
-<li>All high-dimensional mathematics, n-dimensional rotation matrices,
-perspective/zolly projections down to 3D, slice calculation, animations,
-and UI controls remain <strong>100% in pure Dart</strong>.</li>
+<li>All high-dimensional mathematics,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>-dimensional
+rotation matrices, perspective/zolly projections down to 3D, slice
+calculation,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>x</mi><mn>4</mn></msub><annotation encoding="application/x-tex">x_4</annotation></semantics></math>
+rainbow coloring, animations, and UI controls remain <strong>100% in
+pure Dart</strong>.</li>
 </ul></li>
 <li><p><strong>Minimal Target-Specific Glue</strong>:</p>
 <ul>
 <li><p>Platform-dependent code is isolated behind a clean abstract
-interface (<code>XRSupport</code> / <code>XRRenderer</code>) for:</p>
+interface (<code>XRSupport</code>) for:</p>
 <ul>
-<li><p><strong>WebXR</strong> (Meta Quest Browser, Chrome on Android,
-Vision Pro Safari, desktop XR emulators).</p></li>
-<li><p><strong>Android AR / ARCore</strong> (Mobile phones/tablets with
-camera passthrough).</p></li>
-<li><p><strong>Android XR</strong> (Headsets running the new Android XR
-platform / OpenXR / Jetpack XR).</p></li>
+<li><p><strong>WebXR</strong> (<code>lib/xr_support_web.dart</code> +
+<code>lib/webxr_renderer.dart</code> — Meta Quest Browser, Chrome on
+Android, Vision Pro Safari, desktop XR emulators).</p></li>
+<li><p><strong>Android Mobile AR / ARCore</strong>
+(<code>lib/xr_support_mobile.dart</code> — Android phones and tablets
+with camera passthrough).</p></li>
+<li><p><strong>Android XR Headsets</strong>
+(<code>lib/xr_support_mobile.dart</code> — standalone spatial headsets
+running Android XR / OpenXR / Jetpack XR).</p></li>
 </ul></li>
 </ul></li>
 <li><p><strong>Preserve Existing 2D Web &amp; Mobile
@@ -139,462 +77,337 @@ devices or when XR mode is not active.</li>
 </ul></li>
 </ol>
 <hr />
-<h2 id="current-architecture-gap-analysis">2. Current Architecture &amp;
-Gap Analysis</h2>
-<pre><code>Current Architecture:
-[Polytope Math (d-dimensions)]
-       │
-       ▼
-[CoordinateTransform] ── (Rotates in d-dim, zolly projects to R3, scales &amp; offsets to R2)
-       │
-       ▼
-[Drawables (Dot, LineSegment, SliceEdge)]
-       │
-       ▼
-[Flutter Canvas (CustomPainter)] ── 2D pixel drawing (sx, sy)</code></pre>
-<h3 id="the-gap-for-xr">The Gap for XR:</h3>
-<ol type="1">
-<li><p><strong>Projection Target</strong>:</p>
+<h2 id="current-architecture-implementation-status">2. Current
+Architecture &amp; Implementation Status</h2>
+<pre class="text"><code>                     ┌─────────────────────────┐
+                     │   Polytope Geometry &amp;   │
+                     │   Slice Engine (Dart)   │
+                     └────────────┬────────────┘
+                                  │
+                                  ▼
+                     ┌─────────────────────────┐
+                     │   CoordinateTransform   │
+                     │ (R^d -&gt; R^3 + wx4 math) │
+                     └────────────┬────────────┘
+                                  │
+            ┌─────────────────────┴─────────────────────┐
+            ▼                                           ▼
+ ┌──────────────────────┐                    ┌──────────────────────┐
+ │   2D Canvas Engine   │                    │     SpatialScene     │
+ │  (Dot, LineSegment,  │                    │ (Float32List sphere  │
+ │  SlideEdge, Clipper) │                    │  &amp; cylinder buffers) │
+ └──────────────────────┘                    └──────────┬───────────┘
+                                                        │
+                              ┌─────────────────────────┴───┐
+                              ▼                             ▼
+                   ┌──────────────────────┐      ┌──────────────────────┐
+                   │     WebXR Backend    │      │   Android AR / XR    │
+                   │ (WebGL2 Instancing)  │      │ (ARCore / OpenXR)    │
+                   └──────────────────────┘      └──────────────────────┘</code></pre>
+<h3 id="completed-shared-webxr-components">Completed Shared &amp; WebXR
+Components</h3>
 <ul>
-<li><p>Currently, <code>CoordinateTransform.apply</code> projects points
-from
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>ℝ</mi><mi>d</mi></msup><mo>→</mo><msup><mi>ℝ</mi><mn>3</mn></msup></mrow><annotation encoding="application/x-tex">\mathbb{R}^d
-\to \mathbb{R}^3</annotation></semantics></math> via:</p>
-<div class="sourceCode" id="cb2"><pre
-class="sourceCode dart"><code class="sourceCode dart"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 1. Rotation in R^d:</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>temp<span class="op">.</span>x[i] <span class="op">+=</span> A[i][j] <span class="op">*</span> (p<span class="op">.</span>x[j] <span class="op">-</span> b<span class="op">.</span>x[j]) <span class="op">*</span> scale;</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">// 2. Perspective/zolly reduction down to R^3:</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (<span class="dt">int</span> j <span class="op">=</span> zolly<span class="op">.</span>length <span class="op">-</span> <span class="dv">1</span>; j <span class="op">&gt;</span> <span class="dv">1</span>; j<span class="op">--</span>) <span class="op">{</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (<span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span>; i <span class="op">&lt;</span> j; i<span class="op">++</span>) <span class="op">{</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    temp<span class="op">.</span>x[i] <span class="op">=</span> temp<span class="op">.</span>x[i] <span class="op">/</span> (<span class="fl">1.0</span> <span class="op">-</span> zolly[j] <span class="op">*</span> temp<span class="op">.</span>x[j]);</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div></li>
+<li><p><strong>3D Projection (<code>lib/transform.dart</code>,
+<code>lib/vector.dart</code>)</strong>:
+<code>CoordinateTransform.projectTo3D</code> and <code>apply</code>
+compute 3D world coordinates (<code>wx</code>, <code>wy</code>,
+<code>wz</code>) and the 4D depth coordinate
+(<code>wx4 = temp.x[3]</code>) prior to 2D screen flattening
+(<code>sx</code>, <code>sy</code>, <code>sz</code>).</p></li>
+<li><p><strong>Shared 3D Scene Graph
+(<code>lib/spatial_scene.dart</code>)</strong>:
+<code>SpatialScene</code> converts <code>Scene</code> vertices, edges,
+and active hyperplane slice intersections into contiguous GPU-ready
+buffers every frame:</p>
+<ul>
+<li><p><code>sphereBuffer</code>: <code>8</code> floats per sphere
+(<code>[x, y, z, radius, r, g, b, a]</code>).</p></li>
+<li><p><code>cylinderBuffer</code>: <code>12</code> floats per cylinder
+(<code>[x1, y1, z1, x2, y2, z2, radius, r, g, b, a, 0.0]</code>).</p></li>
+<li><p>Supports both solid colors (<code>poly_color</code>,
+<code>slice_color</code>) and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>x</mi><mn>4</mn></msub><annotation encoding="application/x-tex">x_4</annotation></semantics></math>
+rainbow coloring (<code>color_by_x4</code>,
+<code>slice_color_by_x4</code>).</p></li>
 </ul></li>
-</ol>
-<p>At this point, <code>(temp.x[0], temp.x[1], temp.x[2])</code> are
-true <strong>3D coordinates in
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>ℝ</mi><mn>3</mn></msup><annotation encoding="application/x-tex">\mathbb{R}^3</annotation></semantics></math></strong>.</p>
-<ul>
-<li><p>However, the code immediately flattens them to 2D screen
-space:</p>
-<div class="sourceCode" id="cb3"><pre
-class="sourceCode dart"><code class="sourceCode dart"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>p<span class="op">.</span>sx <span class="op">=</span> offset<span class="op">.</span>x <span class="op">+</span> zoom <span class="op">*</span> temp<span class="op">.</span>x[<span class="dv">0</span>];</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>p<span class="op">.</span>sy <span class="op">=</span> offset<span class="op">.</span>y <span class="op">-</span> zoom <span class="op">*</span> temp<span class="op">.</span>x[<span class="dv">1</span>];</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>p<span class="op">.</span>sz <span class="op">=</span> zoom <span class="op">*</span> temp<span class="op">.</span>x[<span class="dv">2</span>]; <span class="co">// sz is only used for z-sorting/coloring</span></span></code></pre></div></li>
-<li><p>In XR, we do <strong>not</strong> flatten to 2D! The XR device’s
-head tracking and stereoscopic cameras handle the final 3D-to-eye
-projection. We need the 3D vertices and 3D line/polygon edges.</p></li>
+<li><p><strong>WebXR Backend (<code>lib/xr_support_web.dart</code>,
+<code>lib/webxr_renderer.dart</code>)</strong>: Complete WebGL2
+instanced renderer (<code>glDrawElementsInstanced</code>) with
+Blinn-Phong lighting, supporting <code>immersive-vr</code>,
+<code>immersive-ar</code>, and <code>inline</code> WebXR
+sessions.</p></li>
 </ul>
-<ol start="2" type="1">
-<li><p><strong>Rendering Technology</strong>:</p>
+<h3 id="current-gap-on-android-libxr_support_mobile.dart">Current Gap on
+Android (<code>lib/xr_support_mobile.dart</code>)</h3>
 <ul>
-<li><p>Flutter’s standard <code>Canvas</code> is a 2D rendering
-API.</p></li>
-<li><p>For 3D stereoscopic XR, the target device requires either a 3D
-scene graph, WebGL (for WebXR), or native 3D mesh nodes (ARCore /
-Android XR).</p></li>
-</ul></li>
-</ol>
-<hr />
-<h2 id="proposed-architecture">3. Proposed Architecture</h2>
-<pre><code>                          ┌─────────────────────────┐
-                          │   Polytope Geometry &amp;   │
-                          │   Slice Engine (Dart)   │
-                          └────────────┬────────────┘
-                                       │
-                                       ▼
-                          ┌─────────────────────────┐
-                          │  CoordinateTransform3D  │
-                          │  (R^d -&gt; R^3 projection) │
-                          └────────────┬────────────┘
-                                       │
-                                       ▼
-                          ┌─────────────────────────┐
-                          │      SpatialScene       │
-                          │ (3D Vertices, Edges,    │
-                          │  Slice Mesh, Colors)    │
-                          └────────────┬────────────┘
-                                       │
-                ┌──────────────────────┴──────────────────────┐
-                ▼                                             ▼
-     ┌──────────────────────┐                      ┌──────────────────────┐
-     │     WebXR Backend    │                      │   Android AR / XR    │
-     │   (WebGL / WebXR)    │                      │ (ARCore / AndroidXR) │
-     └──────────────────────┘                      └──────────────────────┘</code></pre>
-<h3 id="the-shared-3d-data-layer-spatialscene">3.1 The Shared 3D Data
-Layer (<code>SpatialScene</code>)</h3>
-<p>A pure Dart class that produces geometry buffers without any
-dependencies on WebGL, Android, or Flutter UI:</p>
-<ul>
-<li><p><strong>Vertices</strong>: <code>Float32List</code> containing
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo>,</mo><mi>z</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(x, y, z)</annotation></semantics></math>
-coordinates.</p></li>
-<li><p><strong>Edges (Polytope wireframe)</strong>:
-<code>Int32List</code> of index pairs
-<code>[v1, v2, v3, v4, ...]</code>.</p></li>
-<li><p><strong>Slice Geometry</strong>:</p>
-<ul>
-<li>Slice edges (wireframe) and/or slice faces (triangulated 3D
-polygons).</li>
-</ul></li>
-<li><p><strong>Colors &amp; Opacity</strong>: Node colors (polytope
-color, slice color, vertex dot color).</p></li>
-<li><p><strong>Transform</strong>: Translation / scale anchor in
-physical space (e.g., 1 meter in front of user, 0.5m radius).</p></li>
-</ul>
-<h3 id="target-1-webxr-xr_support_web.dart">3.2 Target 1: WebXR
-(<code>xr_support_web.dart</code>)</h3>
-<ul>
-<li><p><strong>Session Modes</strong>:</p>
-<ul>
-<li>Supports <code>immersive-ar</code> (passthrough on phone Chrome or
-Quest 3) and <code>immersive-vr</code> (Quest, Vision Pro, VR
-headsets).</li>
-</ul></li>
-<li><p><strong>Rendering Strategy Options</strong>:</p>
-<ul>
-<li><p><em>Option A: Lightweight WebGL2 line/mesh renderer in
-Dart</em></p>
-<ul>
-<li><p>Uses <code>package:web</code> to obtain
-<code>web.WebGLRenderingContext</code> from an HTML
-<code>&lt;canvas&gt;</code>.</p></li>
-<li><p>Simple vertex/fragment shader to render line segments with custom
-colors and simple shaded spheres/triangles.</p></li>
-<li><p>Highly efficient, zero external JS libraries needed, compiles
-directly with <code>dart2js</code> / WASM.</p></li>
-</ul></li>
-<li><p><em>Option B: Three.js bridge or Three-dart</em></p>
-<ul>
-<li>Easier lighting and material effects, but requires larger bundle
-size and JS interop overhead.</li>
-</ul></li>
-<li><p><strong>Recommendation</strong>: Option A (a clean, ~200-line
-WebGL shader loop in Dart) keeps the codebase lightweight and
-dependency-free.</p></li>
-</ul></li>
-<li><p><strong>UI Overlay</strong>:</p>
-<ul>
-<li><p>Uses WebXR <strong>DOM Overlay</strong> (<code>dom-overlay</code>
-feature).</p></li>
-<li><p>This allows the standard Flutter UI (rotation mode selector,
-dimension picker, slice slider) to float as an HTML layer directly over
-the XR session!</p></li>
-</ul></li>
-</ul>
-<h3 id="target-2-android-ar-on-mobile-xr_support_mobile.dart">3.3 Target
-2: Android AR on Mobile (<code>xr_support_mobile.dart</code>)</h3>
-<ul>
-<li><p><strong>Session Mode</strong>: ARCore camera
-passthrough.</p></li>
-<li><p><strong>Rendering Strategy Options</strong>:</p>
-<ul>
-<li><p><em>Option A: <code>ar_flutter_plugin_2</code></em> (Already in
-<code>pubspec.yaml</code>)</p>
-<ul>
-<li><p>Uses ARCore on Android.</p></li>
-<li><p>Can anchor a 3D node and update geometry.</p></li>
-</ul></li>
-<li><p><em>Option B: Google SceneView / Filament (via Flutter platform
-view)</em></p>
-<ul>
-<li>Supports dynamic line and primitive drawing with low latency.</li>
-</ul></li>
-</ul></li>
-<li><p><strong>UI Overlay</strong>:</p>
-<ul>
-<li>Standard Flutter widgets laid over the AR camera view using a
-Flutter <code>Stack</code>.</li>
-</ul></li>
-</ul>
-<h3 id="target-3-android-xr-spatial-os-headsets">3.4 Target 3: Android
-XR (Spatial OS / Headsets)</h3>
-<ul>
-<li><p>Google has announced the <strong>Android XR platform</strong>
-(for spatial headsets, e.g., Samsung XR headset).</p></li>
-<li><p>Android XR supports:</p>
-<ul>
-<li><p><strong>Spatial Panels</strong>: Standard 2D Android/Flutter apps
-running on a floating curved panel in 3D space.</p></li>
-<li><p><strong>Spatial Scenes / OpenXR</strong>: Apps taking over full
-3D space with 6DoF tracking.</p></li>
-</ul></li>
-<li><p>By structuring our abstraction as <code>XRSupport</code>, we can
-drop in an <code>AndroidXRSupport</code> implementation when the
-official Android XR Flutter SDK / OpenXR bindings are released.</p></li>
+<li><p><code>AndroidXRSupport</code> currently mounts a placeholder
+<code>ARView</code> from <code>ar_flutter_plugin_2</code>
+(<code>showPlanes: true</code>, <code>showWorldOrigin: true</code>)
+without consuming <code>SpatialScene</code> buffers or rendering
+polytope geometry.</p></li>
+<li><p><code>AndroidXRSupport.checkSupport()</code> currently sets
+<code>supported = true</code> unconditionally without querying device
+ARCore or OpenXR availability.</p></li>
+<li><p><code>AndroidXRSupport.buildScene()</code> lacks the 2D Flutter
+control overlay (exit button, polytope/dimension selectors,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>R</mi><mn>4</mn></msup><annotation encoding="application/x-tex">R^4</annotation></semantics></math>
+rotation pad, and slice slider).</p></li>
 </ul>
 <hr />
-<h2 id="ui-interaction-in-xr">4. UI &amp; Interaction in XR</h2>
-<p>In a 2D screen, interaction is done via mouse drag and touch gestures
-(drag = rotate 3D, shift-drag = rotate 4D, etc.). In XR, we have new
-spatial capabilities:</p>
+<h2 id="plan-for-adding-xr-support-on-the-android-build">3. Plan for
+Adding XR Support on the Android Build</h2>
+<p>Android XR support targets two complementary form factors from a
+single Android build:</p>
 <ol type="1">
-<li><p><strong>Viewing (Head movement)</strong>:</p>
+<li><p><strong>Android Mobile AR (Phones &amp; Tablets via
+ARCore)</strong>: Camera passthrough where the 3D polytope and slice
+hologram is anchored on a physical tabletop or floating 0.5–0.8m in
+front of the device camera.</p></li>
+<li><p><strong>Android XR Headsets (Spatial OS / OpenXR / Jetpack
+XR)</strong>: Headsets and XR glasses running Android XR, supporting
+both <strong>Home Space</strong> (2D Flutter spatial panel alongside a
+3D volume) and <strong>Full Space</strong> (stereoscopic 6DoF
+passthrough/VR).</p></li>
+</ol>
+<h3 id="rendering-strategy-on-android">3.1 Rendering Strategy on
+Android</h3>
+<p>Polytopes such as the 120-cell (600 vertices, 1,200 edges) and
+600-cell (120 vertices, 720 edges) animate continuously at 60–120 Hz
+during 4D rotations and hyperplane slicing. Creating and mutating
+hundreds of individual high-level scene-graph nodes
+(<code>ARNode</code>) over a Flutter <code>MethodChannel</code> every
+frame would introduce severe serialization overhead and frame drops.</p>
+<p>Instead, the Android build will mirror the proven
+<code>WebXRRenderer</code> architecture:</p>
 <ul>
-<li>3D perspective and rotation around the 3D projection are natural:
-the user simply walks around or turns their head!</li>
+<li><p><strong>Single-Call Hardware Instancing (OpenGL ES 3.0 /
+Vulkan)</strong>:</p>
+<ul>
+<li><p>Reuse the exact same <code>SpatialScene.sphereBuffer</code> and
+<code>SpatialScene.cylinderBuffer</code> (<code>Float32List</code>)
+generated in Dart.</p></li>
+<li><p>Pass the two flat <code>Float32List</code> byte buffers
+(<code>Uint8List</code> / <code>Float32List</code>) across a single
+lightweight platform call per frame (or shared FFI buffer) to a native
+Kotlin/C++ OpenGL ES 3.0 renderer.</p></li>
+<li><p>Reuse the GLSL ES 3.0 instanced sphere and cylinder
+vertex/fragment shaders from <code>lib/webxr_renderer.dart</code>: one
+unit sphere VBO and one unit cylinder VBO on the GPU, drawn in 2 draw
+calls per eye (<code>glDrawElementsInstanced</code>).</p></li>
 </ul></li>
+<li><p><strong>Camera &amp; Pose Integration</strong>:</p>
+<ul>
+<li><p><strong>On Mobile ARCore</strong>: The native GLES3 renderer
+draws the ARCore background camera texture, queries the ARCore
+<code>Camera</code> <code>viewMatrix</code> and
+<code>projectionMatrix</code> plus the active world <code>Anchor</code>
+pose, and renders the instanced spheres and cylinders into the Flutter
+<code>Texture</code> / <code>PlatformView</code>.</p></li>
+<li><p><strong>On Android XR Headsets</strong>: When running in an
+OpenXR / Jetpack XR full space session, the same GLES3 instanced
+renderer runs per-eye using the headset’s <code>XRView</code> projection
+and view matrices.</p></li>
+</ul></li>
+</ul>
+<h3 id="ui-interaction-design-on-android-xr">3.2 UI &amp; Interaction
+Design on Android XR</h3>
+<ol type="1">
+<li><p><strong>2D Flutter Control Overlay
+(<code>Stack</code>)</strong>:</p>
+<ul>
+<li><p><code>AndroidXRSupport.buildScene(BuildContext context)</code>
+will render a <code>Stack</code> with the 3D AR/XR viewport filling the
+background and translucent Material controls pinned to the top and
+bottom edges:</p>
+<ul>
+<li><p><strong>Top Bar</strong>: Back button (<code>onExitXR</code> to
+return to 2D canvas), Polytope selector menu, Dimension menu, Movement
+mode menu
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>R</mi><mn>3</mn></msup><annotation encoding="application/x-tex">R^3</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>R</mi><mn>4</mn></msup><annotation encoding="application/x-tex">R^4</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>R</mi><mn>5</mn></msup><annotation encoding="application/x-tex">R^5</annotation></semantics></math>,
+Zolly), and Re-center / Reset Anchor button.</p></li>
+<li><p><strong>Bottom Bar</strong>: Slice toggle checkbox and
+<code>MySlider</code> hyperplane slice slider with speed
+controls.</p></li>
+</ul></li>
+</ul></li>
+<li><p><strong>Spatial Touch &amp; Hand Gestures</strong>:</p>
+<ul>
+<li><p><strong>Viewing in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>ℝ</mi><mn>3</mn></msup><annotation encoding="application/x-tex">\mathbb{R}^3</annotation></semantics></math></strong>:
+Moving the phone or headset naturally moves the camera around the 3D
+projection in physical space.</p></li>
 <li><p><strong>Higher-Dimensional Rotation
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>R</mi><mn>4</mn></msup><mo>,</mo><msup><mi>R</mi><mn>5</mn></msup></mrow><annotation encoding="application/x-tex">R^4, R^5</annotation></semantics></math>)</strong>:</p>
-<ul>
-<li><p>Head movement only moves our view in
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>ℝ</mi><mn>3</mn></msup><annotation encoding="application/x-tex">\mathbb{R}^3</annotation></semantics></math>.
-To rotate planes like
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>−</mo><mi>w</mi></mrow><annotation encoding="application/x-tex">x-w</annotation></semantics></math>
-(the 4th dimension), the user still needs an active rotation
-input.</p></li>
-<li><p><strong>Approach</strong>: Floating 2D Flutter buttons / joystick
-/ gesture raycast (e.g. pinch-drag horizontally to rotate
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>−</mo><mi>w</mi></mrow><annotation encoding="application/x-tex">x-w</annotation></semantics></math>).</p></li>
-</ul></li>
-<li><p><strong>Slice Slider</strong>:</p>
-<ul>
-<li>A floating slider panel next to the polytope, or controller
-thumbstick to slide through the hyperplane slice in real time.</li>
-</ul></li>
-<li><p><strong>World Anchoring</strong>:</p>
-<ul>
-<li>Tap/pinch to place the polytope on a detected tabletop or suspend it
-at eye level.</li>
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>ℝ</mi><mn>4</mn></msup><mo>,</mo><msup><mi>ℝ</mi><mn>5</mn></msup></mrow><annotation encoding="application/x-tex">\mathbb{R}^4, \mathbb{R}^5</annotation></semantics></math>)</strong>:
+1-finger drag on the viewport background routes to
+<code>scene.transform.rotatePair</code> for the active movement
+dimension (defaulting to <code>Rotate R4</code> in XR since 3D viewing
+is handled by physical camera motion).</p></li>
+<li><p><strong>Scale &amp; Placement</strong>: 2-finger pinch adjusts
+<code>SpatialScene.worldScale</code> (default <code>0.35m</code>
+radius), and tapping a detected ARCore plane anchors the polytope at
+that 3D hit location (defaulting to <code>0.6m</code> in front of the
+initial camera pose before any plane is tapped).</p></li>
 </ul></li>
 </ol>
 <hr />
-<h2 id="phased-roadmap">5. Phased Roadmap</h2>
+<h2 id="phased-implementation-roadmap-for-android-xr">4. Phased
+Implementation Roadmap for Android XR</h2>
 <table>
 <colgroup>
-<col style="width: 15%" />
-<col style="width: 53%" />
+<col style="width: 7%" />
 <col style="width: 31%" />
+<col style="width: 60%" />
 </colgroup>
 <thead>
 <tr>
-<th>Ready for Android XR headsets.</th>
-<th>Ready for Android XR headsets.</th>
-<th>Ready for Android XR headsets.</th>
+<th>Phase</th>
+<th>Milestone</th>
+<th>Key Deliverables</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Ready for Android XR headsets.</td>
-<td>Ready for Android XR headsets.</td>
-<td>Ready for Android XR headsets.</td>
+<td>1</td>
+<td>Manifest &amp; Capabilities</td>
+<td>Optional ARCore/XR manifest, runtime check</td>
 </tr>
 <tr>
-<td>Ready for Android XR headsets.</td>
-<td>Ready for Android XR headsets.</td>
-<td>Ready for Android XR headsets.</td>
+<td>2</td>
+<td>Flutter XR Overlay</td>
+<td><code>Stack</code> UI controls, <code>repaint_counter</code>
+sync</td>
 </tr>
 <tr>
-<td>Ready for Android XR headsets.</td>
-<td>Ready for Android XR headsets.</td>
-<td>Ready for Android XR headsets.</td>
+<td>3</td>
+<td>GLES3 Instancing</td>
+<td>Kotlin GLES3 shaders using <code>SpatialScene</code></td>
 </tr>
 <tr>
-<td>Ready for Android XR headsets.</td>
-<td>Ready for Android XR headsets.</td>
-<td>Ready for Android XR headsets.</td>
+<td>4</td>
+<td>ARCore Anchoring</td>
+<td>Plane tap placement, 4D drag, pinch scale</td>
 </tr>
 <tr>
-<td>Ready for Android XR headsets.</td>
-<td>Ready for Android XR headsets.</td>
-<td>Ready for Android XR headsets.</td>
+<td>5</td>
+<td>Android XR &amp; Release</td>
+<td>OpenXR headset mode, device audit, release</td>
 </tr>
 </tbody>
 </table>
-<hr />
-<h2 id="architecture-decisions-confirmed">6. Architecture Decisions
-(Confirmed)</h2>
-<p>Based on project priorities, the following decisions are adopted:</p>
-<h3 id="visual-style-shaded-3d-tubes-and-spheres">1. Visual Style:
-Shaded 3D Tubes and Spheres</h3>
+<h3 id="phase-1-android-manifest-permissions-capability-detection">Phase
+1: Android Manifest, Permissions &amp; Capability Detection</h3>
 <ul>
-<li><p><strong>Polytope Vertices</strong>: Shaded 3D spheres (using
-polytope vertex color).</p></li>
-<li><p><strong>Polytope Edges</strong>: Shaded 3D cylinders / tubes
-connecting the projected 3D vertices.</p></li>
-<li><p><strong>Slice Vertices &amp; Edges</strong>: Shaded 3D spheres
-and cylinders with the distinct slice color.</p></li>
-<li><p><strong>Slice Faces</strong>: Translucent shaded planar polygons
-(triangulated from the slice intersections).</p></li>
-<li><p><strong>Rendering Technique</strong>: <strong>Hardware
-Instancing</strong> in shaders:</p>
+<li><p><strong>Update
+<code>android/app/src/main/AndroidManifest.xml</code></strong>:</p>
 <ul>
-<li><p>One unit sphere mesh buffer and one unit cylinder mesh buffer
-stored on GPU.</p></li>
-<li><p>Each frame, Dart provides an instance array of segment endpoints
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mi>A</mi><mo>,</mo><mi>B</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(A, B)</annotation></semantics></math>,
-radius, and color.</p></li>
-<li><p>Vertex shader aligns and scales cylinders between
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>A</mi><annotation encoding="application/x-tex">A</annotation></semantics></math>
+<li><p>Add
+<code>&lt;uses-permission android:name="android.permission.CAMERA" /&gt;</code>.</p></li>
+<li><p>Add
+<code>&lt;uses-feature android:name="android.hardware.camera.ar" android:required="false" /&gt;</code>
 and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>B</mi><annotation encoding="application/x-tex">B</annotation></semantics></math>,
-giving smooth 90Hz/120Hz rendering on standalone headsets like Meta
-Quest.</p></li>
+<code>&lt;meta-data android:name="com.google.ar.core" android:value="optional" /&gt;</code>
+so the app remains installable on non-AR devices.</p></li>
+<li><p>Add Android XR spatial activity metadata so Android XR headsets
+can launch the app in spatial panel or full-space mode.</p></li>
+</ul></li>
+<li><p><strong>Runtime Capability Check
+(<code>AndroidXRSupport.checkSupport</code>)</strong>:</p>
+<ul>
+<li>Query the native platform channel for ARCore availability
+(<code>ArCoreApk.getInstance().checkAvailability</code>) or Android XR /
+OpenXR runtime presence, and set <code>supported</code> accurately
+instead of hardcoding <code>true</code>.</li>
 </ul></li>
 </ul>
-<h3 id="target-priority-fallback-architecture">2. Target Priority &amp;
-Fallback Architecture</h3>
+<h3
+id="phase-2-flutter-xr-overlay-animation-sync-libxr_support_mobile.dart">Phase
+2: Flutter XR Overlay &amp; Animation Sync
+(<code>lib/xr_support_mobile.dart</code>)</h3>
 <ul>
-<li><p><strong>Priority Order</strong>:</p>
-<ol type="1">
-<li><p><strong>WebXR on Meta Quest</strong> (and WebXR-enabled browsers
-like Chrome Android / Vision Pro Safari).</p></li>
-<li><p><strong>Android Mobile AR</strong> (ARCore camera passthrough on
-phones/tablets).</p></li>
-<li><p><strong>Android XR Headsets</strong> (Spatial OS /
-OpenXR).</p></li>
-</ol></li>
-<li><p><strong>Settings &amp; Fallback</strong>:</p>
+<li><p>Build <code>AndroidXRWidget</code> in
+<code>lib/xr_support_mobile.dart</code> (mirroring
+<code>WebXRWidget</code> in <code>lib/xr_support_web.dart</code>):</p>
 <ul>
-<li><p>Add an “XR Mode” setting in <code>Settings</code>:</p>
-<ul>
-<li>Options: <code>Auto</code> (detects best supported system),
-<code>WebXR</code>, <code>Android AR</code>, or
-<code>Disabled</code>.</li>
-</ul></li>
-<li><p>Graceful fallback: If an XR session fails or is unsupported, the
-app seamlessly falls back to standard 2D canvas mode with an informative
-banner.</p></li>
+<li><p>Listen to <code>scene.repaint_counter</code> so any 4D rotation,
+slice slider change, or <code>MyAnimator</code> tick immediately updates
+<code>SpatialScene</code> and pushes new instance buffers to the Android
+renderer.</p></li>
+<li><p>Render translucent top/bottom control bars over the AR viewport
+for switching polytopes, dimensions,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>R</mi><mn>4</mn></msup><annotation encoding="application/x-tex">R^4</annotation></semantics></math>/<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>R</mi><mn>5</mn></msup><annotation encoding="application/x-tex">R^5</annotation></semantics></math>
+rotation, slice position, and exiting back to 2D mode
+(<code>onExitXR</code>).</p></li>
 </ul></li>
 </ul>
-<h3 id="ui-control-scheme-easiest-first-floating-2d-overlay">3. UI &amp;
-Control Scheme: Easiest First (Floating 2D Overlay)</h3>
+<h3 id="phase-3-native-gles3-instanced-renderer-on-android">Phase 3:
+Native GLES3 Instanced Renderer on Android</h3>
 <ul>
-<li><p><strong>WebXR</strong>: Use <strong>WebXR DOM Overlay</strong>
-(<code>dom-overlay</code>).</p>
+<li><p>Implement a lightweight Kotlin OpenGL ES 3.0 renderer in
+<code>android/app/src/main/kotlin/...</code>:</p>
 <ul>
-<li>The standard Flutter 2D UI (dimension picker, polytope selection, 4D
-rotation buttons, slice slider, help) floats as a familiar overlay panel
-over the immersive 3D scene.</li>
-</ul></li>
-<li><p><strong>Android AR</strong>: Use a standard Flutter
-<code>Stack</code> containing the 3D AR view beneath the 2D Flutter
-control widgets.</p></li>
-<li><p><strong>Spatial Expansion (Future)</strong>: Once the core 3D
-scene is proven and interactive, optional in-world 3D spatial handles or
-wrist menus can be introduced.</p></li>
-</ul>
-<h3 id="webxr-3d-backend-direct-webgl2-in-dart">4. WebXR 3D Backend:
-Direct WebGL2 in Dart</h3>
+<li><p>Port the vertex and fragment shaders from
+<code>lib/webxr_renderer.dart</code> (instanced spheres + instanced
+cylinders with Blinn-Phong lighting).</p></li>
+<li><p>Expose a <code>MethodChannel</code> / <code>EventChannel</code>
+(<code>org.gchouse.polytope/xr</code>) with methods:</p>
 <ul>
-<li><p><strong>Recommendation &amp; Decision</strong>: <strong>Direct
-WebGL2 via <code>package:web</code></strong>.</p>
-<ul>
-<li><p><strong>Why Direct WebGL2?</strong></p>
-<ul>
-<li><p><strong>Broadest &amp; Native Support</strong>: WebXR’s
-<code>XRWebGLLayer</code> directly binds to WebGL2 contexts. Every WebXR
-browser (Meta Quest Browser, Chrome, Safari) natively supports
-WebGL2.</p></li>
-<li><p><strong>No External JS Dependencies</strong>: Zero npm packages,
-zero external CDNs, zero version mismatches.</p></li>
-<li><p><strong>Fast &amp; Modern</strong>: Direct typed buffer uploads
-(<code>Float32List</code>) from Dart to GPU buffers, fully compatible
-with <code>dart2js</code> and Dart WASM compilation.</p></li>
-<li><p><strong>Instancing Simplicity</strong>: For procedural
-mathematical objects (cylinders and spheres), direct shaders are compact
-(~150-200 lines of shader code) and outperform heavy general-purpose 3D
-engines.</p></li>
+<li><p><code>checkXrSupport()</code> -&gt; returns
+<code>{arCore: bool, openXr: bool}</code></p></li>
+<li><p><code>startSession()</code> / <code>stopSession()</code></p></li>
+<li><p><code>updateGeometry(Float32List spheres, Float32List cylinders)</code></p></li>
+<li><p><code>resetAnchor()</code></p></li>
 </ul></li>
 </ul></li>
+<li><p>Verify that the 120-cell (600 spheres + 1,200 cylinders) renders
+at a steady 60+ FPS on an Android device connected via <code>adb</code>
+on host <code>raven</code>.</p></li>
 </ul>
-<hr />
-<h2 id="detailed-step-by-step-implementation-plan">7. Detailed
-Step-by-Step Implementation Plan</h2>
-<h3 id="step-1-geometry-extraction-in-pure-dart-spatialscene">Step 1:
-Geometry Extraction in Pure Dart (<code>SpatialScene</code>)</h3>
+<h3 id="phase-4-arcore-world-anchoring-touch-gestures">Phase 4: ARCore
+World Anchoring &amp; Touch Gestures</h3>
 <ul>
-<li><p>Create <code>lib/spatial_scene.dart</code>:</p>
-<ul>
-<li><p>Extracts the
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>ℝ</mi><mi>d</mi></msup><mo>→</mo><msup><mi>ℝ</mi><mn>3</mn></msup></mrow><annotation encoding="application/x-tex">\mathbb{R}^d \to \mathbb{R}^3</annotation></semantics></math>
-projection from <code>CoordinateTransform</code>.</p></li>
-<li><p>Produces typed arrays for:</p>
-<ul>
-<li><p><code>sphereInstances</code>:
-<code>[x, y, z, radius, r, g, b, a]</code> for polytope and slice
-vertices.</p></li>
-<li><p><code>cylinderInstances</code>:
-<code>[x1, y1, z1, x2, y2, z2, radius, r, g, b, a]</code> for
-edges.</p></li>
-<li><p><code>faceTriangles</code>: 3D vertices and normals for slice
-polygon fill.</p></li>
-</ul></li>
-</ul></li>
-<li><p>Add unit tests in <code>test/spatial_scene_test.dart</code> to
-verify vertex/edge counts and coordinates match existing polytopes
-(simplex, hypercube, 24-cell, etc.).</p></li>
+<li><p>Default the polytope origin to <code>(0, 0, -0.6)</code> meters
+in local session space so the polytope is immediately visible upon
+entering AR without requiring the user to scan a floor/table
+first.</p></li>
+<li><p>Allow tapping a detected ARCore plane to move the world anchor to
+the hit pose, and provide a “Reset Position” button in the overlay to
+re-center the hologram in front of the current camera view.</p></li>
+<li><p>Connect single-finger drag on the AR view to 4D rotation
+(<code>Rotate R4</code>) and two-finger pinch to
+<code>SpatialScene.worldScale</code>.</p></li>
 </ul>
-<h3 id="step-2-webgl-shader-pipeline-webxrrenderer">Step 2: WebGL Shader
-Pipeline (<code>WebXRRenderer</code>)</h3>
+<h3
+id="phase-5-android-xr-headsets-settings-production-enablement">Phase 5:
+Android XR Headsets, Settings &amp; Production Enablement</h3>
 <ul>
-<li><p>Implement the WebGL2 pipeline in pure Dart:</p>
-<ul>
-<li><p>Shaders with Blinn-Phong directional lighting (ambient + diffuse
-+ specular highlights).</p></li>
-<li><p>Instanced cylinder generator (transforming a unit cylinder to
-connect any two 3D points).</p></li>
-<li><p>Instanced sphere generator.</p></li>
-<li><p>Single draw call for all edges
-(<code>glDrawArraysInstanced</code> /
-<code>glDrawElementsInstanced</code>), and single draw call for all
-vertices.</p></li>
-</ul></li>
-</ul>
-<h3 id="step-3-webxr-session-render-loop-xr_support_web.dart">Step 3:
-WebXR Session &amp; Render Loop (<code>xr_support_web.dart</code>)</h3>
-<ul>
-<li><p>Update <code>xr_support_web.dart</code>:</p>
-<ul>
-<li><p>Request <code>immersive-vr</code> or <code>immersive-ar</code>
-session with <code>dom-overlay</code> enabled.</p></li>
-<li><p>Setup WebXR render loop via
-<code>XRSession.requestAnimationFrame</code>.</p></li>
-<li><p>Bind XR projection and view matrices (per eye) into the shader
-uniforms.</p></li>
-<li><p>Connect user head position (viewer pose) to the scene
-camera.</p></li>
-</ul></li>
-</ul>
-<h3 id="step-4-webxr-ui-overlay-controls">Step 4: WebXR UI Overlay &amp;
-Controls</h3>
-<ul>
-<li><p>Configure Flutter web container to participate as the
-<code>dom-overlay</code> root.</p></li>
-<li><p>Ensure the slice slider, polytope picker, and higher-dimensional
-rotation controls remain fully responsive via Quest touch controllers or
-hand tracking clicks.</p></li>
-</ul>
-<h3 id="step-5-android-mobile-ar-adapter-xr_support_mobile.dart">Step 5:
-Android Mobile AR Adapter (<code>xr_support_mobile.dart</code>)</h3>
-<ul>
-<li><p>Wire up <code>ar_flutter_plugin_2</code> or platform view to
-render the same <code>SpatialScene</code> instance buffers using ARCore
-anchors.</p></li>
-<li><p>Add camera permission handling and plane detection.</p></li>
-</ul>
-<h3 id="step-6-settings-release-testing">Step 6: Settings &amp; Release
-Testing</h3>
-<ul>
-<li><p>Add XR toggle and mode selection to
-<code>lib/settings.dart</code>.</p></li>
-<li><p>Verify build with <code>flutter test</code> and
-<code>flutter build web</code>.</p></li>
-<li><p>Test on Meta Quest Browser over local network / ADB.</p></li>
+<li><p>Add a setting in <code>lib/settings.dart</code>
+(<code>enable_xr</code> or XR mode selector) or enable the AR/XR app bar
+button in release builds once Android ARCore and WebXR sessions are
+verified end-to-end.</p></li>
+<li><p>Test on physical Android hardware via <code>adb</code>
+(<code>flutter run -d &lt;device-id&gt;</code>) and verify clean
+fallback to 2D canvas mode when camera permission is denied.</p></li>
 </ul>
 <hr />
-<h2 id="visual-accessibility-verification-checklist">Visual &amp;
+<h2 id="visual-accessibility-verification-checklist">5. Visual &amp;
 Accessibility Verification Checklist</h2>
-<p>Perform these manual checks across supported locales
-(<code>en</code>, <code>es</code>, <code>de</code>, <code>fr</code>,
-<code>ja</code>, <code>lt</code>, <code>pt</code>, <code>zh</code>) on
-mobile and desktop viewports:</p>
+<p>Perform these checks across supported locales (<code>en</code>,
+<code>es</code>, <code>de</code>, <code>fr</code>, <code>ja</code>,
+<code>lt</code>, <code>pt</code>, <code>zh</code>) on mobile and desktop
+viewports:</p>
 <ul>
 <li><p><strong>Polytope Projections &amp; Canvas</strong>:</p>
 <ul class="task-list">
 <li><p><label><input type="checkbox" />Verify 2D, 3D, 4D, and 5D regular
 polytopes render correctly with clear edge contrast in both light and
 dark modes.</label></p></li>
+<li><p><label><input type="checkbox" />Verify
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>x</mi><mn>4</mn></msub><annotation encoding="application/x-tex">x_4</annotation></semantics></math>
+rainbow coloring (<code>Color Lines by x4 Distance</code> and
+<code>Color Slice Lines by x4 Distance</code>) renders smooth
+red-to-violet gradients along edges.</label></p></li>
 <li><p><label><input type="checkbox" />Verify hyperplane slicing renders
 intersection polygons smoothly when toggling <strong>Slice</strong> on
 and off.</label></p></li>
@@ -602,8 +415,8 @@ and off.</label></p></li>
 <li><p><strong>Rotation &amp; Transform Modes</strong>:</p>
 <ul class="task-list">
 <li><p><label><input type="checkbox" />Cycle through rotation modes (R3,
-R4, R5, Zolly, Translate) and verify drag gestures apply velocity and
-inertial spin smoothly.</label></p></li>
+R4, R5, Zolly, Translate, Scale) and verify drag gestures apply velocity
+and inertial spin smoothly.</label></p></li>
 <li><p><label><input type="checkbox" />Test snap-to-element buttons
 (vertex, edge, face, 3-cell) and confirm the projection snaps cleanly
 without visual distortion.</label></p></li>
@@ -611,16 +424,9 @@ without visual distortion.</label></p></li>
 <li><p><strong>Documentation &amp; Help Screen</strong>:</p>
 <ul class="task-list">
 <li><p><label><input type="checkbox" />Open Help dialog and verify all
-tabs load in the active language:</label></p>
-<ul>
-<li><p><code>about</code>: Overview and attribution.</p></li>
-<li><p><code>privacy</code>: Privacy policy.</p></li>
-<li><p><code>terms</code>: Terms of service.</p></li>
-<li><p><code>help</code>: Polytopes introduction and research
-notes.</p></li>
-<li><p><code>slice</code>: Hyperplane slicing guide.</p></li>
-<li><p><code>controls</code>: Controller and gesture guide.</p></li>
-</ul></li>
+tabs load in the active language (<code>about</code>,
+<code>privacy</code>, <code>terms</code>, <code>help</code>,
+<code>slice</code>, <code>controls</code>).</label></p></li>
 <li><p><label><input type="checkbox" />Verify that markdown formatting
 and equations render legibly without horizontal clipping on narrow
 screens.</label></p></li>
@@ -628,20 +434,17 @@ screens.</label></p></li>
 <li><p><strong>Language Menu &amp; Navigation</strong>:</p>
 <ul class="task-list">
 <li><p><label><input type="checkbox" />Switch to each language from the
-top bar language menu and confirm all UI labels, toolbars, and help tabs
-update immediately.</label></p></li>
+top bar language menu and confirm all UI labels, toolbars, settings, and
+help tabs update immediately.</label></p></li>
 <li><p><label><input type="checkbox" />Switch to <strong>Auto</strong>
 and verify the app reverts cleanly to the system default
 locale.</label></p></li>
 </ul></li>
 <li><p><strong>Touch Targets &amp; Screen Readers</strong>:</p>
 <ul class="task-list">
-<li><p><label><input type="checkbox" />Verify that top bar action
-buttons (About, Privacy, Terms, Overview, Slices, Controls, Settings,
-Close) have sufficient touch padding on mobile.</label></p></li>
-<li><p><label><input type="checkbox" />Enable TalkBack (Android) or
-VoiceOver (iOS/macOS) and confirm screen reader announcements for
-transform mode changes and snap actions.</label></p></li>
+<li><label><input type="checkbox" />Run <code>make audit</code> to
+verify zero layout overflows at <code>1.5x</code> text scaling and full
+compliance with <code>labeledTapTargetGuideline</code>.</label></li>
 </ul></li>
 </ul>
 </body>

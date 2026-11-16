@@ -50,6 +50,32 @@ class Scene {
 
   static SavableColor poly_color = SavableColor("poly_color", "Polytope Color",
       Colors.white, (scheme) => scheme.onSurface);
+  static SavableBool color_by_x4 = SavableBool(
+    "color_by_x4",
+    "Color Lines by x4 Distance",
+    false,
+    tip:
+        "Color polytope lines with a rainbow gradient from red (lowest x4) to violet (highest x4)",
+  );
+  static double min_x4 = -1.0;
+  static double max_x4 = 1.0;
+
+  static double normalizeX4(double x4) {
+    double span = max_x4 - min_x4;
+    if (span < 1e-6) return 0.5;
+    return ((x4 - min_x4) / span).clamp(0.0, 1.0);
+  }
+
+  // Maps t in [0.0, 1.0] to a rainbow color: red at t=0.0, violet at t=1.0.
+  static Color rainbowColor(double t) {
+    double clamped = t.clamp(0.0, 1.0);
+    return HSVColor.fromAHSV(1.0, 270.0 * clamped, 1.0, 1.0).toColor();
+  }
+
+  static Color x4Color(double x4) {
+    return rainbowColor(normalizeX4(x4));
+  }
+
   static SavableDouble poly_edge_thickness = SavableDouble(
     "poly_edge_thickness",
     "Polytope Edge Thickness",
@@ -90,6 +116,7 @@ class Scene {
   static void initSettings(Settings settings) {
     show_hotkey_buttons.value = settings.no_keyboard;
     settings.add(poly_color);
+    settings.add(color_by_x4);
     settings.add(poly_edge_thickness);
     settings.add(vertex_radius);
     settings.add(EndOfRow());
@@ -346,8 +373,26 @@ class Scene {
       slice!.computeSlice();
     }
     transform.apply(points);
+    updateX4Bounds();
     clipLines();
     if (triggerRepaint) repaint_counter.value++;
+  }
+
+  void updateX4Bounds() {
+    double minVal = double.infinity;
+    double maxVal = double.negativeInfinity;
+    for (var v in polytope.vertices) {
+      double x4 = v.vertex.wx4;
+      if (x4 < minVal) minVal = x4;
+      if (x4 > maxVal) maxVal = x4;
+    }
+    if (minVal <= maxVal) {
+      min_x4 = minVal;
+      max_x4 = maxVal;
+    } else {
+      min_x4 = -1.0;
+      max_x4 = 1.0;
+    }
   }
 
   void dispose() {}

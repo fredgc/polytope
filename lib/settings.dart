@@ -52,6 +52,8 @@ abstract class Savable<T> {
     switch (name) {
       case "poly_color":
         return context.l10n.settingPolyColor;
+      case "color_by_x4":
+        return context.l10n.settingColorByX4;
       case "poly_edge_thickness":
         return context.l10n.settingPolyEdgeThickness;
       case "vertex_radius":
@@ -64,6 +66,8 @@ abstract class Savable<T> {
         return context.l10n.settingShowHotkeyButtons;
       case "slice_color":
         return context.l10n.settingSliceColor;
+      case "slice_color_by_x4":
+        return context.l10n.settingSliceColorByX4;
       case "slice_edge_thickness":
         return context.l10n.settingSliceEdgeThickness;
       case "sticky_delay":
@@ -413,12 +417,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
       },
       separatorBuilder: (BuildContext context, int index) => const Divider(),
     );
-    return Theme(
-      data: Settings.instance.theme.theme_data,
-      child: Scaffold(
-        appBar: appBar(context),
-        body: list,
-      ),
+    return Scaffold(
+      appBar: appBar(context),
+      body: list,
     );
   }
 

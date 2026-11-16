@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 
 import "printer.dart";
@@ -48,7 +49,8 @@ class Dot implements Drawable {
 
   @override
   void paint(Canvas canvas) {
-    Paint paint = Paint()..color = color;
+    Paint paint = Paint()
+      ..color = Scene.color_by_x4.value ? Scene.x4Color(pt.wx4) : color;
     Offset c = Offset(pt.sx, pt.sy);
     canvas.drawCircle(c, radius, paint);
     dprint("Painting $this");
@@ -113,14 +115,53 @@ class LineSegment implements ClippableEdge {
 
   @override
   void paint(Canvas canvas) {
-    Paint paint = Paint()
-      ..color = color
-      ..strokeWidth = Scene.poly_edge_thickness.value;
     Offset p1 = Offset(a.sx, a.sy);
     Offset p2 = Offset(b.sx, b.sy);
+    Paint paint = makeLinePaint(
+      p1,
+      p2,
+      a,
+      b,
+      color,
+      Scene.poly_edge_thickness.value,
+      Scene.color_by_x4.value,
+    );
 
     paintGappedLine(canvas, p1, p2, paint, gaps);
     dprint("Painting $this: ${zzz(p1)} - ${zzz(p2)}");
+  }
+
+  static Paint makeLinePaint(
+    Offset p1,
+    Offset p2,
+    Point a,
+    Point b,
+    Color defaultColor,
+    double strokeWidth,
+    bool colorByX4,
+  ) {
+    Paint paint = Paint()..strokeWidth = strokeWidth;
+    if (colorByX4) {
+      double t1 = Scene.normalizeX4(a.wx4);
+      double t2 = Scene.normalizeX4(b.wx4);
+      if ((t2 - t1).abs() < 1e-4 || (p2 - p1).distance < 1e-4) {
+        paint.color = Scene.rainbowColor((t1 + t2) * 0.5);
+      } else {
+        const int steps = 6;
+        List<Color> colors = List<Color>.generate(
+          steps + 1,
+          (i) => Scene.rainbowColor(t1 + (t2 - t1) * (i / steps)),
+        );
+        List<double> stops = List<double>.generate(
+          steps + 1,
+          (i) => i / steps,
+        );
+        paint.shader = ui.Gradient.linear(p1, p2, colors, stops);
+      }
+    } else {
+      paint.color = defaultColor;
+    }
+    return paint;
   }
 
   static void paintGappedLine(

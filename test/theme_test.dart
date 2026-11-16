@@ -14,10 +14,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:polytope/color.dart';
 import 'package:polytope/l10n/l10n_extension.dart';
 import 'package:polytope/main.dart';
+import 'package:polytope/scene.dart';
 import 'package:polytope/settings.dart';
+import 'package:polytope/slice.dart';
 import 'package:polytope/widget.dart';
 import 'package:polytope/xr_support.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -42,10 +43,14 @@ void main() {
       final scaffoldFinder = find.byType(Scaffold);
       expect(scaffoldFinder, findsOneWidget);
 
+      final expectedSurface = ColorScheme.fromSeed(
+        seedColor: settings.theme.theme_color.value,
+        brightness: Brightness.dark,
+      ).surface;
       final theme = Theme.of(tester.element(scaffoldFinder));
       expect(theme.brightness, Brightness.dark);
-      expect(theme.colorScheme.surface, SavableTheme.darkPurpleBackground);
-      expect(theme.scaffoldBackgroundColor, SavableTheme.darkPurpleBackground);
+      expect(theme.colorScheme.surface, expectedSurface);
+      expect(theme.scaffoldBackgroundColor, expectedSurface);
     });
 
     testWidgets('SettingsScreen reflects dark theme',
@@ -58,6 +63,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
+          theme: settings.theme.theme_data,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           home: const SettingsScreen(),
@@ -68,10 +74,31 @@ void main() {
       final scaffoldFinder = find.byType(Scaffold);
       expect(scaffoldFinder, findsOneWidget);
 
+      final expectedSurface = ColorScheme.fromSeed(
+        seedColor: settings.theme.theme_color.value,
+        brightness: Brightness.dark,
+      ).surface;
       final theme = Theme.of(tester.element(scaffoldFinder));
       expect(theme.brightness, Brightness.dark);
-      expect(theme.colorScheme.surface, SavableTheme.darkPurpleBackground);
-      expect(theme.scaffoldBackgroundColor, SavableTheme.darkPurpleBackground);
+      expect(theme.colorScheme.surface, expectedSurface);
+      expect(theme.scaffoldBackgroundColor, expectedSurface);
+
+      final buttonStyle = theme.elevatedButtonTheme.style!;
+      expect(
+        buttonStyle.backgroundColor?.resolve({}),
+        theme.colorScheme.primaryContainer,
+      );
+      expect(
+        buttonStyle.foregroundColor?.resolve({}),
+        theme.colorScheme.onPrimaryContainer,
+      );
+      expect(find.textContaining('Color Lines by x4 Distance'), findsOneWidget);
+      expect(
+        find.textContaining('Color Slice Lines by x4 Distance'),
+        findsOneWidget,
+      );
+      expect(Scene.color_by_x4.value, isFalse);
+      expect(Slice.slice_color_by_x4.value, isFalse);
     });
   });
 }
