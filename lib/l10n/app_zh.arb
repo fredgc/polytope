@@ -5,6 +5,11 @@
   "cancelButton": "取消",
   "closeTooltip": "关闭",
   "colorPickerTitle": "选取颜色",
+  "controlDownTooltip": "向下",
+  "controlLeftTooltip": "向左",
+  "controlRightTooltip": "向右",
+  "controlStopSpinTooltip": "停止旋转",
+  "controlUpTooltip": "向上",
   "controlsTab": "控制",
   "debugTooltip": "调试",
   "decreaseSpeedTooltip": "降低速度",
@@ -52,6 +57,7 @@
   "settingPolyColor": "多胞体颜色",
   "settingPolyEdgeThickness": "多胞体边缘粗细",
   "settingShowHotkeyButtons": "显示快捷键按钮",
+  "settingShowPanZoomButtons": "显示平移/缩放按钮",
   "settingSliceColor": "截面颜色",
   "settingSliceColorByX4": "按 x4 距离为截面线条着色",
   "settingSliceEdgeThickness": "截面边缘粗细",
@@ -79,5 +85,10 @@
   "termsTab": "条款",
   "themeModeDark": "深色",
   "themeModeLight": "浅色",
-  "themeModeSystem": "系统"
+  "themeModeSystem": "系统",
+  "zoomInTooltip": "放大",
+  "zoomOutTooltip": "缩小",
+  "helpMenu": "帮助菜单",
+  "openDrawerTooltip": "打开菜单",
+  "userGuidesSection": "用户指南"
 }

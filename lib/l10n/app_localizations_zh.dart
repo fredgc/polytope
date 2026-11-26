@@ -24,6 +24,21 @@ class AppLocalizationsZh extends AppLocalizations {
   String get colorPickerTitle => '选取颜色';
 
   @override
+  String get controlDownTooltip => '向下';
+
+  @override
+  String get controlLeftTooltip => '向左';
+
+  @override
+  String get controlRightTooltip => '向右';
+
+  @override
+  String get controlStopSpinTooltip => '停止旋转';
+
+  @override
+  String get controlUpTooltip => '向上';
+
+  @override
   String get controlsTab => '控制';
 
   @override
@@ -49,10 +64,19 @@ class AppLocalizationsZh extends AppLocalizations {
   String get doneTooltip => '保存并关闭';
 
   @override
+  String get helpMenu => '帮助菜单';
+
+  @override
   String get helpTitle => '帮助';
 
   @override
   String get helpTooltip => '帮助';
+
+  @override
+  String get openDrawerTooltip => '打开菜单';
+
+  @override
+  String get userGuidesSection => '用户指南';
 
   @override
   String get increaseSpeedTooltip => '提高速度';
@@ -171,6 +195,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingShowHotkeyButtons => '显示快捷键按钮';
 
   @override
+  String get settingShowPanZoomButtons => '显示平移/缩放按钮';
+
+  @override
   String get settingSliceColor => '截面颜色';
 
   @override
@@ -253,4 +280,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get themeModeSystem => '系统';
+
+  @override
+  String get zoomInTooltip => '放大';
+
+  @override
+  String get zoomOutTooltip => '缩小';
 }

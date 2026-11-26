@@ -24,22 +24,76 @@
   <link rel="stylesheet" href="css/doc_style.css" />
 </head>
 <body>
-<h1 id="控制">控制</h1>
-<p>顶部栏包含若干控制项：</p>
+<h1 id="操作控制">操作控制</h1>
+<p>顶部栏包含多个控件：</p>
 <ol type="1">
-<li><p><strong>多胞体类型</strong>：选择要显示的正则多胞体。</p></li>
-<li><p><strong>维度</strong>：选择维度（2到5）。</p></li>
-<li><p><strong>截面切换</strong>：开启或关闭超平面截面交集。</p></li>
-<li><p><strong>变换菜单</strong>：选择旋转模式（R3、R4、R5）、滑动变焦（Zolly）或平移。</p></li>
+<li><p><strong>设置</strong>（齿轮图标）：配置颜色、边/顶点粗细、线条裁剪、主题明暗和屏幕
+按钮。</p></li>
+<li><p><strong>多胞体类型</strong>：选择要显示的正多胞体（单纯形、超立方体、正轴体、
+正十二面体、正二十面体、正24胞体、正120胞体或正600胞体）。</p></li>
+<li><p><strong>维度</strong>：选择维度（2 至 5）。</p></li>
+<li><p><strong>切片开关</strong>：开启或关闭超平面截面切片。</p></li>
+<li><p><strong>移动 /
+变换菜单</strong>：选择拖动和按钮模式（<code>Rotate R3</code>、<code>Rotate R4</code>、
+<code>Rotate R5</code>、<code>Zolly</code>、<code>Translate</code> 或
+<code>Scale</code>），或快速对齐方向（顶点、 边、面或
+3-胞体朝前）。</p></li>
+<li><p><strong>帮助</strong>（<code>?</code>）和<strong>语言</strong>（地球图标）：打开帮助文档或切换界面和文档
+语言。</p></li>
 </ol>
-<h2 id="手势与速度">手势与速度</h2>
+<h2 id="web-与桌面端鼠标与键盘">Web 与桌面端（鼠标与键盘）</h2>
 <ul>
-<li><p><strong>拖拽</strong>：根据当前模式旋转或平移多胞体。</p></li>
-<li><p><strong>滚动/捏合</strong>：缩放多胞体。</p></li>
-<li><p><strong>轻扫</strong>：赋予惯性速度，使旋转或切片平滑持续。</p></li>
-<li><p><strong>轻触</strong>：停止运动。</p></li>
+<li><p><strong>拖动</strong>：根据当前移动模式旋转、透视缩放（<code>Zolly</code>）、平移或缩放。</p></li>
+<li><p><strong>鼠标滚轮</strong>：放大或缩小。</p></li>
+<li><p><strong>轻扫（Fling）</strong>：在 <code>Rotate R3</code>
+或切片滑块上赋予速度，使其持续平滑 运动。</p></li>
+<li><p><strong>点击 /
+轻触</strong>：停止画布上的旋转，或跳转并停止切片滑块。</p></li>
+<li><p><strong>方向键</strong>：应用当前移动工具。</p></li>
+<li><p><strong><code>]</code> / <code>[</code></strong>（或 <strong>Page
+Up / Page Down</strong>、小键盘 <strong><code>+</code> /
+<code>-</code></strong>）： 放大或缩小。</p></li>
+<li><p><strong>修饰键</strong>：按住
+<strong>Shift</strong>（<code>Rotate R4</code>）、<strong>Shift+Ctrl</strong>
+（<code>Rotate R5</code>）、<strong>Ctrl</strong>（<code>Zolly</code>）、<strong>Alt</strong>（<code>Translate</code>）或
+<strong>Ctrl+Alt</strong>（<code>Scale</code>）。</p></li>
+<li><p><strong><code>0</code>、<code>1</code>、<code>2</code>、<code>3</code></strong>：快速对齐顶点、边、面或
+3-胞体朝前。</p></li>
+<li><p><strong>空格键</strong>：画布获得焦点时暂停旋转和切片动画。</p></li>
+<li><p><strong><code>+</code> / <code>-</code></strong>（或
+<code>=</code>）：加快或减慢切片动画速度。</p></li>
 </ul>
-<h2 id="快速对齐">快速对齐</h2>
-<p>快速对齐多胞体，使顶点、棱、面或三维胞直接正对屏幕。</p>
+<h2 id="移动端触控">移动端（触控）</h2>
+<ul>
+<li><p><strong>拖动、轻扫与点击</strong>：旋转、平移、赋予旋转速度，或点击停止旋转。</p></li>
+<li><p><strong>双指捏合与旋转</strong>：双指捏合缩放多胞体；双指旋转可在屏幕平面内旋转。</p></li>
+<li><p><strong>屏幕快捷键按钮（<code>S</code>、<code>C</code>、<code>A</code>）</strong>：手机和平板默认显示（可在设置中
+开关），对应 Shift、Ctrl 和 Alt。</p></li>
+<li><p><strong>屏幕平移/缩放按钮</strong>：可在设置中启用。在
+<code>Rotate R3</code> 下双击方向按钮
+可增加旋转速度，点击中间停止按钮可停止旋转。</p></li>
+</ul>
+<h2 id="android-tv方向键遥控器">Android TV（方向键遥控器）</h2>
+<p><em>本节仅适用于 Android TV 版本。</em></p>
+<ul>
+<li><p><strong>导航</strong>：使用方向键和<strong>确认</strong>在顶部栏、屏幕旋转/缩放按钮和切片滑块
+之间移动。从顶部栏任意控件按<strong>下</strong>，或从切片滑块按<strong>上</strong>，都会将焦点
+移至中间旋转按钮。</p></li>
+<li><p><strong>主动旋转模式</strong>：</p>
+<ul>
+<li><p>在中间的<strong>停止</strong>按钮上<strong>长按确认</strong>即可进入<strong>主动旋转模式</strong>（中间
+按钮会变为高亮的地球图标）。</p></li>
+<li><p><strong>轻按方向键</strong>：增加该方向的旋转速度。</p></li>
+<li><p><strong>长按方向键</strong>：按住期间持续稳定旋转。</p></li>
+<li><p><strong>轻按确认</strong>：停止旋转，同时保持在主动旋转模式中。</p></li>
+<li><p><strong>长按确认</strong>或按<strong>返回</strong>：退出主动旋转模式。</p></li>
+</ul></li>
+<li><p><strong>切片滑块</strong>：聚焦滑块后按<strong>确认</strong>开始或停止向前动画，按<strong>左
+/ 右</strong> 手动步进。</p></li>
+<li><p><strong>设置</strong>：按<strong>上 /
+下</strong>逐行切换设置。在滑块设置上按<strong>确认</strong>进入编辑
+模式，用<strong>左 /
+右</strong>调整数值，再按<strong>确认</strong>或<strong>返回</strong>退出编辑。</p></li>
+</ul>
 </body>
 </html>

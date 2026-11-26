@@ -16,5 +16,8 @@
 
 在Android上，卸载应用会清除本地设置。在Web端，清除浏览器的本地应用数据即可删除设置。
 
-[github]: https://github.com/fredgc/polytope [issues]:
-https://github.com/fredgc/polytope/issues [gchouse]: https://www.gchouse.org
+[github]: https://github.com/fredgc/polytope
+
+[issues]: https://github.com/fredgc/polytope/issues
+
+[gchouse]: https://www.gchouse.org

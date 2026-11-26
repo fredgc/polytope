@@ -15,6 +15,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' as foundation;
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -64,6 +65,8 @@ abstract class Savable<T> {
         return context.l10n.settingClipGapSize;
       case "show_hotkey_buttons":
         return context.l10n.settingShowHotkeyButtons;
+      case "show_pan_zoom_buttons":
+        return context.l10n.settingShowPanZoomButtons;
       case "slice_color":
         return context.l10n.settingSliceColor;
       case "slice_color_by_x4":
@@ -92,10 +95,13 @@ abstract class Savable<T> {
 }
 
 class SavableBool extends Savable<bool> {
-  SavableBool(super.name, super.description, super.value, {super.tip = ""});
+  final bool Function()? defaultValueProvider;
+  SavableBool(super.name, super.description, super.value,
+      {super.tip = "", this.defaultValueProvider});
   @override
   void load(SharedPreferencesWithCache prefs) {
-    value = prefs.getBool(name) ?? value;
+    final fallback = defaultValueProvider?.call() ?? value;
+    value = prefs.getBool(name) ?? fallback;
     // print("Loaded $name -> $value");
   }
 
@@ -107,16 +113,91 @@ class SavableBool extends Savable<bool> {
 
   @override
   List<Widget?> build(BuildContext context, VoidCallback rebuild) {
-    return [
-      Text("${localizedName(context)}: "),
-      Checkbox(
+    if (Settings.instance.is_android_tv) {
+      return [
+        _TvBoolSettingRow(
+          label: localizedName(context),
           value: value,
-          onChanged: (bool? value) {
-            this.value = value!;
+          onToggle: () {
+            value = !value;
             rebuild();
-          }),
-      SizedBox(width: 10),
+          },
+        ),
+      ];
+    }
+    return [
+      Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Flexible(child: Text("${localizedName(context)}: ")),
+          Checkbox(
+            value: value,
+            onChanged: (bool? value) {
+              this.value = value!;
+              rebuild();
+            },
+          ),
+        ],
+      ),
     ];
+  }
+}
+
+class _TvBoolSettingRow extends StatefulWidget {
+  final String label;
+  final bool value;
+  final VoidCallback onToggle;
+
+  const _TvBoolSettingRow({
+    required this.label,
+    required this.value,
+    required this.onToggle,
+  });
+
+  @override
+  State<_TvBoolSettingRow> createState() => _TvBoolSettingRowState();
+}
+
+class _TvBoolSettingRowState extends State<_TvBoolSettingRow> {
+  bool _focused = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return SizedBox(
+      width: double.infinity,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(8),
+        onFocusChange: (focused) => setState(() => _focused = focused),
+        onTap: widget.onToggle,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          decoration: BoxDecoration(
+            color: _focused
+                ? scheme.primaryContainer.withValues(alpha: 0.25)
+                : null,
+            border: Border.all(
+              color: _focused ? scheme.primary : Colors.transparent,
+              width: 2.5,
+            ),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(child: Text(widget.label)),
+              ExcludeFocus(
+                child: Checkbox(
+                  value: widget.value,
+                  onChanged: (_) => widget.onToggle(),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -156,13 +237,31 @@ class SavableDouble extends Savable<double> {
   @override
   List<Widget?> build(BuildContext context, VoidCallback rebuild) {
     if (min != null && max != null) {
+      if (Settings.instance.is_android_tv) {
+        return [
+          _TvFriendlySlider(
+            label: "${localizedName(context)}: ${value.toStringAsFixed(1)}",
+            value: value.clamp(min!, max!),
+            min: min!,
+            max: max!,
+            divisions: divisions,
+            onChanged: (double newValue) {
+              value = newValue;
+              rebuild();
+            },
+          ),
+        ];
+      }
       return [
         Row(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text("${localizedName(context)}: ${value.toStringAsFixed(1)}"),
-            Slider(
+            Flexible(
+              child: Text(
+                  "${localizedName(context)}: ${value.toStringAsFixed(1)}"),
+            ),
+            _TvFriendlySlider(
               value: value.clamp(min!, max!),
               min: min!,
               max: max!,
@@ -184,7 +283,7 @@ class SavableDouble extends Savable<double> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text("${localizedName(context)}: "),
+          Flexible(child: Text("${localizedName(context)}: ")),
           SizedBox(
             width: 80,
             child: TextField(
@@ -203,6 +302,203 @@ class SavableDouble extends Savable<double> {
   void dispose() {
     _controller?.dispose();
     _controller = null;
+  }
+}
+
+/// Slider that supports Android TV D-pad navigation:
+/// - On Android TV, uses select-to-edit: when focused (not editing), all four
+///   arrow keys traverse focus; pressing Select/Enter enters edit mode where
+///   Left/Right adjust the value, and Select/Enter/Back exits edit mode.
+/// - On non-TV, Left/Right adjust directly while Up/Down traverse focus.
+class _TvFriendlySlider extends StatefulWidget {
+  final String? label;
+  final double value;
+  final double min;
+  final double max;
+  final int? divisions;
+  final ValueChanged<double> onChanged;
+
+  const _TvFriendlySlider({
+    this.label,
+    required this.value,
+    required this.min,
+    required this.max,
+    this.divisions,
+    required this.onChanged,
+  });
+
+  @override
+  State<_TvFriendlySlider> createState() => _TvFriendlySliderState();
+}
+
+class _TvFriendlySliderState extends State<_TvFriendlySlider> {
+  late final FocusNode _focusNode;
+  bool _isEditing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode = FocusNode(
+      debugLabel: 'SettingsSlider',
+      onKeyEvent: _handleKeyEvent,
+    );
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  void _onFocusChange() {
+    if (!_focusNode.hasFocus && _isEditing) {
+      setState(() {
+        _isEditing = false;
+      });
+    } else if (mounted) {
+      setState(() {});
+    }
+  }
+
+  KeyEventResult _handleKeyEvent(FocusNode node, KeyEvent event) {
+    if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
+      return KeyEventResult.ignored;
+    }
+    final key = event.logicalKey;
+    final isTv = Settings.instance.is_android_tv;
+
+    if (key == LogicalKeyboardKey.arrowUp) {
+      if (_isEditing) {
+        setState(() => _isEditing = false);
+      }
+      node.focusInDirection(TraversalDirection.up);
+      return KeyEventResult.handled;
+    }
+    if (key == LogicalKeyboardKey.arrowDown) {
+      if (_isEditing) {
+        setState(() => _isEditing = false);
+      }
+      node.focusInDirection(TraversalDirection.down);
+      return KeyEventResult.handled;
+    }
+
+    if (isTv) {
+      if (key == LogicalKeyboardKey.select ||
+          key == LogicalKeyboardKey.enter ||
+          key == LogicalKeyboardKey.space) {
+        if (event is KeyDownEvent) {
+          setState(() => _isEditing = !_isEditing);
+        }
+        return KeyEventResult.handled;
+      }
+      if (_isEditing &&
+          (key == LogicalKeyboardKey.escape ||
+              key == LogicalKeyboardKey.goBack)) {
+        setState(() => _isEditing = false);
+        return KeyEventResult.handled;
+      }
+      if (_isEditing) {
+        final step = widget.divisions != null && widget.divisions! > 0
+            ? (widget.max - widget.min) / widget.divisions!
+            : (widget.max - widget.min) * 0.05;
+        if (key == LogicalKeyboardKey.arrowLeft) {
+          widget.onChanged((widget.value - step).clamp(widget.min, widget.max));
+          return KeyEventResult.handled;
+        }
+        if (key == LogicalKeyboardKey.arrowRight) {
+          widget.onChanged((widget.value + step).clamp(widget.min, widget.max));
+          return KeyEventResult.handled;
+        }
+      } else {
+        if (key == LogicalKeyboardKey.arrowLeft) {
+          node.focusInDirection(TraversalDirection.left);
+          return KeyEventResult.handled;
+        }
+        if (key == LogicalKeyboardKey.arrowRight) {
+          node.focusInDirection(TraversalDirection.right);
+          return KeyEventResult.handled;
+        }
+      }
+    }
+
+    return KeyEventResult.ignored;
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final hasFocus = _focusNode.hasFocus;
+    final slider = Slider(
+      focusNode: _focusNode,
+      value: widget.value,
+      min: widget.min,
+      max: widget.max,
+      divisions: widget.divisions,
+      onChanged: widget.onChanged,
+    );
+    if (widget.label != null) {
+      return SizedBox(
+        width: double.infinity,
+        child: Focus(
+          focusNode: _focusNode,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: _isEditing
+                ? BoxDecoration(
+                    color: scheme.primaryContainer.withValues(alpha: 0.45),
+                    border: Border.all(color: scheme.primary, width: 3.0),
+                    borderRadius: BorderRadius.circular(8.0),
+                  )
+                : hasFocus
+                    ? BoxDecoration(
+                        color: scheme.primaryContainer.withValues(alpha: 0.2),
+                        border: Border.all(color: scheme.primary, width: 2.5),
+                        borderRadius: BorderRadius.circular(8.0),
+                      )
+                    : BoxDecoration(
+                        border:
+                            Border.all(color: Colors.transparent, width: 2.5),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(child: Text(widget.label!)),
+                SizedBox(
+                  width: 280,
+                  child: ExcludeFocus(
+                    child: Slider(
+                      value: widget.value,
+                      min: widget.min,
+                      max: widget.max,
+                      divisions: widget.divisions,
+                      onChanged: widget.onChanged,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+    return Container(
+      decoration: _isEditing
+          ? BoxDecoration(
+              color: scheme.primaryContainer.withValues(alpha: 0.35),
+              border: Border.all(color: scheme.primary, width: 3.0),
+              borderRadius: BorderRadius.circular(8.0),
+            )
+          : hasFocus
+              ? BoxDecoration(
+                  border: Border.all(color: scheme.primary, width: 2.0),
+                  borderRadius: BorderRadius.circular(8.0),
+                )
+              : null,
+      child: slider,
+    );
   }
 }
 
@@ -235,6 +531,14 @@ class Settings {
   String version = "uninitialized";
   String build_number = "-";
   bool no_keyboard = false;
+  bool is_android_tv =
+      const bool.fromEnvironment('ANDROID_TV', defaultValue: false);
+  @visibleForTesting
+  static bool? isAndroidTvOverride;
+  @visibleForTesting
+  static Map<String, Object>? testInitialValues;
+  static const MethodChannel _platformChannel =
+      MethodChannel('org.gchouse.polytope/platform');
   Future<void>? _loading_future;
 
   List<Savable> savables = []; //All settings.
@@ -263,6 +567,23 @@ class Settings {
     no_keyboard = (foundation.defaultTargetPlatform == TargetPlatform.iOS ||
         foundation.defaultTargetPlatform == TargetPlatform.android);
     // print("noKeboard = $no_keyboard");
+  }
+
+  Future<void> _checkAndroidTv() async {
+    if (isAndroidTvOverride != null) {
+      is_android_tv = isAndroidTvOverride!;
+      return;
+    }
+    if (is_android_tv) return;
+    if (!foundation.kIsWeb &&
+        foundation.defaultTargetPlatform == TargetPlatform.android) {
+      try {
+        final result = await _platformChannel.invokeMethod<bool>('isAndroidTv');
+        is_android_tv = result ?? false;
+      } catch (_) {
+        is_android_tv = false;
+      }
+    }
   }
 
   SettingsStatus get status {
@@ -308,17 +629,46 @@ class Settings {
 
   Future<void> _load_future() async {
     // print("In _load_future.");
+    if (testInitialValues != null) {
+      await _checkAndroidTv();
+      for (var s in savables) {
+        if (s is SavableBool) {
+          final override = testInitialValues![s.name];
+          if (override is bool) {
+            s.value = override;
+          } else if (s.defaultValueProvider != null) {
+            s.value = s.defaultValueProvider!();
+          }
+        }
+      }
+      status = SettingsStatus.Initialized;
+      _loading_future = null;
+      return;
+    }
     await dsleep("settings", 3);
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    app_name = packageInfo.appName;
-    version = packageInfo.version;
-    build_number = packageInfo.buildNumber;
-    print("Package info: $app_name, $build_number, $version");
-    var prefs = await getPrefs();
-    // print("prefs = $prefs");
-    // theme.load(prefs);
-    for (var s in savables) {
-      s.load(prefs);
+    try {
+      PackageInfo packageInfo = await PackageInfo.fromPlatform();
+      app_name = packageInfo.appName;
+      version = packageInfo.version;
+      build_number = packageInfo.buildNumber;
+      print("Package info: $app_name, $build_number, $version");
+    } catch (_) {
+      // PackageInfo may be unavailable in unit tests.
+    }
+    await _checkAndroidTv();
+    try {
+      var prefs = await getPrefs();
+      // print("prefs = $prefs");
+      // theme.load(prefs);
+      for (var s in savables) {
+        s.load(prefs);
+      }
+    } catch (_) {
+      for (var s in savables) {
+        if (s is SavableBool && s.defaultValueProvider != null) {
+          s.value = s.defaultValueProvider!();
+        }
+      }
     }
     // print("Settings done initialized.");
     status = SettingsStatus.Initialized;
@@ -403,11 +753,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
     // print("Building SettingsScreen.");
     List<Widget?> children = _pickChildren(context);
-    List<List<Widget>> rows = [for (var s in MyIterator(children)) s];
+    List<List<Widget>> rows = [
+      for (var s in MyIterator(children))
+        if (s.isNotEmpty) s
+    ];
+    final isTv = Settings.instance.is_android_tv;
     final list = ListView.separated(
       padding: const EdgeInsets.all(8),
       itemCount: rows.length,
       itemBuilder: (buildContext, int index) {
+        if (isTv && rows[index].length == 1) {
+          return rows[index].first;
+        }
         return Wrap(
           crossAxisAlignment: WrapCrossAlignment.center,
           spacing: 8,
@@ -417,10 +774,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
       },
       separatorBuilder: (BuildContext context, int index) => const Divider(),
     );
-    return Scaffold(
+    final scaffold = Scaffold(
       appBar: appBar(context),
-      body: list,
+      body: SafeArea(child: list),
     );
+    if (Settings.instance.is_android_tv) {
+      return ColoredBox(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 27),
+          child: scaffold,
+        ),
+      );
+    }
+    return scaffold;
   }
 
   AppBar appBar(BuildContext context) {
@@ -461,10 +828,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
         null,
       ],
       for (var s in Settings.instance.savables)
-        if (s.visible)
-          (s.build(context, () {
-            setState(() {});
-          })),
+        if (s.visible && !(Settings.instance.is_android_tv && s is EndOfRow))
+          [
+            ...s.build(context, () {
+              setState(() {});
+            }),
+            if (Settings.instance.is_android_tv) null,
+          ],
       [
         null,
         ElevatedButton(

@@ -15,11 +15,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:ar_flutter_plugin_2/ar_flutter_plugin.dart';
-import 'package:ar_flutter_plugin_2/managers/ar_session_manager.dart';
-import 'package:ar_flutter_plugin_2/managers/ar_object_manager.dart';
-import 'package:ar_flutter_plugin_2/managers/ar_anchor_manager.dart';
-import 'package:ar_flutter_plugin_2/managers/ar_location_manager.dart';
 
 import 'xr_support.dart';
 
@@ -30,41 +25,17 @@ XRSupport getXRSupport() {
 class AndroidXRSupport extends XRSupport {
   @override
   Future<void> checkSupport() async {
-    print("BLUE: Checking AR support for Android...");
-    // Simple check: if we are on Android, we'll try to support it.
-    // In a real app, we'd use a more robust check.
-    supported = true;
+    supported = false;
   }
 
   @override
   Future<bool> switchToXR() async {
-    print("BLUE: Switching to AR on Android.");
-    isActive = true;
-    return true;
+    isActive = false;
+    return false;
   }
 
   @override
   Widget buildScene(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Android AR View")),
-      body: ARView(
-        onARViewCreated: onARViewCreated,
-      ),
-    );
-  }
-
-  void onARViewCreated(
-      ARSessionManager arSessionManager,
-      ARObjectManager arObjectManager,
-      ARAnchorManager arAnchorManager,
-      ARLocationManager arLocationManager) {
-    print("BLUE: AR View Created!");
-    arSessionManager.onInitialize(
-      showFeaturePoints: false,
-      showPlanes: true,
-      showWorldOrigin: true,
-      handleTaps: false,
-    );
-    arObjectManager.onInitialize();
+    return const SizedBox.shrink();
   }
 }

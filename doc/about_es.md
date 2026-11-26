@@ -27,5 +27,8 @@ En Android, las configuraciones locales se eliminan al desinstalar la
 aplicación. En la Web, las configuraciones se eliminan al borrar los datos de
 aplicaciones locales de su navegador.
 
-[github]: https://github.com/fredgc/polytope [issues]:
-https://github.com/fredgc/polytope/issues [gchouse]: https://www.gchouse.org
+[github]: https://github.com/fredgc/polytope
+
+[issues]: https://github.com/fredgc/polytope/issues
+
+[gchouse]: https://www.gchouse.org

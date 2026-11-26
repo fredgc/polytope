@@ -140,6 +140,36 @@ abstract class AppLocalizations {
   /// **'Pick Color'**
   String get colorPickerTitle;
 
+  /// Tooltip for down navigation control button
+  ///
+  /// In en, this message translates to:
+  /// **'Down'**
+  String get controlDownTooltip;
+
+  /// Tooltip for left navigation control button
+  ///
+  /// In en, this message translates to:
+  /// **'Left'**
+  String get controlLeftTooltip;
+
+  /// Tooltip for right navigation control button
+  ///
+  /// In en, this message translates to:
+  /// **'Right'**
+  String get controlRightTooltip;
+
+  /// Tooltip for stop spin navigation control button
+  ///
+  /// In en, this message translates to:
+  /// **'Stop Spin'**
+  String get controlStopSpinTooltip;
+
+  /// Tooltip for up navigation control button
+  ///
+  /// In en, this message translates to:
+  /// **'Up'**
+  String get controlUpTooltip;
+
   /// Tab label for the Controls documentation
   ///
   /// In en, this message translates to:
@@ -182,6 +212,12 @@ abstract class AppLocalizations {
   /// **'Save and close'**
   String get doneTooltip;
 
+  /// Title shown when the help navigation menu is open on narrow screens
+  ///
+  /// In en, this message translates to:
+  /// **'Help Menu'**
+  String get helpMenu;
+
   /// Title of the Help screen
   ///
   /// In en, this message translates to:
@@ -193,6 +229,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Help'**
   String get helpTooltip;
+
+  /// Tooltip for button that opens the help navigation menu
+  ///
+  /// In en, this message translates to:
+  /// **'Open menu'**
+  String get openDrawerTooltip;
+
+  /// Section header for user guide links in the help menu
+  ///
+  /// In en, this message translates to:
+  /// **'User Guides'**
+  String get userGuidesSection;
 
   /// Tooltip for increasing slider speed
   ///
@@ -422,6 +470,12 @@ abstract class AppLocalizations {
   /// **'Show Hotkey Buttons'**
   String get settingShowHotkeyButtons;
 
+  /// Label for show pan and zoom buttons setting
+  ///
+  /// In en, this message translates to:
+  /// **'Show Pan/Zoom Buttons'**
+  String get settingShowPanZoomButtons;
+
   /// Label for slice color setting
   ///
   /// In en, this message translates to:
@@ -589,6 +643,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'System'**
   String get themeModeSystem;
+
+  /// Tooltip for zoom in button
+  ///
+  /// In en, this message translates to:
+  /// **'Zoom In'**
+  String get zoomInTooltip;
+
+  /// Tooltip for zoom out button
+  ///
+  /// In en, this message translates to:
+  /// **'Zoom Out'**
+  String get zoomOutTooltip;
 }
 
 class _AppLocalizationsDelegate

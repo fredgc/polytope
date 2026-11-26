@@ -20,6 +20,26 @@
   "@colorPickerTitle": {
     "description": "Title for color picker dialog"
   },
+  "controlDownTooltip": "Down",
+  "@controlDownTooltip": {
+    "description": "Tooltip for down navigation control button"
+  },
+  "controlLeftTooltip": "Left",
+  "@controlLeftTooltip": {
+    "description": "Tooltip for left navigation control button"
+  },
+  "controlRightTooltip": "Right",
+  "@controlRightTooltip": {
+    "description": "Tooltip for right navigation control button"
+  },
+  "controlStopSpinTooltip": "Stop Spin",
+  "@controlStopSpinTooltip": {
+    "description": "Tooltip for stop spin navigation control button"
+  },
+  "controlUpTooltip": "Up",
+  "@controlUpTooltip": {
+    "description": "Tooltip for up navigation control button"
+  },
   "controlsTab": "Controls",
   "@controlsTab": {
     "description": "Tab label for the Controls documentation"
@@ -60,6 +80,10 @@
   "@doneTooltip": {
     "description": "Tooltip for save and close button"
   },
+  "helpMenu": "Help Menu",
+  "@helpMenu": {
+    "description": "Title shown when the help navigation menu is open on narrow screens"
+  },
   "helpTitle": "Help",
   "@helpTitle": {
     "description": "Title of the Help screen"
@@ -67,6 +91,14 @@
   "helpTooltip": "Help",
   "@helpTooltip": {
     "description": "Tooltip for help button"
+  },
+  "openDrawerTooltip": "Open menu",
+  "@openDrawerTooltip": {
+    "description": "Tooltip for button that opens the help navigation menu"
+  },
+  "userGuidesSection": "User Guides",
+  "@userGuidesSection": {
+    "description": "Section header for user guide links in the help menu"
   },
   "increaseSpeedTooltip": "Increase speed",
   "@increaseSpeedTooltip": {
@@ -234,6 +266,10 @@
   "@settingShowHotkeyButtons": {
     "description": "Label for show hotkey buttons setting"
   },
+  "settingShowPanZoomButtons": "Show Pan/Zoom Buttons",
+  "@settingShowPanZoomButtons": {
+    "description": "Label for show pan and zoom buttons setting"
+  },
   "settingSliceColor": "Slice Color",
   "@settingSliceColor": {
     "description": "Label for slice color setting"
@@ -345,5 +381,13 @@
   "themeModeSystem": "System",
   "@themeModeSystem": {
     "description": "System default theme mode option"
+  },
+  "zoomInTooltip": "Zoom In",
+  "@zoomInTooltip": {
+    "description": "Tooltip for zoom in button"
+  },
+  "zoomOutTooltip": "Zoom Out",
+  "@zoomOutTooltip": {
+    "description": "Tooltip for zoom out button"
   }
 }

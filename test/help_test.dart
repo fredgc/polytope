@@ -74,4 +74,42 @@ void main() {
       contains(HelpScreen.colorToHex(lightScheme.surfaceContainerHighest)),
     );
   });
+
+  test('HelpScreen prepareHtmlContent inlines CSS, theme, and link handling',
+      () {
+    final scheme = ColorScheme.fromSeed(
+      seedColor: Colors.purple,
+      brightness: Brightness.dark,
+    );
+    const sampleHtml = '''<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="css/doc_style.css" />
+</head>
+<body>
+  <p>See <a href="help.html">Overview</a> and <a href="https://policies.google.com/privacy">Privacy</a>.</p>
+</body>
+</html>''';
+
+    final prepared = HelpScreen.prepareHtmlContent(
+      sampleHtml,
+      cssContent: 'body { margin: 0; }',
+      isDark: true,
+      colorScheme: scheme,
+    );
+
+    expect(prepared, isNot(contains('href="css/doc_style.css"')));
+    expect(prepared, contains('<style>body { margin: 0; }</style>'));
+    expect(prepared, contains('<style id="theme-style">'));
+    expect(prepared, contains('<html class="dark-theme">'));
+    expect(
+      prepared,
+      contains(
+        '<a href="https://policies.google.com/privacy" target="_blank" rel="noopener">',
+      ),
+    );
+    expect(prepared, contains('<a href="help.html">Overview</a>'));
+    expect(prepared, contains("window.parent.postMessage('help_navigate:'"));
+    expect(prepared, contains('window.HelpNavigate.postMessage(href)'));
+  });
 }

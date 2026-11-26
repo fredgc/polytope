@@ -5,6 +5,11 @@
   "cancelButton": "Atšaukti",
   "closeTooltip": "Uždaryti",
   "colorPickerTitle": "Pasirinkti spalvą",
+  "controlDownTooltip": "Žemyn",
+  "controlLeftTooltip": "Kairėn",
+  "controlRightTooltip": "Dešinėn",
+  "controlStopSpinTooltip": "Sustabdyti sukimą",
+  "controlUpTooltip": "Aukštyn",
   "controlsTab": "Valdikliai",
   "debugTooltip": "Derinimas",
   "decreaseSpeedTooltip": "Mažinti greitį",
@@ -52,6 +57,7 @@
   "settingPolyColor": "Politopo spalva",
   "settingPolyEdgeThickness": "Politopo briaunų storis",
   "settingShowHotkeyButtons": "Rodyti sparčiųjų klavišų mygtukus",
+  "settingShowPanZoomButtons": "Rodyti slinkimo ir mastelio mygtukus",
   "settingSliceColor": "Pjūvio spalva",
   "settingSliceColorByX4": "Spalvinti pjūvio linijas pagal x4 atstumą",
   "settingSliceEdgeThickness": "Pjūvio briaunų storis",
@@ -79,5 +85,10 @@
   "termsTab": "Sąlygos",
   "themeModeDark": "Tamsi",
   "themeModeLight": "Šviesi",
-  "themeModeSystem": "Sistemos"
+  "themeModeSystem": "Sistemos",
+  "zoomInTooltip": "Priartinti",
+  "zoomOutTooltip": "Atitolinti",
+  "helpMenu": "Pagalbos meniu",
+  "openDrawerTooltip": "Atidaryti meniu",
+  "userGuidesSection": "Naudotojo vadovai"
 }

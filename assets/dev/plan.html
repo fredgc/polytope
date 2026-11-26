@@ -261,35 +261,35 @@ Implementation Roadmap for Android XR</h2>
 <col style="width: 60%" />
 </colgroup>
 <thead>
-<tr>
+<tr class="header">
 <th>Phase</th>
 <th>Milestone</th>
 <th>Key Deliverables</th>
 </tr>
 </thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td>1</td>
 <td>Manifest &amp; Capabilities</td>
 <td>Optional ARCore/XR manifest, runtime check</td>
 </tr>
-<tr>
+<tr class="even">
 <td>2</td>
 <td>Flutter XR Overlay</td>
 <td><code>Stack</code> UI controls, <code>repaint_counter</code>
 sync</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>3</td>
 <td>GLES3 Instancing</td>
 <td>Kotlin GLES3 shaders using <code>SpatialScene</code></td>
 </tr>
-<tr>
+<tr class="even">
 <td>4</td>
 <td>ARCore Anchoring</td>
 <td>Plane tap placement, 4D drag, pinch scale</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>5</td>
 <td>Android XR &amp; Release</td>
 <td>OpenXR headset mode, device audit, release</td>
@@ -305,9 +305,9 @@ sync</td>
 <li><p>Add
 <code>&lt;uses-permission android:name="android.permission.CAMERA" /&gt;</code>.</p></li>
 <li><p>Add
-<code>&lt;uses-feature android:name="android.hardware.camera.ar" android:required="false" /&gt;</code>
+<code>&lt;uses-feature android:name="android.hardware.camera.ar"   android:required="false" /&gt;</code>
 and
-<code>&lt;meta-data android:name="com.google.ar.core" android:value="optional" /&gt;</code>
+<code>&lt;meta-data   android:name="com.google.ar.core" android:value="optional" /&gt;</code>
 so the app remains installable on non-AR devices.</p></li>
 <li><p>Add Android XR spatial activity metadata so Android XR headsets
 can launch the app in spatial panel or full-space mode.</p></li>

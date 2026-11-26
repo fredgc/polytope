@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'l10n/l10n_extension.dart';
 import "printer.dart";
@@ -55,11 +56,23 @@ class MySlider with ChangeNotifier {
   }
 
   static SavableDouble sticky_delay = SavableDouble(
-      "sticky_delay", "Sticky delay", 0.1,
-      tip: "How long in seconds to a slider should dwell on a sticky point");
+    "sticky_delay",
+    "Sticky delay",
+    0.1,
+    min: 0.0,
+    max: 2.0,
+    divisions: 20,
+    tip: "How long in seconds to a slider should dwell on a sticky point",
+  );
   static SavableDouble sticky_radius = SavableDouble(
-      "sticky_radius", "Sticky radius", 1.0,
-      tip: "How long in seconds to a slider should dwell on a sticky point");
+    "sticky_radius",
+    "Sticky radius",
+    1.0,
+    min: 0.0,
+    max: 10.0,
+    divisions: 20,
+    tip: "How long in seconds to a slider should dwell on a sticky point",
+  );
 
   static void initSettings(Settings settings) {
     settings.add(sticky_delay);
@@ -88,6 +101,7 @@ class MySlider with ChangeNotifier {
     double buffer = (max - min) * 0.05;
     min -= buffer;
     max += buffer;
+    clamp();
   }
 
   double valueToPixel(double x) {
@@ -326,47 +340,111 @@ class MySlider with ChangeNotifier {
     return name;
   }
 
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, {FocusNode? upFocusNode}) {
     build_counter++;
     // print("BLUE: sticky_delay = ${zzz(sticky_delay)}, radius=${zzz(sticky_radius)}");
     ThemeData theme = Theme.of(context);
     background_color = theme.colorScheme.surface;
     text_color = theme.colorScheme.onSurface;
     grid_color = theme.colorScheme.primary;
-    return IntrinsicHeight(
+    final row = IntrinsicHeight(
         child: Row(children: <Widget>[
       Text("${localizedName(context)}: "),
-      Opacity(
-          opacity: allow_animate ? 1.0 : 0.0,
-          child: IconButton(
-              icon: const Icon(Icons.arrow_left),
-              tooltip: context.l10n.decreaseSpeedTooltip,
-              onPressed: () {
-                // print("Button $name decrease speed.");
-                incrementSpeed(-speed_delta);
-              })),
+      ExcludeFocus(
+          excluding: !allow_animate,
+          child: Opacity(
+              opacity: allow_animate ? 1.0 : 0.0,
+              child: IconButton(
+                  icon: const Icon(Icons.arrow_left),
+                  tooltip: context.l10n.decreaseSpeedTooltip,
+                  onPressed: () {
+                    // print("Button $name decrease speed.");
+                    incrementSpeed(-speed_delta);
+                  }))),
       Expanded(
-          child: Container(
-              child: GestureDetector(
-                  onScaleStart: scaleStart,
-                  onScaleUpdate: scaleUpdate,
-                  onScaleEnd: scaleEnd,
-                  onTapUp: tapUp,
-                  child: ClipRect(
-                      child: CustomPaint(
-                    painter: SliderPainter(slider: this, repaint: this),
-                    child: Container(),
-                  ))))),
-      Opacity(
-          opacity: allow_animate ? 1.0 : 0.0,
-          child: IconButton(
-              icon: const Icon(Icons.arrow_right),
-              tooltip: context.l10n.increaseSpeedTooltip,
-              onPressed: () {
-                // print("Button $name increase speed.");
-                incrementSpeed(speed_delta);
-              })),
+          child: Focus(
+              debugLabel: 'SliceSliderTrack',
+              onKeyEvent: (FocusNode node, KeyEvent event) {
+                if (event is KeyDownEvent || event is KeyRepeatEvent) {
+                  final key = event.logicalKey;
+                  final step = (max - min) * 0.02;
+                  if (key == LogicalKeyboardKey.arrowLeft) {
+                    setSpeed(0.0);
+                    value = value - step;
+                    return KeyEventResult.handled;
+                  }
+                  if (key == LogicalKeyboardKey.arrowRight) {
+                    setSpeed(0.0);
+                    value = value + step;
+                    return KeyEventResult.handled;
+                  }
+                  if (key == LogicalKeyboardKey.select ||
+                      key == LogicalKeyboardKey.enter ||
+                      key == LogicalKeyboardKey.space) {
+                    if (speed == 0.0 && allow_animate) {
+                      if (!loop && value >= max) {
+                        value = min;
+                      }
+                      incrementSpeed(speed_delta);
+                    } else {
+                      setSpeed(0.0);
+                    }
+                    return KeyEventResult.handled;
+                  }
+                }
+                return KeyEventResult.ignored;
+              },
+              child: Builder(builder: (BuildContext focusContext) {
+                final hasFocus = Focus.of(focusContext).hasFocus;
+                return Container(
+                    decoration: hasFocus
+                        ? BoxDecoration(
+                            border: Border.all(
+                              color: theme.colorScheme.primary,
+                              width: 2.0,
+                            ),
+                          )
+                        : null,
+                    child: GestureDetector(
+                        onScaleStart: scaleStart,
+                        onScaleUpdate: scaleUpdate,
+                        onScaleEnd: scaleEnd,
+                        onTapUp: tapUp,
+                        child: ClipRect(
+                            child: CustomPaint(
+                          painter: SliderPainter(slider: this, repaint: this),
+                          child: Container(),
+                        ))));
+              }))),
+      ExcludeFocus(
+          excluding: !allow_animate,
+          child: Opacity(
+              opacity: allow_animate ? 1.0 : 0.0,
+              child: IconButton(
+                  icon: const Icon(Icons.arrow_right),
+                  tooltip: context.l10n.increaseSpeedTooltip,
+                  onPressed: () {
+                    // print("Button $name increase speed.");
+                    incrementSpeed(speed_delta);
+                  }))),
     ]));
+    if (upFocusNode == null) {
+      return row;
+    }
+    return Focus(
+      canRequestFocus: false,
+      skipTraversal: true,
+      onKeyEvent: (FocusNode node, KeyEvent event) {
+        if ((event is KeyDownEvent || event is KeyRepeatEvent) &&
+            event.logicalKey == LogicalKeyboardKey.arrowUp &&
+            upFocusNode.canRequestFocus) {
+          upFocusNode.requestFocus();
+          return KeyEventResult.handled;
+        }
+        return KeyEventResult.ignored;
+      },
+      child: row,
+    );
   }
 }
 

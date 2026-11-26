@@ -27,27 +27,105 @@
 <h1 id="commandes">Commandes</h1>
 <p>La barre supérieure contient plusieurs commandes :</p>
 <ol type="1">
-<li><p><strong>Type de polytope</strong> : Choisissez le polytope
-régulieràafficher.</p></li>
-<li><p><strong>Dimension</strong> : Choisissez la dimension (de
-2à5).</p></li>
-<li><p><strong>Basculer la coupe</strong> : Activez ou désactivez la
-coupe par un hyperplan.</p></li>
-<li><p><strong>Menu Transformation</strong> : Sélectionnez les modes de
-rotation (R3, R4, R5), Zolly ou Translation.</p></li>
+<li><p><strong>Paramètres</strong> (icône d’engrenage) : Configure les
+couleurs, l’épaisseur des arêtes/sommets, le découpage des lignes, le
+thème et les boutons à l’écran.</p></li>
+<li><p><strong>Type de polytope</strong> : Sélectionne le polytope
+régulier à afficher (Simplexe, Cube, Orthoplexe, Dodécaèdre, Icosaèdre,
+24-cellules, 120-cellules ou 600-cellules).</p></li>
+<li><p><strong>Dimension</strong> : Choisit la dimension (de 2 à
+5).</p></li>
+<li><p><strong>Coupe (Slice)</strong> : Active ou désactive
+l’intersection avec l’hyperplan.</p></li>
+<li><p><strong>Menu Mouvement / Transformation</strong> : Sélectionne le
+mode (<code>Rotate R3</code>, <code>Rotate R4</code>,
+<code>Rotate R5</code>, <code>Zolly</code>, <code>Translate</code> ou
+<code>Scale</code>) ou l’alignement (sommet, arête, face ou 3-cellule
+devant).</p></li>
+<li><p><strong>Aide</strong> (<code>?</code>) et <strong>Langue</strong>
+(icône globe) : Ouvre la documentation ou change la langue.</p></li>
 </ol>
-<h2 id="gestes-et-vitesse">Gestes et vitesse</h2>
+<h2 id="web-et-ordinateur-souris-et-clavier">Web et Ordinateur (Souris
+et Clavier)</h2>
 <ul>
-<li><p><strong>Glisser</strong> : Fait pivoter ou déplace le polytope
-selon le mode actif.</p></li>
-<li><p><strong>Faire défiler / Pincer</strong> : Zoome ou redimensionne
-le polytope.</p></li>
-<li><p><strong>Balayer rapidement</strong> : Donne de l’élan pour
-poursuivre la rotation ou la coupe de manière fluide.</p></li>
-<li><p><strong>Toucher</strong> : Arrête le mouvement.</p></li>
+<li><p><strong>Glisser</strong> : Fait pivoter, ajuste la perspective
+(<code>Zolly</code>), déplace ou redimensionne selon le mode
+actif.</p></li>
+<li><p><strong>Molette</strong> : Effectue un zoom avant ou
+arrière.</p></li>
+<li><p><strong>Lancer (Fling)</strong> : Donne une vitesse en
+<code>Rotate R3</code> ou sur le curseur de coupe pour un mouvement
+continu.</p></li>
+<li><p><strong>Clic / Appui</strong> : Arrête la rotation sur le canevas
+ou positionne et arrête le curseur de coupe.</p></li>
+<li><p><strong>Flèches directionnelles</strong> : Appliquent l’outil de
+mouvement actif.</p></li>
+<li><p><strong><code>]</code> / <code>[</code></strong> (ou <strong>Page
+préc. / Page suiv.</strong>, <strong>Pavé num. <code>+</code> /
+<code>-</code></strong>) : Zoom avant ou arrière.</p></li>
+<li><p><strong>Touches de modification</strong> : Maintenez
+<strong>Maj</strong> (<code>Rotate R4</code>), <strong>Maj+Ctrl</strong>
+(<code>Rotate R5</code>), <strong>Ctrl</strong> (<code>Zolly</code>),
+<strong>Alt</strong> (<code>Translate</code>) ou
+<strong>Ctrl+Alt</strong> (<code>Scale</code>).</p></li>
+<li><p><strong><code>0</code>, <code>1</code>, <code>2</code>,
+<code>3</code></strong> : Aligne un sommet, une arête, une face ou une
+3-cellule devant.</p></li>
+<li><p><strong>Espace</strong> : Met en pause la rotation et la coupe
+lorsque le canevas a le focus.</p></li>
+<li><p><strong><code>+</code> / <code>-</code></strong> (ou
+<code>=</code>) : Accélère ou ralentit l’animation de coupe.</p></li>
 </ul>
-<h2 id="alignements-rapides">Alignements rapides</h2>
-<p>Alignez rapidement le polytope pour qu’un sommet, une arête, une face
-ou une 3-cellule soit orientédirectement vers l’écran.</p>
+<h2 id="mobile-tactile">Mobile (Tactile)</h2>
+<ul>
+<li><p><strong>Glisser, lancer et appuyer</strong> : Faire pivoter,
+déplacer, lancer la rotation ou appuyer pour l’arrêter.</p></li>
+<li><p><strong>Pincer et tourner</strong> : Pincer à deux doigts change
+l’échelle ; pivoter à deux doigts tourne dans le plan de
+l’écran.</p></li>
+<li><p><strong>Boutons raccourcis à l’écran (<code>S</code>,
+<code>C</code>, <code>A</code>)</strong> : Affichés par défaut sur
+téléphones et tablettes (réglable dans Paramètres) comme équivalents
+tactiles de Maj, Ctrl et Alt.</p></li>
+<li><p><strong>Boutons panoramique/zoom à l’écran</strong> : Optionnels
+dans Paramètres. Un double appui sur une flèche en
+<code>Rotate R3</code> accélère la rotation ; le bouton central Arrêt la
+stoppe.</p></li>
+</ul>
+<h2 id="android-tv-télécommande-d-pad">Android TV (Télécommande
+D-Pad)</h2>
+<p><em>Cette section concerne uniquement Android TV.</em></p>
+<ul>
+<li><p><strong>Navigation</strong> : Utilisez les flèches du D-Pad et
+<strong>Sélectionner</strong> pour naviguer dans la barre supérieure,
+les boutons de rotation/zoom et le curseur de coupe.
+<strong>Bas</strong> depuis la barre supérieure ou <strong>Haut</strong>
+depuis le curseur de coupe place le focus sur le bouton central de
+rotation.</p></li>
+<li><p><strong>Mode rotation active</strong> :</p>
+<ul>
+<li><p><strong>Appui long sur Sélectionner</strong> sur le bouton
+central <strong>Arrêt</strong> active le <strong>Mode rotation
+active</strong> (l’icône devient un globe mis en évidence).</p></li>
+<li><p><strong>Appui court sur une flèche</strong> : Augmente la vitesse
+de rotation dans cette direction.</p></li>
+<li><p><strong>Appui long sur une flèche</strong> : Fait pivoter
+régulièrement tant que la touche est maintenue.</p></li>
+<li><p><strong>Appui court sur Sélectionner</strong> : Arrête la
+rotation tout en restant en Mode rotation active.</p></li>
+<li><p><strong>Appui long sur Sélectionner</strong> ou touche
+<strong>Retour</strong> : Quitte le Mode rotation active.</p></li>
+</ul></li>
+<li><p><strong>Curseur de coupe</strong> : Placez le focus sur le
+curseur et appuyez sur <strong>Sélectionner</strong> pour démarrer ou
+arrêter l’animation, ou utilisez <strong>Gauche / Droite</strong> pour
+avancer manuellement.</p></li>
+<li><p><strong>Paramètres</strong> : Utilisez <strong>Haut /
+Bas</strong> pour parcourir les réglages ligne par ligne. Sur un
+curseur, appuyez sur <strong>Sélectionner</strong> pour éditer,
+<strong>Gauche / Droite</strong> pour ajuster, puis
+<strong>Sélectionner</strong> ou <strong>Retour</strong> pour
+valider.</p></li>
+</ul>
 </body>
 </html>

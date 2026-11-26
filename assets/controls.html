@@ -27,27 +27,102 @@
 <h1 id="controls">Controls</h1>
 <p>The top bar contains several controls:</p>
 <ol type="1">
+<li><p><strong>Settings</strong> (gear icon): Configure colors,
+edge/vertex sizes, line clipping, theme brightness, and on-screen
+controls.</p></li>
 <li><p><strong>Polytope Type</strong>: Select the regular polytope to
-display.</p></li>
+display (Simplex, Cube, Cross, Dodecahedron, Icosahedron, 24-cell,
+120-cell, or 600-cell).</p></li>
 <li><p><strong>Dimension</strong>: Choose the dimension (2 to
 5).</p></li>
-<li><p><strong>Slice Toggle</strong>: Turn the hyperplane slice
-intersection on or off.</p></li>
-<li><p><strong>Transform Menu</strong>: Select rotation modes (R3, R4,
-R5), Zolly, or Translate.</p></li>
+<li><p><strong>Slice Toggle</strong>: Turn the hyperplane cross-section
+slice on or off.</p></li>
+<li><p><strong>Movement / Transform Menu</strong>: Choose the drag and
+button action (<code>Rotate R3</code>, <code>Rotate R4</code>,
+<code>Rotate R5</code>, <code>Zolly</code>, <code>Translate</code>, or
+<code>Scale</code>) or snap the orientation (<code>Vertex first</code>,
+<code>Edge first</code>, <code>Face first</code>, or
+<code>3-Cell first</code>).</p></li>
+<li><p><strong>Help</strong> (<code>?</code>) and
+<strong>Language</strong> (globe icon): Open documentation or switch the
+interface and help language.</p></li>
 </ol>
-<h2 id="gestures-velocity">Gestures &amp; Velocity</h2>
+<h2 id="web-desktop-mouse-keyboard">Web &amp; Desktop (Mouse &amp;
+Keyboard)</h2>
 <ul>
-<li><p><strong>Drag</strong>: Rotates or translates the polytope
-according to current mode.</p></li>
-<li><p><strong>Scroll / Pinch</strong>: Zoom or scale the
-polytope.</p></li>
-<li><p><strong>Fling</strong>: Imparts velocity so rotation or slice
-continues smoothly.</p></li>
-<li><p><strong>Tap</strong>: Stops movement.</p></li>
+<li><p><strong>Drag</strong>: Rotates, zooms/dollies
+(<code>Zolly</code>), translates, or scales according to the current
+movement mode.</p></li>
+<li><p><strong>Scroll Wheel</strong>: Zooms in or out.</p></li>
+<li><p><strong>Fling</strong>: Imparts velocity in
+<code>Rotate R3</code> or on the slice slider so motion continues
+smoothly.</p></li>
+<li><p><strong>Click / Tap</strong>: Stops spin on the canvas, or jumps
+and stops the slice slider.</p></li>
+<li><p><strong>Arrow Keys</strong>: Apply the current movement
+tool.</p></li>
+<li><p><strong><code>]</code> / <code>[</code></strong> (or <strong>Page
+Up / Page Down</strong>, <strong>Numpad <code>+</code> /
+<code>-</code></strong>): Zoom in or out.</p></li>
+<li><p><strong>Modifier Keys</strong>: Hold <strong>Shift</strong>
+(<code>Rotate R4</code>), <strong>Shift+Ctrl</strong>
+(<code>Rotate R5</code>), <strong>Ctrl</strong> (<code>Zolly</code>),
+<strong>Alt</strong> (<code>Translate</code>), or
+<strong>Ctrl+Alt</strong> (<code>Scale</code>).</p></li>
+<li><p><strong><code>0</code>, <code>1</code>, <code>2</code>,
+<code>3</code></strong>: Snap to Vertex, Edge, Face, or 3-Cell
+first.</p></li>
+<li><p><strong>Space</strong>: Pauses rotation and slice animation when
+the canvas is focused.</p></li>
+<li><p><strong><code>+</code> / <code>-</code></strong> (or
+<code>=</code>): Speed up or slow down slice animation.</p></li>
 </ul>
-<h2 id="snaps">Snaps</h2>
-<p>Quickly align the polytope so a vertex, edge, face, or 3-cell points
-directly toward the screen.</p>
+<h2 id="mobile-touch">Mobile (Touch)</h2>
+<ul>
+<li><p><strong>Drag, Fling &amp; Tap</strong>: Rotate, pan, impart spin,
+or tap to stop rotation.</p></li>
+<li><p><strong>Pinch &amp; Twist</strong>: Two-finger pinch scales the
+polytope; twisting rotates in the screen plane.</p></li>
+<li><p><strong>On-Screen Hotkey Buttons (<code>S</code>, <code>C</code>,
+<code>A</code>)</strong>: Shown by default on phones and tablets
+(configurable in Settings) as touch equivalents for Shift, Ctrl, and
+Alt.</p></li>
+<li><p><strong>On-Screen Pan/Zoom Buttons</strong>: Optional in
+Settings. Tap an arrow to step, double-tap an arrow in
+<code>Rotate R3</code> to add spin, and tap the center Stop button to
+halt spin.</p></li>
+</ul>
+<h2 id="android-tv-d-pad-remote">Android TV (D-Pad Remote)</h2>
+<p><em>This section applies to Android TV builds.</em></p>
+<ul>
+<li><p><strong>Navigation</strong>: Use the D-pad arrows and
+<strong>Select</strong> to navigate the top bar, on-screen rotation/zoom
+buttons, and slice slider. Pressing <strong>Down</strong> from any
+top-bar control or <strong>Up</strong> from the slice slider moves focus
+to the center rotation button.</p></li>
+<li><p><strong>Active Rotation Mode</strong>:</p>
+<ul>
+<li><p><strong>Long-press Select</strong> on the center
+<strong>Stop</strong> button to enter <strong>Active Rotation
+Mode</strong> (the center button changes to a highlighted globe
+icon).</p></li>
+<li><p><strong>Tap an arrow</strong>: Increases rotation speed in that
+direction.</p></li>
+<li><p><strong>Long-press (hold) an arrow</strong>: Steadily rotates as
+long as the button is held down.</p></li>
+<li><p><strong>Tap Select</strong>: Stops rotation while staying in
+Active Rotation Mode.</p></li>
+<li><p><strong>Long-press Select</strong> or press
+<strong>Back</strong>: Exits Active Rotation Mode.</p></li>
+</ul></li>
+<li><p><strong>Slice Slider</strong>: Focus the slice slider and press
+<strong>Select</strong> to start or stop forward animation, or use
+<strong>Left / Right</strong> to step manually.</p></li>
+<li><p><strong>Settings</strong>: Use <strong>Up / Down</strong> to step
+through settings one row at a time. On slider settings, press
+<strong>Select</strong> to enter edit mode, <strong>Left /
+Right</strong> to adjust the value, and <strong>Select</strong> or
+<strong>Back</strong> to finish.</p></li>
+</ul>
 </body>
 </html>

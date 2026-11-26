@@ -21,9 +21,8 @@
       vertical-align: middle;
     }
     /* CSS for syntax highlighting */
-    html { -webkit-text-size-adjust: 100%; }
     pre > code.sourceCode { white-space: pre; position: relative; }
-    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span { line-height: 1.25; }
     pre > code.sourceCode > span:empty { height: 1.2em; }
     .sourceCode { overflow: visible; }
     code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -308,10 +307,9 @@ to Firebase (<code>polytope.gchouse.org</code>).</p></li>
 </ul>
 <h3 id="version-rolling-roll_build_number.sh">Version Rolling
 (<code>roll_build_number.sh</code>)</h3>
-<p>Increments the build number in <code>pubspec.yaml</code> and
-propagates the update to <code>web/version.json</code>:</p>
+<p>Increments the build number in <code>pubspec.yaml</code>:</p>
 <div class="sourceCode" id="cb3"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./roll_build_number.sh</span></span></code></pre></div>
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">roll_build_number.sh</span></span></code></pre></div>
 <hr />
 <h2 id="code-style-guidelines">5. Code Style Guidelines</h2>
 <ul>

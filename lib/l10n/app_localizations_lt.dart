@@ -24,6 +24,21 @@ class AppLocalizationsLt extends AppLocalizations {
   String get colorPickerTitle => 'Pasirinkti spalvą';
 
   @override
+  String get controlDownTooltip => 'Žemyn';
+
+  @override
+  String get controlLeftTooltip => 'Kairėn';
+
+  @override
+  String get controlRightTooltip => 'Dešinėn';
+
+  @override
+  String get controlStopSpinTooltip => 'Sustabdyti sukimą';
+
+  @override
+  String get controlUpTooltip => 'Aukštyn';
+
+  @override
   String get controlsTab => 'Valdikliai';
 
   @override
@@ -49,10 +64,19 @@ class AppLocalizationsLt extends AppLocalizations {
   String get doneTooltip => 'Išsaugoti ir uždaryti';
 
   @override
+  String get helpMenu => 'Pagalbos meniu';
+
+  @override
   String get helpTitle => 'Pagalba';
 
   @override
   String get helpTooltip => 'Pagalba';
+
+  @override
+  String get openDrawerTooltip => 'Atidaryti meniu';
+
+  @override
+  String get userGuidesSection => 'Naudotojo vadovai';
 
   @override
   String get increaseSpeedTooltip => 'Didinti greitį';
@@ -172,6 +196,10 @@ class AppLocalizationsLt extends AppLocalizations {
   String get settingShowHotkeyButtons => 'Rodyti sparčiųjų klavišų mygtukus';
 
   @override
+  String get settingShowPanZoomButtons =>
+      'Rodyti slinkimo ir mastelio mygtukus';
+
+  @override
   String get settingSliceColor => 'Pjūvio spalva';
 
   @override
@@ -256,4 +284,10 @@ class AppLocalizationsLt extends AppLocalizations {
 
   @override
   String get themeModeSystem => 'Sistemos';
+
+  @override
+  String get zoomInTooltip => 'Priartinti';
+
+  @override
+  String get zoomOutTooltip => 'Atitolinti';
 }

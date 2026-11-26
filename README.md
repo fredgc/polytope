@@ -5,7 +5,7 @@ slicing regular polytopes across 3, 4, and higher dimensions.
 
 * **Live Web App**: [polytope.gchouse.org](https://polytope.gchouse.org)
 
-* **Android Package**: `org.gchouse.polytope`
+* **Android Package**: `org.gchouse.polytope2`
 
 ---
 
