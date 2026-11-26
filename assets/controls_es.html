@@ -27,27 +27,103 @@
 <h1 id="controles">Controles</h1>
 <p>La barra superior contiene varios controles:</p>
 <ol type="1">
-<li><p><strong>Tipo de politopo</strong>: Seleccione el politopo regular
-a mostrar.</p></li>
-<li><p><strong>Dimensión</strong>: Elija la dimensión (de 2 a
+<li><p><strong>Configuración</strong> (icono de engranaje): Configura
+colores, grosor de aristas/vértices, recorte de líneas, tema y botones
+en pantalla.</p></li>
+<li><p><strong>Tipo de politopo</strong>: Selecciona el politopo regular
+a mostrar (Símplex, Cubo, Ortoplejo, Dodecaedro, Icosaedro, 24-celdas,
+120-celdas o 600-celdas).</p></li>
+<li><p><strong>Dimensión</strong>: Elige la dimensión (de 2 a
 5).</p></li>
-<li><p><strong>Casilla de corte</strong>: Active o desactive la
-intersección con el hiperplano.</p></li>
-<li><p><strong>Menúde transformación</strong>: Elija los modos de
-rotación (R3, R4, R5), Zolly o Trasladar.</p></li>
+<li><p><strong>Corte (Slice)</strong>: Activa o desactiva la sección
+transversal del hiperplano.</p></li>
+<li><p><strong>Menú de movimiento / transformación</strong>: Selecciona
+el modo de arrastre y botones (<code>Rotate R3</code>,
+<code>Rotate R4</code>, <code>Rotate R5</code>, <code>Zolly</code>,
+<code>Translate</code> o <code>Scale</code>) o alinea la vista (vértice,
+arista, cara o 3-celda al frente).</p></li>
+<li><p><strong>Ayuda</strong> (<code>?</code>) e <strong>Idioma</strong>
+(icono de globo): Abre la documentación o cambia el idioma.</p></li>
 </ol>
-<h2 id="gestos-y-velocidad">Gestos y velocidad</h2>
+<h2 id="web-y-escritorio-ratón-y-teclado">Web y Escritorio (Ratón y
+Teclado)</h2>
 <ul>
-<li><p><strong>Arrastrar</strong>: Rota o traslada el politopo según el
-modo activo.</p></li>
-<li><p><strong>Desplazar / Pellizcar</strong>: Acerca o escala el
-politopo.</p></li>
-<li><p><strong>Deslizar rápido</strong>: Otorga inercia para que la
-rotación o el corte continúen suavemente.</p></li>
-<li><p><strong>Tocar</strong>: Detiene el movimiento.</p></li>
+<li><p><strong>Arrastrar</strong>: Rota, ajusta la perspectiva
+(<code>Zolly</code>), traslada o escala según el modo activo.</p></li>
+<li><p><strong>Rueda del ratón</strong>: Acerca o aleja el
+zoom.</p></li>
+<li><p><strong>Deslizar rápido (Fling)</strong>: Aplica velocidad en
+<code>Rotate R3</code> o en el deslizador de corte para mantener el
+movimiento continuo.</p></li>
+<li><p><strong>Clic / Toque</strong>: Detiene el giro en el lienzo, o
+salta y detiene el deslizador de corte.</p></li>
+<li><p><strong>Teclas de flecha</strong>: Aplican la herramienta de
+movimiento actual.</p></li>
+<li><p><strong><code>]</code> / <code>[</code></strong> (o <strong>Re
+Pág / Av Pág</strong>, <strong>Teclado numérico <code>+</code> /
+<code>-</code></strong>): Acercar o alejar.</p></li>
+<li><p><strong>Teclas modificadoras</strong>: Mantén
+<strong>Shift</strong> (<code>Rotate R4</code>),
+<strong>Shift+Ctrl</strong> (<code>Rotate R5</code>),
+<strong>Ctrl</strong> (<code>Zolly</code>), <strong>Alt</strong>
+(<code>Translate</code>) o <strong>Ctrl+Alt</strong>
+(<code>Scale</code>).</p></li>
+<li><p><strong><code>0</code>, <code>1</code>, <code>2</code>,
+<code>3</code></strong>: Alinea vértice, arista, cara o 3-celda al
+frente.</p></li>
+<li><p><strong>Espacio</strong>: Pausa la rotación y la animación del
+corte cuando el lienzo tiene el foco.</p></li>
+<li><p><strong><code>+</code> / <code>-</code></strong> (o
+<code>=</code>): Acelera o ralentiza la animación del corte.</p></li>
 </ul>
-<h2 id="alineaciones-rápidas">Alineaciones rápidas</h2>
-<p>Alinee rápidamente el politopo para que un vértice, borde, cara o
-3-celda apunte directamente hacia la pantalla.</p>
+<h2 id="móvil-táctil">Móvil (Táctil)</h2>
+<ul>
+<li><p><strong>Arrastrar, deslizar y tocar</strong>: Rota, desplaza,
+aplica giro o toca para detener la rotación.</p></li>
+<li><p><strong>Pellizcar y girar</strong>: Pellizcar con dos dedos
+escala el politopo; girar con dos dedos rota en el plano de la
+pantalla.</p></li>
+<li><p><strong>Botones de acceso rápido en pantalla (<code>S</code>,
+<code>C</code>, <code>A</code>)</strong>: Activados por defecto en
+teléfonos y tabletas (ajustable en Configuración) como equivalente
+táctil de Shift, Ctrl y Alt.</p></li>
+<li><p><strong>Botones de paneo/zoom en pantalla</strong>: Opcionales en
+Configuración. Un doble toque en una flecha en <code>Rotate R3</code>
+aumenta el giro; el botón central Detener frena el giro.</p></li>
+</ul>
+<h2 id="android-tv-control-remoto-d-pad">Android TV (Control remoto
+D-Pad)</h2>
+<p><em>Esta sección aplica solo a versiones de Android TV.</em></p>
+<ul>
+<li><p><strong>Navegación</strong>: Usa las flechas del D-Pad y
+<strong>Seleccionar</strong> para moverte por la barra superior, los
+botones de rotación/zoom y el deslizador de corte. Pulsar
+<strong>Abajo</strong> desde la barra superior o <strong>Arriba</strong>
+desde el deslizador lleva el foco al botón central de rotación.</p></li>
+<li><p><strong>Modo de rotación activa</strong>:</p>
+<ul>
+<li><p><strong>Mantén pulsado Seleccionar</strong> en el botón central
+<strong>Detener</strong> para entrar en el <strong>Modo de rotación
+activa</strong> (el botón central cambia a un icono de globo
+resaltado).</p></li>
+<li><p><strong>Tocar una flecha</strong>: Aumenta la velocidad de
+rotación en esa dirección.</p></li>
+<li><p><strong>Mantener pulsada una flecha</strong>: Rota de forma
+continua mientras la tecla permanezca presionada.</p></li>
+<li><p><strong>Tocar Seleccionar</strong>: Detiene la rotación sin salir
+del Modo de rotación activa.</p></li>
+<li><p><strong>Mantener pulsado Seleccionar</strong> o pulsar
+<strong>Atrás</strong>: Sale del Modo de rotación activa.</p></li>
+</ul></li>
+<li><p><strong>Deslizador de corte</strong>: Enfoca el deslizador y
+pulsa <strong>Seleccionar</strong> para iniciar o detener la animación
+hacia adelante, o usa <strong>Izquierda / Derecha</strong> para avanzar
+manualmente.</p></li>
+<li><p><strong>Configuración</strong>: Usa <strong>Arriba /
+Abajo</strong> para pasar de un ajuste a otro. En los deslizadores,
+pulsa <strong>Seleccionar</strong> para editar, <strong>Izquierda /
+Derecha</strong> para cambiar el valor y <strong>Seleccionar</strong> o
+<strong>Atrás</strong> para salir.</p></li>
+</ul>
 </body>
 </html>

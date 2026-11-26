@@ -147,6 +147,11 @@ class CoordinateTransform {
     dprint("setSpeed = ${zzz(speed)}");
   }
 
+  void addSpeed(double dx, double dy) {
+    speed = [speed[0] + dx / zoom, speed[1] - dy / zoom];
+    dprint("addSpeed = ${zzz(speed)}");
+  }
+
   void resize(Size size) {
     dprint("BLUE: Size ${this.size} -> $size");
     if (this.size.width > 0) {

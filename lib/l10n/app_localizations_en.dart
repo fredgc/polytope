@@ -24,6 +24,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get colorPickerTitle => 'Pick Color';
 
   @override
+  String get controlDownTooltip => 'Down';
+
+  @override
+  String get controlLeftTooltip => 'Left';
+
+  @override
+  String get controlRightTooltip => 'Right';
+
+  @override
+  String get controlStopSpinTooltip => 'Stop Spin';
+
+  @override
+  String get controlUpTooltip => 'Up';
+
+  @override
   String get controlsTab => 'Controls';
 
   @override
@@ -49,10 +64,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get doneTooltip => 'Save and close';
 
   @override
+  String get helpMenu => 'Help Menu';
+
+  @override
   String get helpTitle => 'Help';
 
   @override
   String get helpTooltip => 'Help';
+
+  @override
+  String get openDrawerTooltip => 'Open menu';
+
+  @override
+  String get userGuidesSection => 'User Guides';
 
   @override
   String get increaseSpeedTooltip => 'Increase speed';
@@ -174,6 +198,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingShowHotkeyButtons => 'Show Hotkey Buttons';
 
   @override
+  String get settingShowPanZoomButtons => 'Show Pan/Zoom Buttons';
+
+  @override
   String get settingSliceColor => 'Slice Color';
 
   @override
@@ -256,4 +283,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get themeModeSystem => 'System';
+
+  @override
+  String get zoomInTooltip => 'Zoom In';
+
+  @override
+  String get zoomOutTooltip => 'Zoom Out';
 }

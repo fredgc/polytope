@@ -16,7 +16,8 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter/services.dart'
+    show KeyDownEvent, KeyEvent, KeyRepeatEvent, LogicalKeyboardKey, rootBundle;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -28,6 +29,26 @@ import 'webview_stub.dart' if (dart.library.js_interop) 'webview_web.dart';
 class HelpScreen extends StatefulWidget {
   static const routeName = "/help";
   const HelpScreen({super.key});
+
+  static const _navScript = '''
+<script>
+document.addEventListener('click', function(e) {
+  var a = e.target.closest('a');
+  if (a) {
+    var href = a.getAttribute('href');
+    if (href && !href.startsWith('#')) {
+      e.preventDefault();
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage('help_navigate:' + href, '*');
+      }
+      if (window.HelpNavigate && window.HelpNavigate.postMessage) {
+        window.HelpNavigate.postMessage(href);
+      }
+    }
+  }
+});
+</script>
+''';
 
   static bool isExternalUrl(String href) {
     final trimmed = href.trim();
@@ -121,6 +142,59 @@ header, footer {
             ),
       );
 
+  /// Prepares raw HTML documentation for display in the WebView.
+  static String prepareHtmlContent(
+    String htmlContent, {
+    required String cssContent,
+    required bool isDark,
+    ColorScheme? colorScheme,
+  }) {
+    // Ensure external links open in a new tab/window as a fallback if JS
+    // interception does not handle them.
+    final anchorTargetRegExp = RegExp(
+      r'<a\s+href="(https?://[^"]+)"(?![^>]*\btarget=)',
+    );
+    htmlContent = htmlContent.replaceAllMapped(anchorTargetRegExp, (match) {
+      return '<a href="${match.group(1)}" target="_blank" rel="noopener"';
+    });
+
+    // Replace stylesheet link with inlined CSS to avoid relative path loading
+    // issues on web and mobile.
+    final linkRegExp = RegExp(
+      r'''<link\s+rel=["']stylesheet["']\s+href=["'][^"']*doc_style\.css["']\s*/?>''',
+    );
+    final themeCss = colorScheme != null ? generateThemeCss(colorScheme) : '';
+    final combinedCss = '<style>$cssContent</style>$themeCss';
+    if (htmlContent.contains(linkRegExp)) {
+      htmlContent = htmlContent.replaceFirst(linkRegExp, combinedCss);
+    } else if (htmlContent.contains('</head>')) {
+      htmlContent = htmlContent.replaceFirst('</head>', '$combinedCss</head>');
+    } else {
+      htmlContent = '<head>$combinedCss</head>$htmlContent';
+    }
+
+    final themeClass = isDark ? 'dark-theme' : 'light-theme';
+    if (htmlContent.contains('<html')) {
+      htmlContent = htmlContent.replaceFirst(
+        '<html',
+        '<html class="$themeClass"',
+      );
+    } else if (htmlContent.contains('<body')) {
+      htmlContent = htmlContent.replaceFirst(
+        '<body',
+        '<body class="$themeClass"',
+      );
+    }
+
+    if (htmlContent.contains('</body>')) {
+      htmlContent = htmlContent.replaceFirst('</body>', '$_navScript</body>');
+    } else {
+      htmlContent = '$htmlContent$_navScript';
+    }
+
+    return htmlContent;
+  }
+
   @override
   State<HelpScreen> createState() => _HelpScreenState();
 }
@@ -129,30 +203,11 @@ class _HelpScreenState extends State<HelpScreen> {
   late final WebViewController webViewController;
   double progress = 0;
   String currentFile = "about.html";
+  bool _isMenuOpen = false;
   String? _lastLocale;
   Brightness? _lastBrightness;
   HelpNavListener? _helpNavListener;
   StreamSubscription<SettingsStatus>? _statusListener;
-
-  static const _navScript = '''
-<script>
-document.addEventListener('click', function(e) {
-  var a = e.target.closest('a');
-  if (a) {
-    var href = a.getAttribute('href');
-    if (href && !href.startsWith('#')) {
-      e.preventDefault();
-      if (window.parent && window.parent !== window) {
-        window.parent.postMessage('help_navigate:' + href, '*');
-      }
-      if (window.HelpNavigate && window.HelpNavigate.postMessage) {
-        window.HelpNavigate.postMessage(href);
-      }
-    }
-  }
-});
-</script>
-''';
 
   @override
   void initState() {
@@ -197,7 +252,7 @@ document.addEventListener('click', function(e) {
                 if (HelpScreen.isExternalUrl(urlString)) {
                   final uri = Uri.tryParse(urlString.trim());
                   if (uri != null) {
-                    launchUrl(uri, mode: LaunchMode.externalApplication);
+                    _launchExternalUrl(uri);
                   }
                   return NavigationDecision.prevent;
                 }
@@ -217,6 +272,11 @@ document.addEventListener('click', function(e) {
     LocaleController.currentLocale.addListener(_onLocaleChanged);
     _statusListener = Settings.instance.statusStream().listen((status) {
       if (mounted) {
+        try {
+          webViewController.setBackgroundColor(
+            Settings.instance.theme.scheme.surface,
+          );
+        } catch (_) {}
         loadFile(currentFile);
         setState(() {});
       }
@@ -240,11 +300,21 @@ document.addEventListener('click', function(e) {
     }
   }
 
+  Future<void> _launchExternalUrl(Uri uri) async {
+    try {
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      }
+    } catch (_) {
+      // External browser may be unavailable (e.g. Android TV).
+    }
+  }
+
   void _handleNavigation(String href) async {
     if (HelpScreen.isExternalUrl(href)) {
       final uri = Uri.tryParse(href.trim());
       if (uri != null) {
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
+        await _launchExternalUrl(uri);
       }
       return;
     }
@@ -287,7 +357,13 @@ document.addEventListener('click', function(e) {
         filename.endsWith('.html') ? filename : '$filename.html';
     final cleanBase =
         baseWithExt.replaceAll(RegExp(r'_[a-z]{2}\.html$'), '.html');
-    currentFile = cleanBase;
+    if (currentFile != cleanBase && mounted) {
+      setState(() {
+        currentFile = cleanBase;
+      });
+    } else {
+      currentFile = cleanBase;
+    }
     final lang = _effectiveLanguage();
     String target = cleanBase;
     if (lang != 'en') {
@@ -297,7 +373,6 @@ document.addEventListener('click', function(e) {
             "${cleanBase.substring(0, dot)}_$lang${cleanBase.substring(dot)}";
       }
     }
-    print("load file $target.");
     String htmlContent;
     try {
       htmlContent = await rootBundle.loadString('assets/$target');
@@ -305,89 +380,59 @@ document.addEventListener('click', function(e) {
       try {
         htmlContent = await rootBundle.loadString('assets/$cleanBase');
       } catch (ex) {
-        print("RED: error loading $cleanBase. $ex");
+        debugPrint("RED: error loading $cleanBase. $ex");
         return;
       }
     }
+    String cssContent = '';
     try {
-      final css = await rootBundle.loadString('assets/css/doc_style.css');
-      htmlContent =
-          htmlContent.replaceFirst('</head>', '<style>$css</style></head>');
+      cssContent = await rootBundle.loadString('assets/css/doc_style.css');
     } catch (_) {}
 
     final scheme = Settings.instance.theme.scheme;
-    final themeCss = HelpScreen.generateThemeCss(scheme);
-    if (htmlContent.contains('</head>')) {
-      htmlContent = htmlContent.replaceFirst('</head>', '$themeCss</head>');
-    } else {
-      htmlContent = '$themeCss$htmlContent';
-    }
-
-    if (htmlContent.contains('</body>')) {
-      htmlContent = htmlContent.replaceFirst('</body>', '$_navScript</body>');
-    } else {
-      htmlContent = '$htmlContent$_navScript';
-    }
+    htmlContent = HelpScreen.prepareHtmlContent(
+      htmlContent,
+      cssContent: cssContent,
+      isDark: scheme.brightness == Brightness.dark,
+      colorScheme: scheme,
+    );
 
     try {
       await webViewController.loadHtmlString(htmlContent);
     } catch (e) {
-      print("Error loading data into webview: $e");
+      debugPrint("Error loading data into webview: $e");
     }
   }
 
-  AppBar appBar(BuildContext context) {
-    final settingsButton = IconButton(
-      onPressed: () {
-        Navigator.pushNamed(context, SettingsScreen.routeName);
-      },
-      icon: const Icon(Icons.settings),
-      tooltip: context.l10n.settingsTooltip,
-    );
-
+  AppBar appBar(BuildContext context, {required bool isWideScreen}) {
+    final l10n = context.l10n;
     return AppBar(
-      title: Text(context.l10n.helpTitle),
-      leading: settingsButton,
+      title: Text(
+        (!isWideScreen && _isMenuOpen) ? l10n.helpMenu : l10n.helpTitle,
+      ),
+      leading: isWideScreen
+          ? null
+          : IconButton(
+              icon: Icon(_isMenuOpen ? Icons.close : Icons.menu),
+              tooltip: _isMenuOpen ? l10n.closeTooltip : l10n.openDrawerTooltip,
+              onPressed: () {
+                setState(() {
+                  _isMenuOpen = !_isMenuOpen;
+                });
+              },
+            ),
+      automaticallyImplyLeading: false,
       actions: <Widget>[
-        ElevatedButton(
-          child: Text(context.l10n.aboutTab),
+        IconButton(
           onPressed: () {
-            loadFile("about.html");
+            Navigator.pushNamed(context, SettingsScreen.routeName);
           },
-        ),
-        ElevatedButton(
-          child: Text(context.l10n.privacyTab),
-          onPressed: () {
-            loadFile("privacy.html");
-          },
-        ),
-        ElevatedButton(
-          child: Text(context.l10n.termsTab),
-          onPressed: () {
-            loadFile("terms.html");
-          },
-        ),
-        ElevatedButton(
-          child: Text(context.l10n.overviewTab),
-          onPressed: () {
-            loadFile("help.html");
-          },
-        ),
-        ElevatedButton(
-          child: Text(context.l10n.slicesTab),
-          onPressed: () {
-            loadFile("slice.html");
-          },
-        ),
-        ElevatedButton(
-          child: Text(context.l10n.controlsTab),
-          onPressed: () {
-            loadFile("controls.html");
-          },
+          icon: const Icon(Icons.settings),
+          tooltip: l10n.settingsTooltip,
         ),
         IconButton(
           icon: const Icon(Icons.close),
-          tooltip: context.l10n.closeTooltip,
+          tooltip: l10n.closeTooltip,
           onPressed: () {
             Navigator.pop(context);
           },
@@ -396,30 +441,257 @@ document.addEventListener('click', function(e) {
     );
   }
 
+  Widget buildNavigationList(BuildContext context, {required bool isSidebar}) {
+    final l10n = context.l10n;
+    final items = <Widget>[
+      if (isSidebar) ...[
+        Padding(
+          padding: const EdgeInsets.only(left: 16, top: 24, bottom: 8),
+          child: Text(
+            l10n.appTitle,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+        ),
+        const Divider(),
+      ] else ...[
+        DrawerHeader(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primaryContainer,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(
+                l10n.appTitle,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                l10n.helpTitle,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+      Padding(
+        padding: const EdgeInsets.only(left: 16, top: 16, bottom: 8),
+        child: Text(
+          l10n.userGuidesSection,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
+      ),
+      buildDrawerItem(
+        context,
+        l10n.aboutTab,
+        "about.html",
+        Icons.info_outline,
+        isSidebar: isSidebar,
+      ),
+      buildDrawerItem(
+        context,
+        l10n.overviewTab,
+        "help.html",
+        Icons.visibility_outlined,
+        isSidebar: isSidebar,
+      ),
+      buildDrawerItem(
+        context,
+        l10n.slicesTab,
+        "slice.html",
+        Icons.layers_outlined,
+        isSidebar: isSidebar,
+      ),
+      buildDrawerItem(
+        context,
+        l10n.controlsTab,
+        "controls.html",
+        Icons.tune,
+        isSidebar: isSidebar,
+      ),
+      buildDrawerItem(
+        context,
+        l10n.privacyTab,
+        "privacy.html",
+        Icons.privacy_tip_outlined,
+        isSidebar: isSidebar,
+      ),
+      buildDrawerItem(
+        context,
+        l10n.termsTab,
+        "terms.html",
+        Icons.gavel_outlined,
+        isSidebar: isSidebar,
+      ),
+    ];
+    return ListView(padding: EdgeInsets.zero, children: items);
+  }
+
+  Widget buildDrawerItem(
+    BuildContext context,
+    String title,
+    String filename,
+    IconData icon, {
+    required bool isSidebar,
+  }) {
+    final isSelected = currentFile == filename;
+    return ListTile(
+      leading: Icon(
+        icon,
+        color: isSelected ? Theme.of(context).colorScheme.primary : null,
+      ),
+      title: Text(
+        title,
+        style: TextStyle(
+          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          color: isSelected ? Theme.of(context).colorScheme.primary : null,
+        ),
+      ),
+      selected: isSelected,
+      onTap: () {
+        if (!isSidebar) {
+          setState(() {
+            _isMenuOpen = false;
+          });
+        }
+        setState(() {
+          currentFile = filename;
+        });
+        loadFile(filename);
+      },
+    );
+  }
+
+  Future<void> _scrollWebViewUpOrLeaveFocus(FocusNode node) async {
+    try {
+      final result = await webViewController
+          .runJavaScriptReturningResult('window.scrollY');
+      final scrollY = double.tryParse(result.toString()) ?? 0.0;
+      if (scrollY <= 1.0) {
+        node.focusInDirection(TraversalDirection.up);
+        return;
+      }
+      await webViewController.runJavaScript('window.scrollBy(0, -140);');
+    } catch (_) {
+      node.focusInDirection(TraversalDirection.up);
+    }
+  }
+
   Widget webview(BuildContext c) {
-    return WebViewWidget(controller: webViewController);
+    final view = WebViewWidget(controller: webViewController);
+    if (kIsWeb) {
+      return view;
+    }
+    return Focus(
+      debugLabel: 'HelpWebView',
+      onKeyEvent: (FocusNode node, KeyEvent event) {
+        if (event is KeyDownEvent || event is KeyRepeatEvent) {
+          final key = event.logicalKey;
+          if (key == LogicalKeyboardKey.arrowDown) {
+            webViewController.runJavaScript('window.scrollBy(0, 140);');
+            return KeyEventResult.handled;
+          }
+          if (key == LogicalKeyboardKey.arrowUp) {
+            unawaited(_scrollWebViewUpOrLeaveFocus(node));
+            return KeyEventResult.handled;
+          }
+          if (key == LogicalKeyboardKey.pageDown) {
+            webViewController.runJavaScript('window.scrollBy(0, 420);');
+            return KeyEventResult.handled;
+          }
+          if (key == LogicalKeyboardKey.pageUp) {
+            webViewController.runJavaScript('window.scrollBy(0, -420);');
+            return KeyEventResult.handled;
+          }
+        }
+        return KeyEventResult.ignored;
+      },
+      child: Builder(
+        builder: (BuildContext focusContext) {
+          final hasFocus = Focus.of(focusContext).hasFocus;
+          return Container(
+            decoration: hasFocus
+                ? BoxDecoration(
+                    border: Border.all(
+                      color: Theme.of(focusContext).colorScheme.primary,
+                      width: 2.5,
+                    ),
+                  )
+                : null,
+            child: view,
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildWebViewPane(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        Expanded(
+          child: Stack(
+            children: [
+              Builder(builder: (BuildContext c) => webview(context)),
+              progress < 1.0
+                  ? LinearProgressIndicator(value: progress)
+                  : Container(),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: appBar(context),
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final bool isWideScreen = screenWidth > 750;
+    final scaffold = Scaffold(
+      appBar: appBar(context, isWideScreen: isWideScreen),
       body: SafeArea(
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              child: Stack(
+        child: isWideScreen
+            ? Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Builder(builder: (BuildContext c) => webview(context)),
-                  progress < 1.0
-                      ? LinearProgressIndicator(value: progress)
-                      : Container(),
+                  SizedBox(
+                    width: 280,
+                    child: Material(
+                      color: Theme.of(context).cardColor,
+                      child: buildNavigationList(context, isSidebar: true),
+                    ),
+                  ),
+                  const VerticalDivider(width: 1, thickness: 1),
+                  Expanded(child: _buildWebViewPane(context)),
                 ],
-              ),
-            ),
-          ],
-        ),
+              )
+            : (_isMenuOpen
+                ? Material(
+                    color: Theme.of(context).cardColor,
+                    child: buildNavigationList(context, isSidebar: false),
+                  )
+                : _buildWebViewPane(context)),
       ),
     );
+    if (Settings.instance.is_android_tv) {
+      return ColoredBox(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 27),
+          child: scaffold,
+        ),
+      );
+    }
+    return scaffold;
   }
 }

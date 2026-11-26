@@ -19,5 +19,8 @@ GitHub（[https://github.com/fredgc/polytope][github]）で公開されていま
 Androidでは、アプリをアンインストールするとローカル設定が削除されます。Webでは、ブラウザのローカルアプリケーションデータを消去すると設定が削除され
 ます。
 
-[github]: https://github.com/fredgc/polytope [issues]:
-https://github.com/fredgc/polytope/issues [gchouse]: https://www.gchouse.org
+[github]: https://github.com/fredgc/polytope
+
+[issues]: https://github.com/fredgc/polytope/issues
+
+[gchouse]: https://www.gchouse.org

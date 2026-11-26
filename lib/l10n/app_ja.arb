@@ -5,6 +5,11 @@
   "cancelButton": "キャンセル",
   "closeTooltip": "閉じる",
   "colorPickerTitle": "色を選択",
+  "controlDownTooltip": "下",
+  "controlLeftTooltip": "左",
+  "controlRightTooltip": "右",
+  "controlStopSpinTooltip": "回転を停止",
+  "controlUpTooltip": "上",
   "controlsTab": "操作方法",
   "debugTooltip": "デバッグ",
   "decreaseSpeedTooltip": "速度を下げる",
@@ -52,6 +57,7 @@
   "settingPolyColor": "多胞体の色",
   "settingPolyEdgeThickness": "多胞体のエッジの太さ",
   "settingShowHotkeyButtons": "ホットキーボタンを表示",
+  "settingShowPanZoomButtons": "移動・ズームボタンを表示",
   "settingSliceColor": "切断面の色",
   "settingSliceColorByX4": "x4距離で切断面の線を色分け",
   "settingSliceEdgeThickness": "切断面のエッジの太さ",
@@ -79,5 +85,10 @@
   "termsTab": "利用規約",
   "themeModeDark": "ダーク",
   "themeModeLight": "ライト",
-  "themeModeSystem": "システム"
+  "themeModeSystem": "システム",
+  "zoomInTooltip": "拡大",
+  "zoomOutTooltip": "縮小",
+  "helpMenu": "ヘルプメニュー",
+  "openDrawerTooltip": "メニューを開く",
+  "userGuidesSection": "ユーザーガイド"
 }

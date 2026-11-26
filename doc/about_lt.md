@@ -25,5 +25,8 @@ Android sistemoje vietiniai nustatymai ištrinami pašalinus programėlę.
 Žiniatinklyje nustatymai ištrinami išvalius naršyklės vietinius programos
 duomenis.
 
-[github]: https://github.com/fredgc/polytope [issues]:
-https://github.com/fredgc/polytope/issues [gchouse]: https://www.gchouse.org
+[github]: https://github.com/fredgc/polytope
+
+[issues]: https://github.com/fredgc/polytope/issues
+
+[gchouse]: https://www.gchouse.org

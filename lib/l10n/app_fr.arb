@@ -5,6 +5,11 @@
   "cancelButton": "Annuler",
   "closeTooltip": "Fermer",
   "colorPickerTitle": "Choisir une couleur",
+  "controlDownTooltip": "Bas",
+  "controlLeftTooltip": "Gauche",
+  "controlRightTooltip": "Droite",
+  "controlStopSpinTooltip": "Arrêter la rotation",
+  "controlUpTooltip": "Haut",
   "controlsTab": "Commandes",
   "debugTooltip": "Débogage",
   "decreaseSpeedTooltip": "Diminuer la vitesse",
@@ -52,6 +57,7 @@
   "settingPolyColor": "Couleur du polytope",
   "settingPolyEdgeThickness": "Épaisseur des arêtes du polytope",
   "settingShowHotkeyButtons": "Afficher les boutons de raccourci",
+  "settingShowPanZoomButtons": "Afficher les boutons de déplacement et de zoom",
   "settingSliceColor": "Couleur de la coupe",
   "settingSliceColorByX4": "Colorer les lignes de coupe selon la distance x4",
   "settingSliceEdgeThickness": "Épaisseur des arêtes de la coupe",
@@ -79,5 +85,10 @@
   "termsTab": "Conditions",
   "themeModeDark": "Sombre",
   "themeModeLight": "Clair",
-  "themeModeSystem": "Système"
+  "themeModeSystem": "Système",
+  "zoomInTooltip": "Zoom avant",
+  "zoomOutTooltip": "Zoom arrière",
+  "helpMenu": "Menu d'aide",
+  "openDrawerTooltip": "Ouvrir le menu",
+  "userGuidesSection": "Guides d'utilisation"
 }

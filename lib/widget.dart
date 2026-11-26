@@ -128,11 +128,12 @@ class PolyAppWidgetState extends State<PolyAppWidget>
   }
 
   bool keyHandler(KeyEvent event) {
-    if (scene.keyHandle(event.character)) {
+    if (scene.keyHandle(event)) {
       // print("Key changed event: $event");
       setState(() {
         // print("Key changed.");
       });
+      return true;
     }
     return false;
   }
@@ -150,20 +151,38 @@ class PolyAppWidgetState extends State<PolyAppWidget>
         _narrow = false;
         _constraints = constraints;
       }
-      return Scaffold(
-        appBar: makeAppBar(context),
-        body: SafeArea(
-          child: Center(
-            child: Builder(
-              builder: (BuildContext c) => _centerWidget(c),
+      final scaffold = PopScope(
+        canPop: !scene.activeRotationMode,
+        onPopInvokedWithResult: (bool didPop, Object? result) {
+          if (!didPop && scene.activeRotationMode) {
+            scene.setActiveRotationMode(false);
+          }
+        },
+        child: Scaffold(
+          appBar: makeAppBar(context),
+          body: SafeArea(
+            child: Center(
+              child: Builder(
+                builder: (BuildContext c) => _centerWidget(c),
+              ),
             ),
           ),
         ),
       );
+      if (Settings.instance.is_android_tv) {
+        return ColoredBox(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 27),
+            child: scaffold,
+          ),
+        );
+      }
+      return scaffold;
     });
   }
 
-  AppBar makeAppBar(BuildContext context) {
+  PreferredSizeWidget makeAppBar(BuildContext context) {
     final settingsButton = IconButton(
       onPressed: () {
         Navigator.pushNamed(context, SettingsScreen.routeName);
@@ -172,10 +191,31 @@ class PolyAppWidgetState extends State<PolyAppWidget>
       tooltip: context.l10n.settingsTooltip,
     );
 
-    return AppBar(
+    final appBar = AppBar(
       title: _buildPolyMenu(context),
       leading: settingsButton,
       actions: _getButtons(context),
+    );
+    if (!Settings.instance.is_android_tv) {
+      return appBar;
+    }
+    return PreferredSize(
+      preferredSize: appBar.preferredSize,
+      child: Focus(
+        canRequestFocus: false,
+        skipTraversal: true,
+        onKeyEvent: (FocusNode node, KeyEvent event) {
+          if ((event is KeyDownEvent || event is KeyRepeatEvent) &&
+              event.logicalKey == LogicalKeyboardKey.arrowDown &&
+              Scene.show_pan_zoom_buttons.value &&
+              scene.panZoomCenterFocusNode.canRequestFocus) {
+            scene.panZoomCenterFocusNode.requestFocus();
+            return KeyEventResult.handled;
+          }
+          return KeyEventResult.ignored;
+        },
+        child: appBar,
+      ),
     );
   }
 
@@ -183,6 +223,7 @@ class PolyAppWidgetState extends State<PolyAppWidget>
     return MenuAnchor(
         menuChildren: Regular.values
             .map((poly) => MenuItemButton(
+                  autofocus: poly == scene.type,
                   child: Text(poly.localizedName(context)),
                   onPressed: () {
                     if (poly != scene.type) {
@@ -244,7 +285,9 @@ class PolyAppWidgetState extends State<PolyAppWidget>
     List<Widget> list = [];
     final isCompact = MediaQuery.sizeOf(context).width < 600;
     if (!_narrow && !isCompact) _getOtherButtons(list, context);
-    if (widget.xr.supported && !kReleaseMode) {
+    if (widget.xr.supported &&
+        !kReleaseMode &&
+        !Settings.instance.is_android_tv) {
       list.add(
           _makeButton(context.l10n.switchToArTooltip, Icons.view_in_ar, () {
         print("RED: switch to XR.");
@@ -296,6 +339,7 @@ class PolyAppWidgetState extends State<PolyAppWidget>
         menuChildren: [
           for (var i = Regular.min_dim; i <= Regular.max_dim; i++)
             MenuItemButton(
+              autofocus: i == scene.polytope.dim,
               child: Text(context.l10n.dimensionMenuLabel(i)),
               onPressed: () {
                 if (i != scene.polytope.dim) {
@@ -362,7 +406,13 @@ class PolyAppWidgetState extends State<PolyAppWidget>
     }
     column.add(Expanded(child: mainViewWidget(context)));
     if (scene.slice != null) {
-      column.add(scene.slice!.slider.build(context));
+      column.add(scene.slice!.slider.build(
+        context,
+        upFocusNode:
+            Settings.instance.is_android_tv && Scene.show_pan_zoom_buttons.value
+                ? scene.panZoomCenterFocusNode
+                : null,
+      ));
     }
     return Column(children: column);
   }

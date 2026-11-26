@@ -25,21 +25,95 @@
 </head>
 <body>
 <h1 id="操作方法">操作方法</h1>
-<p>上部のバーには複数の操作項目があります：</p>
+<p>上部バーには以下のコントロールがあります:</p>
 <ol type="1">
-<li><p><strong>ポリトープの種類</strong>:表示する正多胞体・正多面体を選択します。</p></li>
-<li><p><strong>次元</strong>:次元（2〜5）を選択します。</p></li>
-<li><p><strong>断面の切り替え</strong>:超平面による断面交差の表示を切り替えます。</p></li>
-<li><p><strong>変換メニュー</strong>:回転モード（R3、R4、R5）、ゾリー（Zolly）、移動を選択します。</p></li>
+<li><p><strong>設定</strong>（歯車アイコン）:
+色、辺・頂点の太さ、線クリッピング、テーマ、
+画面上ボタンを設定します。</p></li>
+<li><p><strong>ポリトープの種類</strong>:
+表示する正ポリトープ（単体、立方体、正軸体、
+正十二面体、正二十面体、正24胞体、正120胞体、正600胞体）を選択します。</p></li>
+<li><p><strong>次元</strong>: 次元（2〜5）を選択します。</p></li>
+<li><p><strong>スライス切替</strong>:
+超平面断面スライスの表示を切り替えます。</p></li>
+<li><p><strong>移動・変換メニュー</strong>:
+ドラッグやボタンの動作（<code>Rotate R3</code>、<code>Rotate R4</code>、
+<code>Rotate R5</code>、<code>Zolly</code>、<code>Translate</code>、<code>Scale</code>）や向きスナップ（頂点、辺、面、
+3胞体を正面）を選択します。</p></li>
+<li><p><strong>ヘルプ</strong>（<code>?</code>）と<strong>言語</strong>（地球アイコン）:
+ドキュメントの表示や言語の 切り替えを行います。</p></li>
 </ol>
-<h2 id="ジェスチャーと速度">ジェスチャーと速度</h2>
+<h2
+id="webデスクトップマウスキーボード">Web・デスクトップ（マウス＆キーボード）</h2>
 <ul>
-<li><p><strong>ドラッグ</strong>:現在のモードに応じてポリトープを回転または移動します。</p></li>
-<li><p><strong>スクロール/ピンチ</strong>:ポリトープをズームまたは拡大縮小します。</p></li>
-<li><p><strong>フリック</strong>:勢いを与え、回転やスライスが滑らかに継続します。</p></li>
-<li><p><strong>タップ</strong>:動きを停止します。</p></li>
+<li><p><strong>ドラッグ</strong>:
+現在の移動モードに応じて回転・遠近変更（<code>Zolly</code>）・平行
+移動・拡大縮小します。</p></li>
+<li><p><strong>スクロールホイール</strong>:
+ズームイン・ズームアウトします。</p></li>
+<li><p><strong>フリック</strong>: <code>Rotate R3</code>
+やスライススライダーに速度を与え、滑らかに動き 続けさせます。</p></li>
+<li><p><strong>クリック / タップ</strong>:
+キャンバス上で回転を停止、またはスライス位置を移動
+して停止します。</p></li>
+<li><p><strong>矢印キー</strong>:
+現在の移動ツールを適用します。</p></li>
+<li><p><strong><code>]</code> / <code>[</code></strong>（または
+<strong>Page Up / Page Down</strong>、テンキー <strong><code>+</code> /
+<code>-</code></strong>）: ズームイン・ズームアウトします。</p></li>
+<li><p><strong>修飾キー</strong>:
+<strong>Shift</strong>（<code>Rotate R4</code>）、<strong>Shift+Ctrl</strong>（<code>Rotate R5</code>）、
+<strong>Ctrl</strong>（<code>Zolly</code>）、<strong>Alt</strong>（<code>Translate</code>）、<strong>Ctrl+Alt</strong>（<code>Scale</code>）を
+押しながら操作します。</p></li>
+<li><p><strong><code>0</code>、<code>1</code>、<code>2</code>、<code>3</code></strong>:
+頂点・辺・面・3胞体を正面にスナップします。</p></li>
+<li><p><strong>Space</strong>:
+キャンバスにフォーカスがあるとき、回転とスライスアニメーション
+を一時停止します。</p></li>
+<li><p><strong><code>+</code> / <code>-</code></strong>（または
+<code>=</code>）: スライスアニメーションの速度を増減します。</p></li>
 </ul>
-<h2 id="スナップ">スナップ</h2>
-<p>頂点、辺、面、または3次元胞が画面の真正面を向くように素早く整列します。</p>
+<h2 id="モバイルタッチ">モバイル（タッチ）</h2>
+<ul>
+<li><p><strong>ドラッグ・フリック・タップ</strong>:
+回転・移動・スピン付与、タップで回転停止。</p></li>
+<li><p><strong>ピンチ＆ツイスト</strong>:
+2本指ピンチで拡大縮小、ひねりで画面内回転します。</p></li>
+<li><p><strong>画面上ホットキーボタン（<code>S</code>、<code>C</code>、<code>A</code>）</strong>:
+スマートフォンやタブレット では標準で表示され（設定で切替可能）、Shift /
+Ctrl / Alt の代わりになり ます。</p></li>
+<li><p><strong>画面上パン／ズームボタン</strong>:
+設定で有効化できます。<code>Rotate R3</code> で矢印を
+ダブルタップすると回転速度が上がり、中央の停止ボタンで停止します。</p></li>
+</ul>
+<h2 id="android-tvd-pad-リモコン">Android TV（D-Pad リモコン）</h2>
+<p><em>このセクションは Android TV 版のみ対象です。</em></p>
+<ul>
+<li><p><strong>ナビゲーション</strong>: D-Pad
+矢印と<strong>決定</strong>で上部バー、回転／ズームボタン、
+スライススライダーを操作します。上部バーから<strong>下</strong>、またはスライス
+スライダーから<strong>上</strong>を押すと中央の回転ボタンにフォーカスします。</p></li>
+<li><p><strong>アクティブ回転モード</strong>:</p>
+<ul>
+<li><p>中央の<strong>停止</strong>ボタンで<strong>決定を長押し</strong>すると<strong>アクティブ回転モード</strong>に
+入ります（中央ボタンがハイライトされた地球アイコンに変わります）。</p></li>
+<li><p><strong>矢印を短押し</strong>:
+その方向の回転速度を上げます。</p></li>
+<li><p><strong>矢印を長押し</strong>:
+押している間、一定のペースで回転し続けます。</p></li>
+<li><p><strong>決定を短押し</strong>:
+アクティブ回転モードのまま回転を停止します。</p></li>
+<li><p><strong>決定を長押し</strong>または<strong>戻る</strong>:
+アクティブ回転モードを終了します。</p></li>
+</ul></li>
+<li><p><strong>スライススライダー</strong>:
+フォーカスして<strong>決定</strong>を押すと前進アニメーションを
+開始／停止し、<strong>左 / 右</strong>で手動移動します。</p></li>
+<li><p><strong>設定</strong>: <strong>上 /
+下</strong>で1行ずつ移動します。スライダー項目では<strong>決定</strong>で
+編集モードに入り、<strong>左 /
+右</strong>で値を調整し、<strong>決定</strong>または<strong>戻る</strong>で確定
+します。</p></li>
+</ul>
 </body>
 </html>

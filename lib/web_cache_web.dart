@@ -1,7 +1,43 @@
 import 'dart:convert';
 import 'dart:js_interop';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:web/web.dart' as web;
+
+Future<void> _reloadAssetHttpCache() async {
+  final urlsToReload = <String>{
+    'favicon.ico',
+    'favicon.png',
+    'icons/Icon-192.png',
+    'icons/Icon-512.png',
+    'icons/Icon-maskable-192.png',
+    'icons/Icon-maskable-512.png',
+    'assets/AssetManifest.bin',
+    'assets/AssetManifest.bin.json',
+    'assets/FontManifest.json',
+  };
+
+  try {
+    final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
+    for (final assetKey in manifest.listAssets()) {
+      urlsToReload.add('assets/$assetKey');
+      for (final variant in manifest.getAssetVariants(assetKey) ?? const []) {
+        urlsToReload.add('assets/${variant.key}');
+      }
+    }
+  } catch (e) {
+    debugPrint("Error loading AssetManifest for cache flush: $e");
+  }
+
+  final init = web.RequestInit(cache: 'reload');
+  await Future.wait(
+    urlsToReload.map((url) async {
+      try {
+        await web.window.fetch(url.toJS, init).toDart;
+      } catch (_) {}
+    }),
+  );
+}
 
 Future<void> reloadAndFlushCache() async {
   try {
@@ -11,14 +47,15 @@ Future<void> reloadAndFlushCache() async {
     final registrations = await serviceWorker.getRegistrations().toDart;
     final regList = registrations.toDart;
     for (final reg in regList) {
-      reg.unregister();
+      await reg.unregister().toDart;
     }
     final cacheStorage = web.window.caches;
     final keys = await cacheStorage.keys().toDart;
     final keyList = keys.toDart;
     for (final key in keyList) {
-      cacheStorage.delete(key.toDart);
+      await cacheStorage.delete(key.toDart).toDart;
     }
+    await _reloadAssetHttpCache();
   } catch (e) {
     debugPrint("Error clearing web cache: $e");
   }

@@ -101,4 +101,121 @@ void main() {
       expect(Slice.slice_color_by_x4.value, isFalse);
     });
   });
+
+  group('SettingsScreen mobile layout tests', () {
+    testWidgets('Checkboxes stay on the same row as their labels on mobile',
+        (WidgetTester tester) async {
+      const mobileSize = Size(360, 640);
+      tester.view.physicalSize = mobileSize;
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final settings = Settings.instance;
+      PolyAppWidgetState.initSettings(settings);
+      settings.status = SettingsStatus.Initialized;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: settings.theme.theme_data,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: const SettingsScreen(),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+
+      // Scroll through the SettingsScreen list and verify every Checkbox is
+      // inside a Row with its label Text on the same horizontal row.
+      final listView = find.byType(ListView);
+      final checkedLabels = <String>{};
+
+      for (int scrollStep = 0; scrollStep < 5; scrollStep++) {
+        final checkboxFinders = find.byType(Checkbox);
+        for (final element in checkboxFinders.evaluate()) {
+          final checkboxFinder = find.byWidget(element.widget);
+          final rowFinder = find.ancestor(
+            of: checkboxFinder,
+            matching: find.byType(Row),
+          );
+          expect(
+            rowFinder,
+            findsWidgets,
+            reason: 'Checkbox must be grouped with its label in a Row',
+          );
+          final labelFinder = find.descendant(
+            of: rowFinder.first,
+            matching: find.byType(Text),
+          );
+          expect(labelFinder, findsOneWidget);
+
+          final labelText = tester.widget<Text>(labelFinder).data ?? '';
+          checkedLabels.add(labelText);
+
+          final labelRect = tester.getRect(labelFinder);
+          final checkboxRect = tester.getRect(checkboxFinder);
+          expect(
+            checkboxRect.left,
+            greaterThanOrEqualTo(labelRect.right - 1.0),
+            reason:
+                'Checkbox for "$labelText" should be to the right of its label',
+          );
+          expect(
+            (checkboxRect.center.dy - labelRect.center.dy).abs(),
+            lessThanOrEqualTo(12.0),
+            reason:
+                'Checkbox for "$labelText" wrapped onto a different row than its label',
+          );
+        }
+        await tester.drag(listView, const Offset(0, -300));
+        await tester.pumpAndSettle();
+      }
+
+      expect(
+        checkedLabels.length,
+        greaterThanOrEqualTo(5),
+        reason: 'Expected to inspect all boolean settings checkboxes',
+      );
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('SettingsScreen has no overflow on mobile at 1.5x text scale',
+        (WidgetTester tester) async {
+      const mobileSize = Size(360, 640);
+      tester.view.physicalSize = mobileSize;
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final settings = Settings.instance;
+      PolyAppWidgetState.initSettings(settings);
+      settings.status = SettingsStatus.Initialized;
+
+      await tester.pumpWidget(
+        MediaQuery(
+          data: const MediaQueryData(
+            size: mobileSize,
+            textScaler: TextScaler.linear(1.5),
+          ),
+          child: MaterialApp(
+            theme: settings.theme.theme_data,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: const SettingsScreen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final listView = find.byType(ListView);
+      for (int i = 0; i < 6; i++) {
+        expect(tester.takeException(), isNull);
+        await tester.drag(listView, const Offset(0, -300));
+        await tester.pumpAndSettle();
+      }
+      expect(tester.takeException(), isNull);
+    });
+  });
 }

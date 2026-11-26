@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:async';
 import 'dart:math' as math;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -34,6 +35,18 @@ class Scene {
   Polytope polytope = Regular.simplex.make(4);
   Slice? slice;
   VoidCallback? startAnimation;
+  final FocusNode canvasFocusNode = FocusNode(debugLabel: 'SceneCanvas');
+  final FocusNode panZoomCenterFocusNode =
+      FocusNode(debugLabel: 'PanZoomCenter');
+  bool activeRotationMode = false;
+  VoidCallback? _uiStateChanged;
+  Timer? _centerHoldTimer;
+  bool _centerLongPressed = false;
+  Timer? _arrowHoldTimer;
+  Timer? _arrowRepeatTimer;
+  LogicalKeyboardKey? _heldArrowKey;
+  bool _arrowLongPressed = false;
+  bool _requestedInitialFocus = false;
   CoordinateTransform transform = CoordinateTransform();
   ValueNotifier<int> repaint_counter = ValueNotifier<int>(0);
   List<Point> points = [];
@@ -110,11 +123,24 @@ class Scene {
     tip: "Width of gaps drawn when lines cross in pixels",
   );
   static SavableBool show_hotkey_buttons = SavableBool(
-      "show_hotkey_buttons", "Show Hotkey Buttons", false,
-      tip: "Show buttons on the screen as shortcuts for shift/ctrl/alt.");
+    "show_hotkey_buttons",
+    "Show Hotkey Buttons",
+    false,
+    tip: "Show buttons on the screen as shortcuts for shift/ctrl/alt.",
+    defaultValueProvider: () =>
+        Settings.instance.no_keyboard && !Settings.instance.is_android_tv,
+  );
+  static SavableBool show_pan_zoom_buttons = SavableBool(
+    "show_pan_zoom_buttons",
+    "Show Pan/Zoom Buttons",
+    false,
+    tip: "Show on-screen buttons to pan, rotate, and zoom.",
+    defaultValueProvider: () => Settings.instance.is_android_tv,
+  );
 
   static void initSettings(Settings settings) {
-    show_hotkey_buttons.value = settings.no_keyboard;
+    show_hotkey_buttons.value = settings.no_keyboard && !settings.is_android_tv;
+    show_pan_zoom_buttons.value = settings.is_android_tv;
     settings.add(poly_color);
     settings.add(color_by_x4);
     settings.add(poly_edge_thickness);
@@ -126,6 +152,7 @@ class Scene {
     settings.add(clip_gap_size);
     settings.add(EndOfRow());
     settings.add(show_hotkey_buttons);
+    settings.add(show_pan_zoom_buttons);
   }
 
   void setPolytope(Regular type) {
@@ -395,39 +422,350 @@ class Scene {
     }
   }
 
-  void dispose() {}
+  void dispose() {
+    _cancelActiveRotationTimers();
+    canvasFocusNode.dispose();
+    panZoomCenterFocusNode.dispose();
+  }
+
+  void _cancelActiveRotationTimers() {
+    _centerHoldTimer?.cancel();
+    _centerHoldTimer = null;
+    _centerLongPressed = false;
+    _arrowHoldTimer?.cancel();
+    _arrowHoldTimer = null;
+    _arrowRepeatTimer?.cancel();
+    _arrowRepeatTimer = null;
+    _heldArrowKey = null;
+    _arrowLongPressed = false;
+  }
+
+  void setActiveRotationMode(bool enabled) {
+    if (activeRotationMode == enabled) return;
+    activeRotationMode = enabled;
+    if (!enabled) {
+      _cancelActiveRotationTimers();
+    }
+    _uiStateChanged?.call();
+  }
+
+  (double, double)? _arrowDelta(LogicalKeyboardKey key) {
+    final step = buttonStepSize;
+    if (key == LogicalKeyboardKey.arrowUp) return (0.0, -step);
+    if (key == LogicalKeyboardKey.arrowDown) return (0.0, step);
+    if (key == LogicalKeyboardKey.arrowLeft) return (-step, 0.0);
+    if (key == LogicalKeyboardKey.arrowRight) return (step, 0.0);
+    return null;
+  }
+
+  KeyEventResult _handleCenterButtonKeyEvent(FocusNode node, KeyEvent event) {
+    final key = event.logicalKey;
+    final isSelectKey = key == LogicalKeyboardKey.select ||
+        key == LogicalKeyboardKey.enter ||
+        key == LogicalKeyboardKey.space;
+
+    if (isSelectKey) {
+      if (event is KeyDownEvent) {
+        _centerLongPressed = false;
+        _centerHoldTimer?.cancel();
+        _centerHoldTimer = Timer(const Duration(milliseconds: 500), () {
+          _centerLongPressed = true;
+          setActiveRotationMode(!activeRotationMode);
+        });
+        return KeyEventResult.handled;
+      }
+      if (event is KeyRepeatEvent) {
+        return KeyEventResult.handled;
+      }
+      if (event is KeyUpEvent) {
+        _centerHoldTimer?.cancel();
+        _centerHoldTimer = null;
+        if (!_centerLongPressed) {
+          stopSpin();
+        }
+        _centerLongPressed = false;
+        return KeyEventResult.handled;
+      }
+    }
+
+    if (!activeRotationMode) {
+      return KeyEventResult.ignored;
+    }
+
+    if (key == LogicalKeyboardKey.escape) {
+      if (event is KeyDownEvent) {
+        setActiveRotationMode(false);
+      }
+      return KeyEventResult.handled;
+    }
+
+    final delta = _arrowDelta(key);
+    if (delta != null) {
+      final (dx, dy) = delta;
+      if (event is KeyDownEvent) {
+        if (_heldArrowKey != key) {
+          _arrowHoldTimer?.cancel();
+          _arrowRepeatTimer?.cancel();
+          _heldArrowKey = key;
+          _arrowLongPressed = false;
+          _arrowHoldTimer = Timer(const Duration(milliseconds: 250), () {
+            _arrowLongPressed = true;
+            applyDragDelta(dx, dy);
+            _arrowRepeatTimer?.cancel();
+            _arrowRepeatTimer = Timer.periodic(
+              const Duration(milliseconds: 33),
+              (_) => applyDragDelta(dx, dy),
+            );
+          });
+        }
+        return KeyEventResult.handled;
+      }
+      if (event is KeyRepeatEvent) {
+        if (_heldArrowKey == key && !_arrowLongPressed) {
+          _arrowHoldTimer?.cancel();
+          _arrowLongPressed = true;
+          applyDragDelta(dx, dy);
+          _arrowRepeatTimer?.cancel();
+          _arrowRepeatTimer = Timer.periodic(
+            const Duration(milliseconds: 33),
+            (_) => applyDragDelta(dx, dy),
+          );
+        }
+        return KeyEventResult.handled;
+      }
+      if (event is KeyUpEvent) {
+        if (_heldArrowKey == key) {
+          _arrowHoldTimer?.cancel();
+          _arrowHoldTimer = null;
+          _arrowRepeatTimer?.cancel();
+          _arrowRepeatTimer = null;
+          final wasLongPress = _arrowLongPressed;
+          _heldArrowKey = null;
+          _arrowLongPressed = false;
+          if (!wasLongPress) {
+            if (movement == CameraMovement.rotate3) {
+              addSpin(dx * 4.0, dy * 4.0);
+            } else {
+              applyDragDelta(dx, dy);
+            }
+          }
+        }
+        return KeyEventResult.handled;
+      }
+    }
+
+    return KeyEventResult.ignored;
+  }
 
   Widget build(BuildContext context, State state) {
     // print("ORANGE: build scene.");
     build_counter++;
-    Widget main = Listener(
-        onPointerSignal: (pointerSignal) {
-          if (pointerSignal is PointerScrollEvent) {
-            onScrollWheel(pointerSignal);
+    _uiStateChanged = () {
+      if (state.mounted) {
+        // ignore: invalid_use_of_protected_member
+        state.setState(() {});
+      }
+    };
+    final isTv = Settings.instance.is_android_tv;
+    if (!isTv && !_requestedInitialFocus) {
+      _requestedInitialFocus = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (canvasFocusNode.canRequestFocus &&
+            (FocusManager.instance.primaryFocus == null ||
+                FocusManager.instance.primaryFocus is FocusScopeNode)) {
+          canvasFocusNode.requestFocus();
+        }
+      });
+    }
+    Widget main = Focus(
+        focusNode: canvasFocusNode,
+        autofocus: !isTv,
+        canRequestFocus: !isTv,
+        skipTraversal: isTv,
+        onKeyEvent: (FocusNode node, KeyEvent event) {
+          if (Settings.instance.is_android_tv) {
+            return KeyEventResult.ignored;
+          }
+          if (event is KeyDownEvent || event is KeyRepeatEvent) {
+            final key = event.logicalKey;
+            final step = buttonStepSize;
+            if (key == LogicalKeyboardKey.arrowUp) {
+              applyDragDelta(0, -step);
+              return KeyEventResult.handled;
+            }
+            if (key == LogicalKeyboardKey.arrowDown) {
+              applyDragDelta(0, step);
+              return KeyEventResult.handled;
+            }
+            if (key == LogicalKeyboardKey.arrowLeft) {
+              applyDragDelta(-step, 0);
+              return KeyEventResult.handled;
+            }
+            if (key == LogicalKeyboardKey.arrowRight) {
+              applyDragDelta(step, 0);
+              return KeyEventResult.handled;
+            }
+          }
+          return KeyEventResult.ignored;
+        },
+        child: Listener(
+            onPointerSignal: (pointerSignal) {
+              if (pointerSignal is PointerScrollEvent) {
+                onScrollWheel(pointerSignal);
+              }
+            },
+            child: GestureDetector(
+                onScaleStart: scaleStart,
+                onScaleUpdate: scaleUpdate,
+                onScaleEnd: scaleEnd,
+                onTapUp: tapUp,
+                child: CustomPaint(
+                  painter: ScenePainter(scene: this, repaint: repaint_counter),
+                  child: Container(),
+                  // XXX If we want background painting:
+                  // foregroundPainter:
+                  //     ScenePainter(scene: this, repaint: repaint_counter),
+                  // painter: AxisPainter(
+                  //   transform, settings.axis_color.color, x_axis, y_axis),
+                ))));
+    final showHotkeys = show_hotkey_buttons.value;
+    final showPanZoom = show_pan_zoom_buttons.value;
+    if (!showHotkeys && !showPanZoom) {
+      return main;
+    }
+    return Stack(
+      children: <Widget>[
+        main,
+        if (showPanZoom)
+          Align(
+            alignment: AlignmentDirectional.bottomStart,
+            child: buildPanZoomButtons(context),
+          ),
+        if (showHotkeys)
+          Align(
+            alignment: AlignmentDirectional.bottomEnd,
+            child: keys.hotKeyButtons(
+                context, () => state.setState(() => updateMovement())),
+          ),
+      ],
+    );
+  }
+
+  Widget buildPanZoomButtons(BuildContext context) {
+    final step = buttonStepSize;
+    final scheme = Theme.of(context).colorScheme;
+    final isTv = Settings.instance.is_android_tv;
+    Widget navButton(IconData icon, String tip, VoidCallback onPressed,
+        {bool autofocus = false, FocusNode? focusNode}) {
+      return IconButton.filledTonal(
+        icon: Icon(icon),
+        tooltip: tip,
+        autofocus: autofocus,
+        focusNode: focusNode,
+        style: IconButton.styleFrom(
+          backgroundColor:
+              scheme.surfaceContainerHighest.withValues(alpha: 0.75),
+        ).copyWith(
+          side: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.focused)) {
+              return BorderSide(color: scheme.primary, width: 2.5);
+            }
+            return BorderSide.none;
+          }),
+        ),
+        onPressed: onPressed,
+      );
+    }
+
+    Widget centerButton() {
+      final bgColor = activeRotationMode
+          ? scheme.primary
+          : scheme.surfaceContainerHighest.withValues(alpha: 0.75);
+      final fgColor = activeRotationMode ? scheme.onPrimary : null;
+      return Focus(
+        canRequestFocus: false,
+        skipTraversal: true,
+        onKeyEvent: _handleCenterButtonKeyEvent,
+        onFocusChange: (hasFocus) {
+          if (!hasFocus && activeRotationMode) {
+            setActiveRotationMode(false);
           }
         },
         child: GestureDetector(
-            onScaleStart: scaleStart,
-            onScaleUpdate: scaleUpdate,
-            onScaleEnd: scaleEnd,
-            onTapUp: tapUp,
-            child: CustomPaint(
-              painter: ScenePainter(scene: this, repaint: repaint_counter),
-              child: Container(),
-              // XXX If we want background painting:
-              // foregroundPainter:
-              //     ScenePainter(scene: this, repaint: repaint_counter),
-              // painter: AxisPainter(
-              //   transform, settings.axis_color.color, x_axis, y_axis),
-            )));
-    if (!show_hotkey_buttons.value) {
-      return main;
+          onLongPress: () {
+            panZoomCenterFocusNode.requestFocus();
+            setActiveRotationMode(!activeRotationMode);
+          },
+          child: IconButton.filledTonal(
+            icon: Icon(activeRotationMode ? Icons.public : Icons.stop),
+            tooltip: context.l10n.controlStopSpinTooltip,
+            autofocus: isTv,
+            focusNode: panZoomCenterFocusNode,
+            style: IconButton.styleFrom(
+              backgroundColor: bgColor,
+              foregroundColor: fgColor,
+            ).copyWith(
+              side: WidgetStateProperty.resolveWith((states) {
+                if (activeRotationMode) {
+                  return BorderSide(
+                    color: states.contains(WidgetState.focused)
+                        ? scheme.onPrimary
+                        : scheme.primary,
+                    width: 3.0,
+                  );
+                }
+                if (states.contains(WidgetState.focused)) {
+                  return BorderSide(color: scheme.primary, width: 2.5);
+                }
+                return BorderSide.none;
+              }),
+            ),
+            onPressed: stopSpin,
+          ),
+        ),
+      );
     }
-    Widget inset = keys.hotKeyButtons(
-        context, () => state.setState(() => updateMovement()));
-    return Stack(
-      alignment: AlignmentDirectional.bottomEnd,
-      children: <Widget>[main, inset],
+
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              navButton(Icons.arrow_upward, context.l10n.controlUpTooltip,
+                  () => onNavButtonPressed('up', 0, -step)),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  navButton(Icons.arrow_back, context.l10n.controlLeftTooltip,
+                      () => onNavButtonPressed('left', -step, 0)),
+                  centerButton(),
+                  navButton(
+                      Icons.arrow_forward,
+                      context.l10n.controlRightTooltip,
+                      () => onNavButtonPressed('right', step, 0)),
+                ],
+              ),
+              navButton(Icons.arrow_downward, context.l10n.controlDownTooltip,
+                  () => onNavButtonPressed('down', 0, step)),
+            ],
+          ),
+          const SizedBox(width: 8),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              navButton(Icons.add, context.l10n.zoomInTooltip,
+                  () => zoomByFactor(1.1)),
+              const SizedBox(height: 8),
+              navButton(Icons.remove, context.l10n.zoomOutTooltip,
+                  () => zoomByFactor(1.0 / 1.1)),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -462,6 +800,7 @@ class Scene {
     var movements = CameraMovement.values
         .where((item) => (item.dim < polytope.dim))
         .map((item) => MenuItemButton(
+              autofocus: item == movement,
               child: makeTip(item.localizedTip(context), item.hotkeys,
                   Text(item.localizedName(context))),
               onPressed: () {
@@ -518,7 +857,8 @@ class Scene {
     }
   }
 
-  bool keyHandle(String? character) {
+  bool keyHandle(KeyEvent event) {
+    final character = event.character;
     // print("Key Handle: character = $character");
     for (var snap in RotationSnap.values) {
       if (snap.character == character && snap.dim < polytope.dim) {
@@ -531,17 +871,35 @@ class Scene {
     if (changed) {
       updateMovement();
     }
-    if (character == " ") {
-      dprint("Character Space. Pause.");
-      stopMovement();
-    }
-    if (character == "-") {
-      dprint("slow.");
-      slice?.slider.incrementSpeed(-1);
-    }
-    if ((character == "=") || (character == "+")) {
-      dprint("fast.");
-      slice?.slider.incrementSpeed(1);
+    if (event is KeyDownEvent || event is KeyRepeatEvent) {
+      if (character == " " &&
+          !Settings.instance.is_android_tv &&
+          (FocusManager.instance.primaryFocus == null ||
+              canvasFocusNode.hasFocus)) {
+        dprint("Character Space. Pause.");
+        stopMovement();
+      }
+      if (character == "-") {
+        dprint("slow.");
+        slice?.slider.incrementSpeed(-1);
+      }
+      if ((character == "=") || (character == "+")) {
+        dprint("fast.");
+        slice?.slider.incrementSpeed(1);
+      }
+      final key = event.logicalKey;
+      if (key == LogicalKeyboardKey.bracketRight ||
+          key == LogicalKeyboardKey.pageUp ||
+          key == LogicalKeyboardKey.numpadAdd) {
+        zoomByFactor(1.1);
+        return true;
+      }
+      if (key == LogicalKeyboardKey.bracketLeft ||
+          key == LogicalKeyboardKey.pageDown ||
+          key == LogicalKeyboardKey.numpadSubtract) {
+        zoomByFactor(1.0 / 1.1);
+        return true;
+      }
     }
     return changed;
   }
@@ -558,9 +916,83 @@ class Scene {
   double previous_rotate = 0.0;
   double previous_scale = 1.0;
   void scaleStart(ScaleStartDetails info) {
+    canvasFocusNode.requestFocus();
     scale_start = true;
     // XXX -- maybe if doing rotation? transform.setSpeed(0.0, 0.0);
     // print("Scale start, movement = ${movement}");
+  }
+
+  double get buttonStepSize {
+    final minDim = math.min(transform.size.width, transform.size.height);
+    if (minDim <= 0) return 20.0;
+    return math.max(16.0, minDim * 0.04);
+  }
+
+  void _applyMovementDelta(double dx, double dy) {
+    switch (movement) {
+      case CameraMovement.rotate3:
+      case CameraMovement.rotate4:
+      case CameraMovement.rotate5:
+        transform.rotatePair(movement.dim, dx, dy);
+        break;
+      case CameraMovement.zolly:
+        transform.zollyBy(2, dx);
+        transform.zollyBy(3, dy);
+        break;
+      case CameraMovement.translate:
+        transform.pan(dx, dy);
+        break;
+      case CameraMovement.scale:
+        if (transform.size.width > 0 && transform.size.height > 0) {
+          double delta =
+              (dx / transform.size.width - dy / transform.size.height);
+          transform.scaleBy(1.0 + delta);
+        }
+        break;
+    }
+  }
+
+  @visibleForTesting
+  DateTime Function() clockNow = DateTime.now;
+  final Map<String, DateTime> _lastNavTap = {};
+
+  void onNavButtonPressed(String id, double dx, double dy) {
+    applyDragDelta(dx, dy);
+    if (movement != CameraMovement.rotate3) {
+      _lastNavTap.remove(id);
+      return;
+    }
+    final now = clockNow();
+    final prev = _lastNavTap[id];
+    if (prev != null && now.difference(prev) <= kDoubleTapTimeout) {
+      _lastNavTap.remove(id);
+      addSpin(dx * 4.0, dy * 4.0);
+    } else {
+      _lastNavTap[id] = now;
+    }
+  }
+
+  void addSpin(double dx, double dy) {
+    if (movement != CameraMovement.rotate3) {
+      return;
+    }
+    transform.addSpeed(dx, dy);
+    startAnimation?.call();
+  }
+
+  void stopSpin() {
+    dprint("Stop spin.");
+    transform.setSpeed(0.0, 0.0);
+  }
+
+  void applyDragDelta(double dx, double dy) {
+    _applyMovementDelta(dx, dy);
+    updateScene();
+  }
+
+  void zoomByFactor(double factor) {
+    transform.scaleBy(factor);
+    updateScene();
   }
 
   void scaleUpdate(ScaleUpdateDetails info) {
@@ -575,26 +1007,7 @@ class Scene {
     double dscale = info.scale / previous_scale;
     previous_scale = info.scale;
     transform.scaleBy(dscale);
-    switch (movement) {
-      case CameraMovement.rotate3:
-      case CameraMovement.rotate4:
-      case CameraMovement.rotate5:
-        transform.rotatePair(
-            movement.dim, info.focalPointDelta.dx, info.focalPointDelta.dy);
-        break;
-      case CameraMovement.zolly:
-        transform.zollyBy(2, info.focalPointDelta.dx);
-        transform.zollyBy(3, info.focalPointDelta.dy);
-        break;
-      case CameraMovement.translate:
-        transform.pan(info.focalPointDelta.dx, info.focalPointDelta.dy);
-        break;
-      case CameraMovement.scale:
-        double delta = (info.focalPointDelta.dx / transform.size.width -
-            info.focalPointDelta.dy / transform.size.height);
-        transform.scaleBy(1.0 + delta);
-        break;
-    }
+    _applyMovementDelta(info.focalPointDelta.dx, info.focalPointDelta.dy);
     transform.rotate(0, 1, dtheta);
     updateScene();
   }
@@ -613,9 +1026,10 @@ class Scene {
   }
 
   void tapUp(TapUpDetails info) {
+    canvasFocusNode.requestFocus();
     dprint("TapUp pos ${zzz(info.localPosition)}.");
     // Stop rotations, but not slice.
-    transform.setSpeed(0.0, 0.0);
+    stopSpin();
   }
 
   void stopMovement() {
@@ -736,9 +1150,11 @@ enum RotationSnap {
     scene.polytope.cellFirst(dim);
     if (scene.slice != null) {
       double value = scene.slice!.slider.value;
+      double speed = scene.slice!.slider.speed;
       scene.changeSlice(false); //Remove old slice...
       scene.changeSlice(true); //and add new one.
       scene.slice!.slider.value = value;
+      scene.slice!.slider.setSpeed(speed);
     } else {
       scene.updateScene();
     }

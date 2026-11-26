@@ -48,27 +48,64 @@ class SavableColor extends Savable<Color> {
 
   @override
   List<Widget?> build(BuildContext context, VoidCallback rebuild) {
+    if (Settings.instance.is_android_tv) {
+      return [
+        _TvSettingRow(
+          label: localizedName(context),
+          onActivate: () async {
+            await pickColor(context);
+            callback?.call();
+            rebuild();
+          },
+          trailing: Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: value,
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 1.5,
+              ),
+            ),
+          ),
+        ),
+      ];
+    }
     return [
-      Text('${localizedName(context)}: '),
-      ColorIndicator(
-        width: 30,
-        height: 30,
-        borderRadius: 15,
-        color: value,
-        elevation: 1,
-        onSelectFocus: false,
-        onSelect: () async {
-          await pickColor(context);
-          //print("Update $name. callback = $callback");
-          callback?.call();
-          rebuild();
-        },
+      Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Flexible(child: Text('${localizedName(context)}: ')),
+          ColorIndicator(
+            width: 30,
+            height: 30,
+            borderRadius: 15,
+            color: value,
+            elevation: 1,
+            onSelectFocus: false,
+            onSelect: () async {
+              await pickColor(context);
+              //print("Update $name. callback = $callback");
+              callback?.call();
+              rebuild();
+            },
+          ),
+        ],
       ),
-      SizedBox(width: 10),
     ];
   }
 
   Future<void> pickColor(BuildContext context) async {
+    if (Settings.instance.is_android_tv) {
+      final Color? picked = await showTvColorPickerDialog(context, value);
+      if (picked != null) {
+        value = picked;
+        callback?.call();
+      }
+      return;
+    }
     // Just for debugging: Color original = value;
     final Color newColor = await showColorPickerDialog(
       // The dialog needs a context, we pass it in.
@@ -86,9 +123,15 @@ class SavableColor extends Savable<Color> {
       enableOpacity: true,
       showColorCode: true,
       colorCodeHasColor: true,
-      pickersEnabled: <ColorPickerType, bool>{
-        ColorPickerType.wheel: true,
-      },
+      pickersEnabled: Settings.instance.is_android_tv
+          ? const <ColorPickerType, bool>{
+              ColorPickerType.primary: true,
+              ColorPickerType.accent: true,
+              ColorPickerType.wheel: false,
+            }
+          : const <ColorPickerType, bool>{
+              ColorPickerType.wheel: true,
+            },
       copyPasteBehavior: const ColorPickerCopyPasteBehavior(
         copyButton: true,
         pasteButton: true,
@@ -174,6 +217,13 @@ class SavableColorArray extends Savable<List<Color>> {
   }
 
   Future<void> pickColor(BuildContext context, int i) async {
+    if (Settings.instance.is_android_tv) {
+      final Color? picked = await showTvColorPickerDialog(context, value[i]);
+      if (picked != null) {
+        value[i] = picked;
+      }
+      return;
+    }
     // Just for debugging: Color original = value[i];
     // print("Picking color for $name $i");
 
@@ -193,9 +243,15 @@ class SavableColorArray extends Savable<List<Color>> {
       enableOpacity: true,
       showColorCode: true,
       colorCodeHasColor: true,
-      pickersEnabled: <ColorPickerType, bool>{
-        ColorPickerType.wheel: true,
-      },
+      pickersEnabled: Settings.instance.is_android_tv
+          ? const <ColorPickerType, bool>{
+              ColorPickerType.primary: true,
+              ColorPickerType.accent: true,
+              ColorPickerType.wheel: false,
+            }
+          : const <ColorPickerType, bool>{
+              ColorPickerType.wheel: true,
+            },
       copyPasteBehavior: const ColorPickerCopyPasteBehavior(
         copyButton: true,
         pasteButton: true,
@@ -292,14 +348,27 @@ class SavableTheme extends Savable<int> {
     // print("update theme from color ${theme_color.value}, brightness=$brightness.");
     _scheme = ColorScheme.fromSeed(
         seedColor: theme_color.value, brightness: brightness);
+    final focusSide = WidgetStateProperty.resolveWith<BorderSide?>((states) {
+      if (states.contains(WidgetState.focused)) {
+        return BorderSide(color: _scheme.primary, width: 2.5);
+      }
+      return null;
+    });
     theme_data = ThemeData(
       colorScheme: _scheme,
       scaffoldBackgroundColor: _scheme.surface,
+      focusColor: _scheme.primary.withValues(alpha: 0.3),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: _scheme.primaryContainer,
           foregroundColor: _scheme.onPrimaryContainer,
-        ),
+        ).copyWith(side: focusSide),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: ButtonStyle(side: focusSide),
+      ),
+      iconButtonTheme: IconButtonThemeData(
+        style: ButtonStyle(side: focusSide),
       ),
     );
     if (resetBackground) {
@@ -320,6 +389,7 @@ class SavableTheme extends Savable<int> {
       switcher(context, rebuild),
       null,
       for (var w in theme_color.build(context, rebuild)) w,
+      if (Settings.instance.is_android_tv) null,
       for (var w in background_color.build(context, rebuild)) w,
       null,
     ];
@@ -328,25 +398,221 @@ class SavableTheme extends Savable<int> {
   Widget switcher(BuildContext context, VoidCallback callback) {
     List<bool> isSelected = List<bool>.filled(ThemeMode.values.length, false);
     isSelected[theme_mode.index] = true;
-    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-      Text('${context.l10n.settingThemeBrightness}: '),
-      SizedBox(width: 10),
-      ToggleButtons(
-        isSelected: isSelected,
-        onPressed: (int index) {
-          // print("Setting theme_mode to $index");
-          theme_mode = ThemeMode.values[index];
-          // TODO: this actually calls update several times.
-          // print("switcher changed.");
-          updateAndCallback();
-          callback();
-        },
-        children: [
-          Text(context.l10n.themeModeSystem),
-          Text(context.l10n.themeModeLight),
-          Text(context.l10n.themeModeDark),
+    return Wrap(
+      alignment: WrapAlignment.center,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: 10,
+      runSpacing: 8,
+      children: [
+        Text('${context.l10n.settingThemeBrightness}: '),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: ToggleButtons(
+            isSelected: isSelected,
+            onPressed: (int index) {
+              // print("Setting theme_mode to $index");
+              theme_mode = ThemeMode.values[index];
+              // TODO: this actually calls update several times.
+              // print("switcher changed.");
+              updateAndCallback();
+              callback();
+            },
+            children: [
+              Text(context.l10n.themeModeSystem),
+              Text(context.l10n.themeModeLight),
+              Text(context.l10n.themeModeDark),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+const List<Color> _tvColorPalette = <Color>[
+  Colors.white,
+  Color(0xFFD0D0D0),
+  Colors.grey,
+  Color(0xFF424242),
+  Color(0xFF1A1A1A),
+  Colors.black,
+  Colors.red,
+  Colors.redAccent,
+  Colors.pink,
+  Colors.purple,
+  Colors.deepPurple,
+  Colors.indigo,
+  Colors.blue,
+  Colors.lightBlue,
+  Colors.cyan,
+  Colors.teal,
+  Colors.green,
+  Colors.lightGreen,
+  Colors.lime,
+  Colors.yellow,
+  Colors.amber,
+  Colors.orange,
+  Colors.deepOrange,
+  Colors.brown,
+  Color(0xFFFF8A80),
+  Color(0xFFEA80FC),
+  Color(0xFF82B1FF),
+  Color(0xFF80D8FF),
+  Color(0xFFB9F6CA),
+  Color(0xFFFFFF8D),
+];
+
+/// D-pad friendly color chooser dialog for Android TV.
+Future<Color?> showTvColorPickerDialog(
+    BuildContext context, Color currentColor) {
+  int initialIndex = _tvColorPalette
+      .indexWhere((c) => c.toARGB32() == currentColor.toARGB32());
+  if (initialIndex < 0) initialIndex = 0;
+
+  return showDialog<Color>(
+    context: context,
+    builder: (BuildContext dialogContext) {
+      final scheme = Theme.of(dialogContext).colorScheme;
+      return AlertDialog(
+        title: Text(dialogContext.l10n.colorPickerTitle),
+        content: SizedBox(
+          width: 396,
+          child: GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 6,
+              mainAxisSpacing: 12,
+              crossAxisSpacing: 12,
+            ),
+            itemCount: _tvColorPalette.length,
+            itemBuilder: (BuildContext context, int index) {
+              final swatch = _tvColorPalette[index];
+              final isSelected = swatch.toARGB32() == currentColor.toARGB32();
+              final checkColor = ThemeData.estimateBrightnessForColor(swatch) ==
+                      Brightness.dark
+                  ? Colors.white
+                  : Colors.black;
+              return _TvColorSwatchButton(
+                color: swatch,
+                isSelected: isSelected,
+                checkColor: checkColor,
+                focusBorderColor: scheme.primary,
+                autofocus: index == initialIndex,
+                onSelect: () => Navigator.of(dialogContext).pop(swatch),
+              );
+            },
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(null),
+            child: Text(dialogContext.l10n.cancelButton),
+          ),
         ],
+      );
+    },
+  );
+}
+
+class _TvColorSwatchButton extends StatefulWidget {
+  final Color color;
+  final bool isSelected;
+  final Color checkColor;
+  final Color focusBorderColor;
+  final bool autofocus;
+  final VoidCallback onSelect;
+
+  const _TvColorSwatchButton({
+    required this.color,
+    required this.isSelected,
+    required this.checkColor,
+    required this.focusBorderColor,
+    required this.autofocus,
+    required this.onSelect,
+  });
+
+  @override
+  State<_TvColorSwatchButton> createState() => _TvColorSwatchButtonState();
+}
+
+class _TvColorSwatchButtonState extends State<_TvColorSwatchButton> {
+  bool _focused = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      autofocus: widget.autofocus,
+      borderRadius: BorderRadius.circular(28),
+      onFocusChange: (focused) => setState(() => _focused = focused),
+      onTap: widget.onSelect,
+      child: Container(
+        decoration: BoxDecoration(
+          color: widget.color,
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: _focused
+                ? widget.focusBorderColor
+                : Theme.of(context).colorScheme.outline,
+            width: _focused ? 4.0 : 1.5,
+          ),
+        ),
+        child: widget.isSelected
+            ? Icon(Icons.check, color: widget.checkColor, size: 24)
+            : null,
       ),
-    ]);
+    );
+  }
+}
+
+class _TvSettingRow extends StatefulWidget {
+  final String label;
+  final Widget trailing;
+  final VoidCallback onActivate;
+
+  const _TvSettingRow({
+    required this.label,
+    required this.trailing,
+    required this.onActivate,
+  });
+
+  @override
+  State<_TvSettingRow> createState() => _TvSettingRowState();
+}
+
+class _TvSettingRowState extends State<_TvSettingRow> {
+  bool _focused = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return SizedBox(
+      width: double.infinity,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(8),
+        onFocusChange: (focused) => setState(() => _focused = focused),
+        onTap: widget.onActivate,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            color: _focused
+                ? scheme.primaryContainer.withValues(alpha: 0.25)
+                : null,
+            border: Border.all(
+              color: _focused ? scheme.primary : Colors.transparent,
+              width: 2.5,
+            ),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(child: Text(widget.label)),
+              ExcludeFocus(child: widget.trailing),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

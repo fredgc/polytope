@@ -5,6 +5,11 @@
   "cancelButton": "Abbrechen",
   "closeTooltip": "Schließen",
   "colorPickerTitle": "Farbe wählen",
+  "controlDownTooltip": "Unten",
+  "controlLeftTooltip": "Links",
+  "controlRightTooltip": "Rechts",
+  "controlStopSpinTooltip": "Drehung stoppen",
+  "controlUpTooltip": "Oben",
   "controlsTab": "Steuerung",
   "debugTooltip": "Debug",
   "decreaseSpeedTooltip": "Geschwindigkeit verringern",
@@ -52,6 +57,7 @@
   "settingPolyColor": "Polytopfarbe",
   "settingPolyEdgeThickness": "Polytop-Kantenstärke",
   "settingShowHotkeyButtons": "Hotkey-Schaltflächen anzeigen",
+  "settingShowPanZoomButtons": "Schwenk-/Zoom-Schaltflächen anzeigen",
   "settingSliceColor": "Schnittfarbe",
   "settingSliceColorByX4": "Schnittlinien nach x4-Abstand färben",
   "settingSliceEdgeThickness": "Schnitt-Kantenstärke",
@@ -79,5 +85,10 @@
   "termsTab": "Bedingungen",
   "themeModeDark": "Dunkel",
   "themeModeLight": "Hell",
-  "themeModeSystem": "System"
+  "themeModeSystem": "System",
+  "zoomInTooltip": "Vergrößern",
+  "zoomOutTooltip": "Verkleinern",
+  "helpMenu": "Hilfemenü",
+  "openDrawerTooltip": "Menü öffnen",
+  "userGuidesSection": "Benutzerhandbücher"
 }

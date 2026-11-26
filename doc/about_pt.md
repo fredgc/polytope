@@ -26,5 +26,8 @@ No Android, as configurações locais são excluídas ao desinstalar o aplicativ
 Na Web, as configurações são excluídas ao limpar os dados locais de navegação
 do aplicativo.
 
-[github]: https://github.com/fredgc/polytope [issues]:
-https://github.com/fredgc/polytope/issues [gchouse]: https://www.gchouse.org
+[github]: https://github.com/fredgc/polytope
+
+[issues]: https://github.com/fredgc/polytope/issues
+
+[gchouse]: https://www.gchouse.org

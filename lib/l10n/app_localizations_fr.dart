@@ -24,6 +24,21 @@ class AppLocalizationsFr extends AppLocalizations {
   String get colorPickerTitle => 'Choisir une couleur';
 
   @override
+  String get controlDownTooltip => 'Bas';
+
+  @override
+  String get controlLeftTooltip => 'Gauche';
+
+  @override
+  String get controlRightTooltip => 'Droite';
+
+  @override
+  String get controlStopSpinTooltip => 'Arrêter la rotation';
+
+  @override
+  String get controlUpTooltip => 'Haut';
+
+  @override
   String get controlsTab => 'Commandes';
 
   @override
@@ -49,10 +64,19 @@ class AppLocalizationsFr extends AppLocalizations {
   String get doneTooltip => 'Enregistrer et fermer';
 
   @override
+  String get helpMenu => 'Menu d\'aide';
+
+  @override
   String get helpTitle => 'Aide';
 
   @override
   String get helpTooltip => 'Aide';
+
+  @override
+  String get openDrawerTooltip => 'Ouvrir le menu';
+
+  @override
+  String get userGuidesSection => 'Guides d\'utilisation';
 
   @override
   String get increaseSpeedTooltip => 'Augmenter la vitesse';
@@ -177,6 +201,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settingShowHotkeyButtons => 'Afficher les boutons de raccourci';
 
   @override
+  String get settingShowPanZoomButtons =>
+      'Afficher les boutons de déplacement et de zoom';
+
+  @override
   String get settingSliceColor => 'Couleur de la coupe';
 
   @override
@@ -262,4 +290,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get themeModeSystem => 'Système';
+
+  @override
+  String get zoomInTooltip => 'Zoom avant';
+
+  @override
+  String get zoomOutTooltip => 'Zoom arrière';
 }

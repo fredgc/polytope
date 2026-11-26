@@ -5,6 +5,11 @@
   "cancelButton": "Cancelar",
   "closeTooltip": "Cerrar",
   "colorPickerTitle": "Elegir color",
+  "controlDownTooltip": "Abajo",
+  "controlLeftTooltip": "Izquierda",
+  "controlRightTooltip": "Derecha",
+  "controlStopSpinTooltip": "Detener giro",
+  "controlUpTooltip": "Arriba",
   "controlsTab": "Controles",
   "debugTooltip": "Depuración",
   "decreaseSpeedTooltip": "Disminuir velocidad",
@@ -52,6 +57,7 @@
   "settingPolyColor": "Color del politopo",
   "settingPolyEdgeThickness": "Grosor del borde del politopo",
   "settingShowHotkeyButtons": "Mostrar botones de atajo",
+  "settingShowPanZoomButtons": "Mostrar botones de desplazamiento y zoom",
   "settingSliceColor": "Color del corte",
   "settingSliceColorByX4": "Colorear líneas del corte por distancia x4",
   "settingSliceEdgeThickness": "Grosor del borde del corte",
@@ -79,5 +85,10 @@
   "termsTab": "Términos",
   "themeModeDark": "Oscuro",
   "themeModeLight": "Claro",
-  "themeModeSystem": "Sistema"
+  "themeModeSystem": "Sistema",
+  "zoomInTooltip": "Acercar",
+  "zoomOutTooltip": "Alejar",
+  "helpMenu": "Menú de ayuda",
+  "openDrawerTooltip": "Abrir menú",
+  "userGuidesSection": "Guías de usuario"
 }

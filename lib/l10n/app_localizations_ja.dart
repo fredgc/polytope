@@ -24,6 +24,21 @@ class AppLocalizationsJa extends AppLocalizations {
   String get colorPickerTitle => '色を選択';
 
   @override
+  String get controlDownTooltip => '下';
+
+  @override
+  String get controlLeftTooltip => '左';
+
+  @override
+  String get controlRightTooltip => '右';
+
+  @override
+  String get controlStopSpinTooltip => '回転を停止';
+
+  @override
+  String get controlUpTooltip => '上';
+
+  @override
   String get controlsTab => '操作方法';
 
   @override
@@ -49,10 +64,19 @@ class AppLocalizationsJa extends AppLocalizations {
   String get doneTooltip => '保存して閉じる';
 
   @override
+  String get helpMenu => 'ヘルプメニュー';
+
+  @override
   String get helpTitle => 'ヘルプ';
 
   @override
   String get helpTooltip => 'ヘルプ';
+
+  @override
+  String get openDrawerTooltip => 'メニューを開く';
+
+  @override
+  String get userGuidesSection => 'ユーザーガイド';
 
   @override
   String get increaseSpeedTooltip => '速度を上げる';
@@ -171,6 +195,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get settingShowHotkeyButtons => 'ホットキーボタンを表示';
 
   @override
+  String get settingShowPanZoomButtons => '移動・ズームボタンを表示';
+
+  @override
   String get settingSliceColor => '切断面の色';
 
   @override
@@ -253,4 +280,10 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get themeModeSystem => 'システム';
+
+  @override
+  String get zoomInTooltip => '拡大';
+
+  @override
+  String get zoomOutTooltip => '縮小';
 }

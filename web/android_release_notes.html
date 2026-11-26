@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>android_release_notes</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="css/doc_style.css" />
+</head>
+<body>
+<h1 id="bios-virtualization-android-release-continuation-notes">BIOS
+Virtualization &amp; Android Release Continuation Notes</h1>
+<h2
+id="how-to-enable-hardware-virtualization-intel-vt-x-in-bios-on-raven">1.
+How to Enable Hardware Virtualization (Intel VT-x) in BIOS on
+<code>raven</code></h2>
+<ul>
+<li><p><strong>Motherboard</strong>: ASUS PRIME Z390-A (American
+Megatrends UEFI BIOS)</p></li>
+<li><p><strong>CPU</strong>: Intel Core i7-9700K</p></li>
+</ul>
+<h3 id="steps-to-enable-intel-vt-x">Steps to Enable Intel VT-x:</h3>
+<ol type="1">
+<li><p>Reboot directly into the UEFI BIOS setup from Linux (or press
+<strong>Del</strong> / <strong>F2</strong> repeatedly during
+startup):</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">systemctl</span> reboot <span class="at">--firmware-setup</span></span></code></pre></div></li>
+<li><p>Once in the ASUS UEFI BIOS Utility, press <strong>F7</strong> to
+switch from <strong>EZ Mode</strong> to <strong>Advanced Mode</strong>
+(if not already in Advanced Mode).</p></li>
+<li><p>Select the <strong>Advanced</strong> tab at the top of the
+screen.</p></li>
+<li><p>Open <strong>CPU Configuration</strong>.</p></li>
+<li><p>Scroll down to <strong>Intel (VMX) Virtualization
+Technology</strong> and change it from <strong>Disabled</strong> to
+<strong>Enabled</strong>.</p></li>
+<li><p><em>(Optional)</em> Return to the <strong>Advanced</strong> tab,
+open <strong>System Agent (SA) Configuration</strong>, and set
+<strong>VT-d</strong> to <strong>Enabled</strong>.</p></li>
+<li><p>Press <strong>F10</strong> to <strong>Save Changes &amp;
+Reset</strong> (confirm <strong>OK</strong>), and let the machine boot
+back into Linux.</p></li>
+<li><p>After logging back in, verify KVM is active:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span> /dev/kvm</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">lscpu</span> <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-i</span> virt</span></code></pre></div>
+<p>You should see <code>/dev/kvm</code> present and
+<code>Virtualization: VT-x</code>.</p></li>
+</ol>
+<hr />
+<h2 id="current-progress-on-todo-1-android-build">2. Current Progress on
+TODO <code>[1]</code> (<code>android-build</code>)</h2>
+<p>Completed so far:</p>
+<ul>
+<li><p><strong>Gradle / AGP / Kotlin &amp; Release Signing</strong>:</p>
+<ul>
+<li><p><code>android/app/build.gradle.kts</code> is configured to sign
+release builds using <code>~/.android/upload-keystore.jks</code>
+(<code>alias = "gchouse-upload"</code>) via <code>KEYSTORE_PW</code> or
+<code>~/.android/key.properties</code>, with fallback to
+<code>debug</code>.</p></li>
+<li><p><code>Makefile</code> includes <code>apk</code>,
+<code>apk-release</code>, <code>aab</code>, and
+<code>play-store-assets</code> targets.</p></li>
+</ul></li>
+<li><p><strong>Play Store Graphics &amp; Phone Screenshots
+(<code>play_store_images/</code>)</strong>:</p>
+<ul>
+<li><p><code>play_store_images/icon_512.png</code>
+(<code>512x512</code>, 24-bit RGB PNG)</p></li>
+<li><p><code>play_store_images/feature_graphic_1024x500.png</code>
+(<code>1024x500</code>, 24-bit RGB PNG)</p></li>
+<li><p><code>play_store_images/phone_01.png</code>
+(<code>1080x1920</code>, 24-bit RGB PNG)</p></li>
+<li><p><code>play_store_images/phone_02.png</code>
+(<code>1080x1920</code>, 24-bit RGB PNG)</p></li>
+</ul></li>
+<li><p><strong>Android Emulator System Image</strong>:</p>
+<ul>
+<li>Downloaded and unpacked
+<code>system-images;android-36.1;google_apis_playstore;x86_64</code>
+into <code>~/tools/android-sdk/system-images/</code> for AVD
+<code>Medium_Phone_API_36.1</code>.</li>
+</ul></li>
+<li><p><strong>Script Fix</strong>:</p>
+<ul>
+<li>Fixed <code>trap</code> cleanup of <code>tmp_png</code> in
+<code>~/bin/android-screenshots</code> under <code>set -u</code>.</li>
+</ul></li>
+</ul>
+<hr />
+<h2 id="remaining-steps-after-reboot">3. Remaining Steps After
+Reboot</h2>
+<h3 id="step-a-start-the-emulator-and-capture-tablet-screenshots">Step
+A: Start the Emulator and Capture Tablet Screenshots</h3>
+<ol type="1">
+<li><p>Start the <code>Medium_Phone_API_36.1</code> emulator:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="va">ANDROID_SDK_ROOT</span><span class="op">=</span><span class="va">$HOME</span>/tools/android-sdk <span class="dt">\</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="ex">~/tools/android-sdk/emulator/emulator</span> <span class="at">-avd</span> Medium_Phone_API_36.1 <span class="kw">&amp;</span></span></code></pre></div></li>
+<li><p>Wait for boot, install the release APK, and set
+<code>tablet7</code> size (<code>1200x1920 @ 320 dpi</code>):</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">adb</span> <span class="at">-s</span> emulator-5554 wait-for-device</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">android-screenshots</span> <span class="at">-s</span> emulator-5554 size tablet7</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">android-screenshots</span> <span class="at">-s</span> emulator-5554 demo-on</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="ex">adb</span> <span class="at">-s</span> emulator-5554 install <span class="at">-r</span> build/app/outputs/flutter-apk/app-release.apk</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="ex">adb</span> <span class="at">-s</span> emulator-5554 shell monkey <span class="at">-p</span> org.gchouse.polytope <span class="dt">\</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">-c</span> android.intent.category.LAUNCHER 1</span></code></pre></div></li>
+<li><p>Position the polytope interactively in the emulator and capture
+two 7-inch tablet screenshots:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">android-screenshots</span> <span class="at">-s</span> emulator-5554 capture tablet7_01</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">android-screenshots</span> <span class="at">-s</span> emulator-5554 capture tablet7_02</span></code></pre></div></li>
+<li><p>Switch the emulator to <code>tablet10</code> size
+(<code>1600x2560 @ 320 dpi</code>) and capture two 10-inch tablet
+screenshots:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">android-screenshots</span> <span class="at">-s</span> emulator-5554 size tablet10</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">android-screenshots</span> <span class="at">-s</span> emulator-5554 capture tablet10_01</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="ex">android-screenshots</span> <span class="at">-s</span> emulator-5554 capture tablet10_02</span></code></pre></div></li>
+<li><p>Reset emulator display size and exit demo mode:</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">android-screenshots</span> <span class="at">-s</span> emulator-5554 size reset</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">android-screenshots</span> <span class="at">-s</span> emulator-5554 demo-off</span></code></pre></div></li>
+</ol>
+<h3 id="step-b-monotonic-versioncode-for-android-google-play">Step B:
+Monotonic <code>versionCode</code> for Android / Google Play</h3>
+<ul>
+<li><p><code>roll_build_number.sh --release</code> resets
+<code>+BUILD</code> in <code>pubspec.yaml</code> to <code>+0</code>
+(e.g., <code>2.2.0+9</code> -&gt; <code>2.2.1+0</code> -&gt;
+<code>2.2.2+0</code>), which causes Flutter to set
+<code>flutter.versionCode = 1</code> and triggers
+<code>INSTALL_FAILED_VERSION_DOWNGRADE</code> on devices or Google Play
+when a previous build had <code>versionCode = 7</code>.</p></li>
+<li><p>Before building the release <code>.aab</code>, either compute a
+monotonic <code>versionCode</code> from
+<code>MAJOR.MINOR.PATCH+BUILD</code> in
+<code>android/app/build.gradle.kts</code> or ensure <code>+BUILD</code>
+in <code>pubspec.yaml</code> is strictly greater than any previously
+installed or uploaded <code>versionCode</code>.</p></li>
+</ul>
+<h3 id="step-c-build-verify-signed-release-bundle-.aab">Step C: Build
+&amp; Verify Signed Release Bundle (<code>.aab</code>)</h3>
+<ol type="1">
+<li><p>Build the signed <code>.aab</code> and verify its
+certificate:</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> aab</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">keytool</span> <span class="at">-printcert</span> <span class="dt">\</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-jarfile</span> build/app/outputs/bundle/release/app-release.aab <span class="dt">\</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-E</span> <span class="st">&quot;Owner:|SHA1:|SHA256:&quot;</span></span></code></pre></div></li>
+<li><p>Mark TODO item <code>[1]</code> done
+(<code>~/bin/todo.py done 1</code>).</p></li>
+</ol>
+</body>
+</html>

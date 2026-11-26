@@ -27,27 +27,109 @@
 <h1 id="steuerung">Steuerung</h1>
 <p>Die obere Leiste enthält mehrere Steuerelemente:</p>
 <ol type="1">
+<li><p><strong>Einstellungen</strong> (Zahnradsymbol): Farben,
+Kanten-/Punktgrößen, Linienclipping, Design-Helligkeit und
+Bildschirmtasten konfigurieren.</p></li>
 <li><p><strong>Polytop-Typ</strong>: Wählen Sie das anzuzeigende
-regelmäßige Polytop aus.</p></li>
+reguläre Polytop (Simplex, Würfel, Kreuzpolytop, Dodekaeder, Ikosaeder,
+24-Zeller, 120-Zeller oder 600-Zeller).</p></li>
 <li><p><strong>Dimension</strong>: Wählen Sie die Dimension (2 bis
 5).</p></li>
-<li><p><strong>Schnitt-Umschalter</strong>: Schalten Sie den
-Hyperebenen-Schnitt ein oder aus.</p></li>
-<li><p><strong>Transformationsmenü</strong>: Wählen Sie Rotationsmodi
-(R3, R4, R5), Zolly oder Verschieben.</p></li>
+<li><p><strong>Schnitt-Schalter</strong>: Schaltet den
+Hyperebenen-Querschnitt ein oder aus.</p></li>
+<li><p><strong>Bewegungs- / Transformationsmenü</strong>: Wählen Sie die
+Aktion für Ziehen und Tasten (<code>Rotate R3</code>,
+<code>Rotate R4</code>, <code>Rotate R5</code>, <code>Zolly</code>,
+<code>Translate</code> oder <code>Scale</code>) oder richten Sie die
+Ansicht aus (Ecke, Kante, Fläche oder 3-Zelle zuerst).</p></li>
+<li><p><strong>Hilfe</strong> (<code>?</code>) und
+<strong>Sprache</strong> (Globussymbol): Öffnet die Dokumentation oder
+wechselt die Sprache.</p></li>
 </ol>
-<h2 id="gesten-geschwindigkeit">Gesten &amp; Geschwindigkeit</h2>
+<h2 id="web-desktop-maus-tastatur">Web &amp; Desktop (Maus &amp;
+Tastatur)</h2>
 <ul>
-<li><p><strong>Ziehen</strong>: Rotiert oder verschiebt das Polytop
-entsprechend dem aktiven Modus.</p></li>
-<li><p><strong>Scrollen / Zuziehen</strong>: Zoomt oder skaliert das
-Polytop.</p></li>
-<li><p><strong>Schwungvolles Streichen</strong>: Verleiht Schwung,
-sodass Rotation oder Schnitt sanft weiterlaufen.</p></li>
-<li><p><strong>Tippen</strong>: Stoppt die Bewegung.</p></li>
+<li><p><strong>Ziehen</strong>: Dreht, ändert die Perspektive
+(<code>Zolly</code>), verschiebt oder skaliert je nach aktuellem
+Modus.</p></li>
+<li><p><strong>Mausrad</strong>: Vergrößert oder verkleinert die
+Ansicht.</p></li>
+<li><p><strong>Schwung (Fling)</strong>: Verleiht Geschwindigkeit in
+<code>Rotate R3</code> oder auf dem Schnitt-Schieberegler für flüssige
+Bewegung.</p></li>
+<li><p><strong>Klick / Tippen</strong>: Stoppt die Drehung auf der
+Zeichenfläche oder springt und stoppt den
+Schnitt-Schieberegler.</p></li>
+<li><p><strong>Pfeiltasten</strong>: Führen das aktuelle
+Bewegungswerkzeug aus.</p></li>
+<li><p><strong><code>]</code> / <code>[</code></strong> (oder
+<strong>Bild auf / Bild ab</strong>, <strong>Ziffernblock <code>+</code>
+/ <code>-</code></strong>): Hinein- oder herauszoomen.</p></li>
+<li><p><strong>Modifikatortasten</strong>: Halten Sie
+<strong>Umschalt</strong> (<code>Rotate R4</code>),
+<strong>Umschalt+Strg</strong> (<code>Rotate R5</code>),
+<strong>Strg</strong> (<code>Zolly</code>), <strong>Alt</strong>
+(<code>Translate</code>) oder <strong>Strg+Alt</strong>
+(<code>Scale</code>).</p></li>
+<li><p><strong><code>0</code>, <code>1</code>, <code>2</code>,
+<code>3</code></strong>: Richtet Ecke, Kante, Fläche oder 3-Zelle nach
+vorn aus.</p></li>
+<li><p><strong>Leertaste</strong>: Pausiert Drehung und
+Schnittanimation, wenn die Zeichenfläche fokussiert ist.</p></li>
+<li><p><strong><code>+</code> / <code>-</code></strong> (oder
+<code>=</code>): Beschleunigt oder verlangsamt die
+Schnittanimation.</p></li>
 </ul>
-<h2 id="einrasten">Einrasten</h2>
-<p>Richten Sie das Polytop schnell so aus, dass eine Ecke, Kante, Fläche
-oder 3-Zelle direkt auf den Bildschirm zeigt.</p>
+<h2 id="mobilgeräte-touch">Mobilgeräte (Touch)</h2>
+<ul>
+<li><p><strong>Ziehen, Wischen &amp; Tippen</strong>: Drehen,
+verschieben, Schwung geben oder zum Stoppen tippen.</p></li>
+<li><p><strong>Aufziehen &amp; Drehen</strong>: Mit zwei Fingern
+skalieren oder in der Bildschirmebene drehen.</p></li>
+<li><p><strong>Bildschirm-Modifikatortasten (<code>S</code>,
+<code>C</code>, <code>A</code>)</strong>: Auf Smartphones und Tablets
+standardmäßig aktiv (in den Einstellungen umschaltbar) als
+Touch-Entsprechung zu Umschalt, Strg und Alt.</p></li>
+<li><p><strong>Bildschirm-Schwenk-/Zoomtasten</strong>: Optional in den
+Einstellungen. Ein Doppeltipp auf einen Pfeil in <code>Rotate R3</code>
+erhöht die Drehgeschwindigkeit; die mittlere Stopp-Taste hält die
+Drehung an.</p></li>
+</ul>
+<h2 id="android-tv-d-pad-fernbedienung">Android TV
+(D-Pad-Fernbedienung)</h2>
+<p><em>Dieser Abschnitt gilt nur für Android-TV-Versionen.</em></p>
+<ul>
+<li><p><strong>Navigation</strong>: Verwenden Sie D-Pad-Pfeile und
+<strong>Auswählen</strong>, um obere Leiste, Drehtasten und
+Schnitt-Schieberegler zu bedienen. <strong>Nach unten</strong> aus der
+oberen Leiste oder <strong>Nach oben</strong> vom Schnitt-Schieberegler
+springt zur mittleren Drehtaste.</p></li>
+<li><p><strong>Aktiver Rotationsmodus</strong>:</p>
+<ul>
+<li><p><strong>Auswählen gedrückt halten</strong> auf der mittleren
+<strong>Stopp</strong>-Taste aktiviert den <strong>Aktiven
+Rotationsmodus</strong> (das Symbol wechselt zu einem hervorgehobenen
+Globus).</p></li>
+<li><p><strong>Pfeil kurz drücken</strong>: Erhöht die
+Drehgeschwindigkeit in diese Richtung.</p></li>
+<li><p><strong>Pfeil gedrückt halten</strong>: Dreht gleichmäßig,
+solange die Taste gedrückt bleibt.</p></li>
+<li><p><strong>Auswählen kurz drücken</strong>: Stoppt die Drehung,
+bleibt aber im Aktiven Rotationsmodus.</p></li>
+<li><p><strong>Auswählen gedrückt halten</strong> oder
+<strong>Zurück</strong> drücken: Beendet den Aktiven
+Rotationsmodus.</p></li>
+</ul></li>
+<li><p><strong>Schnitt-Schieberegler</strong>: Fokussieren Sie den
+Schieberegler und drücken Sie <strong>Auswählen</strong>, um die
+Vorwärtsanimation zu starten oder zu stoppen, oder nutzen Sie
+<strong>Links / Rechts</strong> für manuelle Schritte.</p></li>
+<li><p><strong>Einstellungen</strong>: Mit <strong>Hoch /
+Runter</strong> wechseln Sie Zeile für Zeile. Bei Schiebereglern
+aktiviert <strong>Auswählen</strong> den Bearbeitungsmodus;
+<strong>Links / Rechts</strong> ändern den Wert,
+<strong>Auswählen</strong> oder <strong>Zurück</strong> beenden
+ihn.</p></li>
+</ul>
 </body>
 </html>
